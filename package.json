@@ -3,7 +3,12 @@
   "bugs": {
     "url": "https://github.com/OctopusDeploy/api-client.ts/issues"
   },
-  "description": "API client for Octopus Deploy",
+  "dependencies": {
+    "@octopusdeploy/message-contracts": "file:../message-contracts.ts",
+    "consola": "^2.15.3",
+    "got": "^11.8.2"
+  },
+  "description": "TypeScript API client for Octopus Deploy",
   "devDependencies": {
     "@octopusdeploy/runtime-inputs": "^0.11.0",
     "@tsconfig/node16": "^1.0.2",
@@ -29,14 +34,8 @@
     "url": "https://github.com/OctopusDeploy/api-client.ts.git"
   },
   "scripts": {
-    "build": "tsc --p tsconfig.json",
-    "prepublishOnly": "npm run build"
+    "build": "tsc --p tsconfig.json"
   },
   "types": "dist/index.d.ts",
-  "version": "0.0.1",
-  "dependencies": {
-    "@octopusdeploy/message-contracts": "file:../message-contracts.ts",
-    "consola": "^2.15.3",
-    "got": "^11.8.2"
-  }
+  "version": "0.1.0"
 }
