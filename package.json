@@ -3,7 +3,7 @@
   "bugs": {
     "url": "https://github.com/OctopusDeploy/api-client.ts/issues"
   },
-  "description": "Node.js API client for Octopus Deploy",
+  "description": "API client for Octopus Deploy",
   "devDependencies": {
     "@octopusdeploy/runtime-inputs": "^0.11.0",
     "@tsconfig/node16": "^1.0.2",
