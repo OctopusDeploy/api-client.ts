@@ -66,8 +66,6 @@ class RunbookRepository extends BasicRepository<NonVcsRunbookResource, NewNonVcs
     getRunbookSnapshotTemplate(runbook: NonVcsRunbookResource): Promise<RunbookSnapshotTemplateResource> {
         return this.client.get<RunbookSnapshotTemplateResource>(runbook.Links["RunbookSnapshotTemplate"]);
     }
-
-    run(runbook: )
 }
 
 export default RunbookRepository;
