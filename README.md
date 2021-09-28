@@ -5,6 +5,13 @@ Node.js API client for Octopus Deploy ✨🐙🚀✨
 ## Usage
 
 ```typescript
+import type { ProjectResource } from '@octopusdeploy/message-contracts';
+import {
+  Client,
+  ClientConfiguration,
+  Repository,
+} from '@octopusdeploy/api-client';
+
 const configuration: ClientConfiguration = {
   apiKey: '<api-key>',
   apiUri: '<api-uri>',
