@@ -1,8 +1,11 @@
+import type {
+    ServerConfigurationResource,
+    ServerConfigurationSettingsSetResource
+} from "@octopusdeploy/message-contracts";
 import type { Client } from "../client";
-import ConfigurationRepository from "./configurationRepository";
-import type { ServerConfigurationResource, ServerConfigurationSettingsSetResource } from "@octopusdeploy/message-contracts";
+import { ConfigurationRepository } from "./configurationRepository";
 
-class ServerConfigurationRepository extends ConfigurationRepository<ServerConfigurationResource> {
+export class ServerConfigurationRepository extends ConfigurationRepository<ServerConfigurationResource> {
     constructor(client: Client) {
         super("ServerConfiguration", client);
     }
@@ -10,5 +13,3 @@ class ServerConfigurationRepository extends ConfigurationRepository<ServerConfig
         return this.client.get<ServerConfigurationSettingsSetResource[]>(this.client.getLink("ServerConfigurationSettings"));
     }
 }
-
-export default ServerConfigurationRepository;

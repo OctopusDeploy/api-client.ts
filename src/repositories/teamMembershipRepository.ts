@@ -1,5 +1,5 @@
-import type { Client } from "../client";
 import type { UserResource, TeamMembership, TeamResource } from "@octopusdeploy/message-contracts";
+import type { Client } from "../client";
 import { convertToSpacePartitionParameters } from "./mixedScopeBaseRepository";
 
 class TeamMembershipRepository {

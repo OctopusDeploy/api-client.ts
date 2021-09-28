@@ -10,5 +10,3 @@ export class BranchesRepository {
         return this.client.get<ReleaseTemplateResource>(branch.Links["ReleaseTemplate"], { channel: channelId });
     }
 }
-
-export default BranchesRepository;

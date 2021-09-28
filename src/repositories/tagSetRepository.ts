@@ -1,5 +1,5 @@
 import type { TagSetResource } from "@octopusdeploy/message-contracts";
-import BasicRepository from "./basicRepository";
+import { BasicRepository } from "./basicRepository";
 import type { Client } from "../client";
 
 class TagSetRepository extends BasicRepository<TagSetResource, TagSetResource> {

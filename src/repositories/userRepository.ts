@@ -6,7 +6,7 @@ import type {
     SpaceResource,
     UserResource
 } from "@octopusdeploy/message-contracts";
-import BasicRepository from "./basicRepository";
+import { BasicRepository } from "./basicRepository";
 import type { Client } from "../client";
 
 class UserRepository extends BasicRepository<UserResource, UserResource> {

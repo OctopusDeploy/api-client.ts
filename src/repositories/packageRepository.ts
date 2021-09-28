@@ -1,10 +1,10 @@
 import type { AllArgs } from "./basicRepository";
-import BasicRepository from "./basicRepository";
+import { BasicRepository } from "./basicRepository";
 import type { PackageResource } from "@octopusdeploy/message-contracts";
 import { PackageFromBuiltInFeedResource, ResourceCollection } from "@octopusdeploy/message-contracts";
 import type { Client } from "../client";
 
-type PackageListArgs = {
+export type PackageListArgs = {
     take?: number;
     skip?: number;
     filter?: string;
@@ -34,7 +34,7 @@ type PackageGetArgs = {
     includeNotes?: boolean;
 };
 
-class PackageRepository extends BasicRepository<PackageResource, PackageResource, PackageListArgs, AllArgs, PackageGetArgs> {
+export class PackageRepository extends BasicRepository<PackageResource, PackageResource, PackageListArgs, AllArgs, PackageGetArgs> {
     constructor(client: Client) {
         super("Packages", client);
     }
@@ -52,5 +52,3 @@ class PackageRepository extends BasicRepository<PackageResource, PackageResource
         return this.client.get<PackageNotesList>(this.client.getLink("PackageNotesList"), { packageIds });
     }
 }
-
-export default PackageRepository;

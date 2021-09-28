@@ -5,7 +5,7 @@ import type {
     VariableSetContentType
 } from "@octopusdeploy/message-contracts";
 import type { AllArgs, ListArgs } from "./basicRepository";
-import BasicRepository from "./basicRepository";
+import { BasicRepository } from "./basicRepository";
 import type { Client } from "../client";
 
 type LibraryVariableAllArgs = {
@@ -16,7 +16,7 @@ type LibraryVariableListArgs = {
     contentType?: VariableSetContentType;
 } & ListArgs;
 
-class LibraryVariableRepository extends BasicRepository<LibraryVariableSetResource, NewLibraryVariableSetResource, LibraryVariableListArgs, LibraryVariableAllArgs> {
+export class LibraryVariableRepository extends BasicRepository<LibraryVariableSetResource, NewLibraryVariableSetResource, LibraryVariableListArgs, LibraryVariableAllArgs> {
     constructor(client: Client) {
         super("LibraryVariables", client);
     }
@@ -25,5 +25,3 @@ class LibraryVariableRepository extends BasicRepository<LibraryVariableSetResour
         return this.client.get(libraryVariableSet.Links["Usages"]);
     }
 }
-
-export default LibraryVariableRepository;

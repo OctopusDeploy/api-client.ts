@@ -14,7 +14,7 @@ type LogsListArgs = {
     includeDetail: boolean;
 } & ListArgs;
 
-class ServerStatusRepository {
+export class ServerStatusRepository {
     private client: Client;
     constructor(client: Client) {
         this.client = client;
@@ -47,5 +47,3 @@ class ServerStatusRepository {
         return this.client.get<ServerTimezoneResource[]>(this.client.getLink("Timezones"));
     }
 }
-
-export default ServerStatusRepository;

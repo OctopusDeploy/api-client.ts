@@ -7,19 +7,17 @@ import type {
     AzureWebSiteSlot,
     NewAccountResource
 } from "@octopusdeploy/message-contracts";
-import BasicRepository from "./basicRepository";
+import { BasicRepository, ListArgs } from "./basicRepository";
 import type { Client } from "../client";
 
-type AccountRepositoryListArgs = {
+export type AccountRepositoryListArgs = {
     accountType?: AccountType[];
     ids?: string[],
     orderBy?: string;
     partialName?: string;
-    skip?: number;
-    take?: number;
-};
+} & ListArgs;
 
-class AccountRepository extends BasicRepository<AccountResource, NewAccountResource, AccountRepositoryListArgs> {
+export class AccountRepository extends BasicRepository<AccountResource, NewAccountResource, AccountRepositoryListArgs> {
     constructor(client: Client) {
         super("Accounts", client);
     }
@@ -53,5 +51,3 @@ class AccountRepository extends BasicRepository<AccountResource, NewAccountResou
         return this.client.get(account.Links["WebSiteSlots"], args);
     }
 }
-
-export default AccountRepository;

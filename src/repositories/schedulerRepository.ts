@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import BasicRepository from "./basicRepository";
+import { BasicRepository } from "./basicRepository";
 import type { Client } from "../client";
 import type { ScheduledTaskDetailsResource } from "@octopusdeploy/message-contracts";
 
@@ -9,7 +9,7 @@ interface DetailsArgs {
     verbose: boolean;
 }
 
-class SchedulerRepository extends BasicRepository<any, any> {
+export class SchedulerRepository extends BasicRepository<any, any> {
     constructor(client: Client) {
         super("Scheduler", client);
     }
@@ -19,5 +19,3 @@ class SchedulerRepository extends BasicRepository<any, any> {
         return this.client.get<ScheduledTaskDetailsResource>(this.client.getLink("Scheduler"), args);
     }
 }
-
-export default SchedulerRepository;

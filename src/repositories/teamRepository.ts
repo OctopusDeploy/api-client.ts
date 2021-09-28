@@ -1,9 +1,7 @@
-/* eslint-disable @typescript-eslint/consistent-type-assertions */
-
-import type { Client } from "../client";
 import type { TeamResource, ScopedUserRoleResource, ResourceCollection } from "@octopusdeploy/message-contracts";
-import MixedScopeBaseRepository from "./mixedScopeBaseRepository";
+import type { Client } from "../client";
 import type { ListArgs } from "./basicRepository";
+import { MixedScopeBaseRepository } from "./mixedScopeBaseRepository";
 
 interface TeamListArgs extends ListArgs {
     spaces?: string | string[];
@@ -12,7 +10,7 @@ interface TeamListArgs extends ListArgs {
     partialName: string;
 }
 
-class TeamRepository extends MixedScopeBaseRepository<TeamResource, TeamResource> {
+export class TeamRepository extends MixedScopeBaseRepository<TeamResource, TeamResource> {
     constructor(client: Client) {
         super("Teams", client);
     }
@@ -25,5 +23,3 @@ class TeamRepository extends MixedScopeBaseRepository<TeamResource, TeamResource
         return super.list(args) as Promise<ResourceCollection<TeamResource>>;
     }
 }
-
-export default TeamRepository;

@@ -23,17 +23,15 @@ export class DeploymentSettingsRepository {
         return this.client.get(this.project.Links[this.resourceLink]);
     }
 
-    modify(deploymentSettings: ModifyDeploymentSettingsCommand): Promise<DeploymentSettingsResource> {
-        return this.client.update(deploymentSettings.Links.Self, deploymentSettings);
-    }
-
     getOcl(deploymentSettings: DeploymentSettingsResource) {
         return this.client.get<DeploymentSettingsOclResource>(deploymentSettings.Links["RawOcl"]);
+    }
+
+    modify(deploymentSettings: ModifyDeploymentSettingsCommand): Promise<DeploymentSettingsResource> {
+        return this.client.update(deploymentSettings.Links.Self, deploymentSettings);
     }
 
     modifyOcl(deploymentSettings: DeploymentSettingsResource, command: ModifyDeploymentSettingsOclCommand) {
         return this.client.update<DeploymentSettingsOclResource>(deploymentSettings.Links["RawOcl"], command);
     }
 }
-
-export default DeploymentSettingsRepository;

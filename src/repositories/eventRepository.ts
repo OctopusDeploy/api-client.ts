@@ -1,9 +1,13 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-import type { DocumentTypeResource, EventAgentResource, EventCategoryResource, EventGroupResource, EventResource } from "@octopusdeploy/message-contracts";
+import type {
+    DocumentTypeResource,
+    EventAgentResource,
+    EventCategoryResource,
+    EventGroupResource,
+    EventResource
+} from "@octopusdeploy/message-contracts";
 import type { ListArgs } from "./basicRepository";
 import type { Client } from "../client";
-import MixedScopeBaseRepository from "./mixedScopeBaseRepository";
+import { MixedScopeBaseRepository } from "./mixedScopeBaseRepository";
 
 interface EventListArgs extends ListArgs {
     from?: string;
@@ -27,7 +31,7 @@ interface EventListArgs extends ListArgs {
     excludeDifference?: boolean;
 }
 
-class EventRepository extends MixedScopeBaseRepository<EventResource, EventResource, EventListArgs> {
+export class EventRepository extends MixedScopeBaseRepository<EventResource, EventResource, EventListArgs> {
     constructor(client: Client) {
         super("Events", client);
     }
@@ -48,5 +52,3 @@ class EventRepository extends MixedScopeBaseRepository<EventResource, EventResou
         return this.client.get<EventAgentResource[]>(this.client.getLink("EventAgents"));
     }
 }
-
-export default EventRepository;

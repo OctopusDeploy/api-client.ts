@@ -1,10 +1,5 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/consistent-type-assertions */
-
 import type { ResourceCollection, ResourceWithId } from "@octopusdeploy/message-contracts";
-import type { GlobalAndSpaceRootLinks } from "../client";
-import type { Client } from "../client";
+import type { Client, GlobalAndSpaceRootLinks } from "../client";
 import type { Dictionary } from "lodash";
 import { chunk, flatten } from "lodash";
 import type { RouteArgs } from "../resolver";
@@ -24,7 +19,7 @@ export type ResourcesById<TResource> = { [id: string]: TResource };
 export type ResourcesByNameOrId<TResource> = { [key: string]: TResource };
 
 // Repositories provide a helpful abstraction around the Octopus Deploy API
-class BasicRepository<
+export class BasicRepository<
     TExistingResource extends ResourceWithId,
     TNewResource, // Should never have a `Links` property, which we rely on in `save`
     TListArgs extends ListArgs & RouteArgs = ListArgs,
@@ -137,5 +132,3 @@ class BasicRepository<
         return Promise.all(promises).then((result) => flatten(result));
     }
 }
-
-export default BasicRepository;

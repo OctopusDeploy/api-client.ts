@@ -8,7 +8,7 @@ import type {
 } from "@octopusdeploy/message-contracts";
 import type { Client } from "../client";
 
-class VcsRunbookRepository {
+export class VcsRunbookRepository {
     constructor(private readonly client: Client, private readonly project: ProjectResource, private readonly branch: VcsBranchResource | undefined) {
         this.client = client;
     }
@@ -22,18 +22,20 @@ class VcsRunbookRepository {
     create(newVcsRunbook: NewVcsRunbookResource): Promise<VcsRunbookResource> {
         return this.client.create(this.getBranch().Links.Runbook, newVcsRunbook, {});
     }
-    get(id: string): Promise<VcsRunbookResource> {
-        return this.client.get(this.getBranch().Links.Runbook, { id });
-    }
-    list(args?: { skip?: number; take?: number }): Promise<ResourceCollection<VcsRunbookResource>> {
-        return this.client.get<ResourceCollection<VcsRunbookResource>>(this.getBranch().Links.Runbook, args);
-    }
-    modify(vcsRunbook: ModifyRunbookCommand): Promise<VcsRunbookResource> {
-        return this.client.update(vcsRunbook.Links.Self, vcsRunbook);
-    }
+
     del(vcsRunbook: VcsRunbookResource) {
         return this.client.del(vcsRunbook.Links.Self, vcsRunbook);
     }
-}
 
-export { VcsRunbookRepository };
+    get(id: string): Promise<VcsRunbookResource> {
+        return this.client.get(this.getBranch().Links.Runbook, { id });
+    }
+
+    list(args?: { skip?: number; take?: number }): Promise<ResourceCollection<VcsRunbookResource>> {
+        return this.client.get<ResourceCollection<VcsRunbookResource>>(this.getBranch().Links.Runbook, args);
+    }
+
+    modify(vcsRunbook: ModifyRunbookCommand): Promise<VcsRunbookResource> {
+        return this.client.update(vcsRunbook.Links.Self, vcsRunbook);
+    }
+}

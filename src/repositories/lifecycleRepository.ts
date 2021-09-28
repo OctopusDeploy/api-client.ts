@@ -1,8 +1,8 @@
 import type { LifecycleResource, ProjectResource } from "@octopusdeploy/message-contracts";
-import BasicRepository from "./basicRepository";
+import { BasicRepository } from "./basicRepository";
 import type { Client } from "../client";
 
-class LifecycleRepository extends BasicRepository<LifecycleResource, LifecycleResource> {
+export class LifecycleRepository extends BasicRepository<LifecycleResource, LifecycleResource> {
     constructor(client: Client) {
         super("Lifecycles", client);
     }
@@ -13,5 +13,3 @@ class LifecycleRepository extends BasicRepository<LifecycleResource, LifecycleRe
         return this.client.get<ProjectResource[]>(lifecycle.Links["Projects"]);
     }
 }
-
-export default LifecycleRepository;

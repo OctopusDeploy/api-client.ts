@@ -8,8 +8,7 @@ import type {
     VariablesScopedToEnvironmentResponse
 } from "@octopusdeploy/message-contracts";
 import type { Client } from "../client";
-import BasicRepository from "./basicRepository";
-import type { ListArgs } from "./basicRepository";
+import { BasicRepository, ListArgs } from "./basicRepository";
 
 type EnvironmentRepositoryListArgs = {
     ids?: string[],
@@ -17,7 +16,7 @@ type EnvironmentRepositoryListArgs = {
     partialName?: string;
 } & ListArgs;
 
-class EnvironmentRepository extends BasicRepository<EnvironmentResource, NewEnvironmentResource, EnvironmentRepositoryListArgs> {
+export class EnvironmentRepository extends BasicRepository<EnvironmentResource, NewEnvironmentResource, EnvironmentRepositoryListArgs> {
     constructor(client: Client) {
         super("Environments", client);
     }
@@ -93,5 +92,3 @@ export type EnvironmentSummaryArgs = {
     hideEmptyEnvironments: boolean;
     shellNames: string;
 };
-
-export default EnvironmentRepository;

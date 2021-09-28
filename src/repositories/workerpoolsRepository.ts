@@ -8,9 +8,9 @@ import type {
     WorkerPoolResource
 } from "@octopusdeploy/message-contracts";
 import type { Client } from "../client";
-import BasicRepository from "./basicRepository";
+import { BasicRepository } from "./basicRepository";
 
-class WorkerPoolRepository extends BasicRepository<WorkerPoolResource, NewWorkerPoolResource> {
+export class WorkerPoolsRepository extends BasicRepository<WorkerPoolResource, NewWorkerPoolResource> {
     constructor(client: Client) {
         super("WorkerPools", client);
     }
@@ -52,5 +52,3 @@ export type WorkerPoolsSummaryArgs = {
     hideEmptyWorkerPools: boolean;
     shellNames: string;
 };
-
-export default WorkerPoolRepository;

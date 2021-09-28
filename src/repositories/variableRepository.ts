@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import type { VariableSetResource } from "@octopusdeploy/message-contracts";
-import BasicRepository from "./basicRepository";
+import { BasicRepository } from "./basicRepository";
 import type { Client } from "../client";
 
 class VariableRepository extends BasicRepository<VariableSetResource, VariableSetResource> {

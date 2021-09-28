@@ -8,7 +8,7 @@ import type { GlobalAndSpaceRootLinks } from "../client";
 import type { Client } from "../client";
 import type { RouteArgs } from "../resolver";
 import type { AllArgs, ListArgs } from "./basicRepository";
-import BasicRepository from "./basicRepository";
+import { BasicRepository } from "./basicRepository";
 import type ProjectRepository from "./projectRepository";
 import { chunk, flatten } from "lodash";
 
@@ -16,8 +16,7 @@ interface HasProject {
     ProjectId: string;
 }
 
-// Repositories provide a helpful abstraction around the Octopus Deploy API
-class ProjectScopedRepository<
+export class ProjectScopedRepository<
     TExistingResource extends ResourceWithId,
     TNewResource extends HasProject, // Should never have a `Links` property, which we rely on in `save`
     TListArgs extends ListArgs & RouteArgs = ListArgs,
@@ -117,5 +116,3 @@ class ProjectScopedRepository<
         return Promise.all(promises).then((result) => flatten(result));
     }
 }
-
-export default ProjectScopedRepository;

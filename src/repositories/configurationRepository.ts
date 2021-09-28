@@ -2,7 +2,7 @@ import type { ResourceWithId } from "@octopusdeploy/message-contracts";
 import type { GlobalAndSpaceRootLinks } from "../client";
 import type { Client } from "../client";
 
-class ConfigurationRepository<TResource extends ResourceWithId> {
+export class ConfigurationRepository<TResource extends ResourceWithId> {
     protected client: Client;
     private configurationLinkName: GlobalAndSpaceRootLinks;
 
@@ -10,6 +10,7 @@ class ConfigurationRepository<TResource extends ResourceWithId> {
         this.configurationLinkName = configurationLinkName;
         this.client = client;
     }
+
     get(): Promise<TResource> {
         return this.client.get<TResource>(this.client.getLink(this.configurationLinkName));
     }
@@ -18,5 +19,3 @@ class ConfigurationRepository<TResource extends ResourceWithId> {
         return this.client.update<TResource>(resource.Links["Self"], resource);
     }
 }
-
-export default ConfigurationRepository;

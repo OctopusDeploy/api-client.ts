@@ -1,6 +1,5 @@
 import type { RunbookRunResource, TaskState } from "@octopusdeploy/message-contracts";
-import type { ListArgs } from "./basicRepository";
-import BasicRepository from "./basicRepository";
+import { BasicRepository, ListArgs } from "./basicRepository";
 import type { Client } from "../client";
 
 type RunbookRunListArgs = {
@@ -12,10 +11,8 @@ type RunbookRunListArgs = {
     taskState?: TaskState;
 } & ListArgs;
 
-class RunbookRunRepository extends BasicRepository<RunbookRunResource, RunbookRunResource, RunbookRunListArgs> {
+export class RunbookRunRepository extends BasicRepository<RunbookRunResource, RunbookRunResource, RunbookRunListArgs> {
     constructor(client: Client) {
         super("RunbookRuns", client);
     }
 }
-
-export default RunbookRunRepository;

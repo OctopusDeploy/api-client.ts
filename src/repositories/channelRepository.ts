@@ -13,7 +13,7 @@ import type {
 } from "@octopusdeploy/message-contracts";
 import type { ListArgs } from "./basicRepository";
 import type { Client } from "../client";
-import ProjectScopedRepository from "./projectScopedRepository";
+import { ProjectScopedRepository } from "./projectScopedRepository";
 import type ProjectRepository from "./projectRepository";
 import type { RouteArgs } from "../resolver";
 
@@ -28,7 +28,7 @@ export type SearchOptions = {
     feedType: FeedType;
 };
 
-class ChannelRepository extends ProjectScopedRepository<ChannelResource, ChannelResource> {
+export class ChannelRepository extends ProjectScopedRepository<ChannelResource, ChannelResource> {
     constructor(projectRepository: ProjectRepository, client: Client) {
         super(projectRepository, "Channels", client);
     }
@@ -78,5 +78,3 @@ class ChannelRepository extends ProjectScopedRepository<ChannelResource, Channel
         }
     }
 }
-
-export default ChannelRepository;

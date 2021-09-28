@@ -1,15 +1,13 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import type {
     DeploymentTargetResource,
     MachinePolicyResource,
     ResourceCollection,
     WorkerMachineResource
 } from "@octopusdeploy/message-contracts";
-import BasicRepository from "./basicRepository";
+import { BasicRepository } from "./basicRepository";
 import type { Client } from "../client";
 
-class MachinePolicyRepository extends BasicRepository<MachinePolicyResource, any> {
+export class MachinePolicyRepository extends BasicRepository<MachinePolicyResource, any> {
     constructor(client: Client) {
         super("MachinePolicies", client);
     }
@@ -23,5 +21,3 @@ class MachinePolicyRepository extends BasicRepository<MachinePolicyResource, any
         return this.client.get(machinePolicy.Links["Workers"]);
     }
 }
-
-export default MachinePolicyRepository;

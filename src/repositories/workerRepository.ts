@@ -5,23 +5,21 @@ import type {
     NewWorkerMachineResource,
     WorkerMachineResource
 } from "@octopusdeploy/message-contracts";
-import BasicRepository from "./basicRepository";
+import { BasicRepository, ListArgs } from "./basicRepository";
 import type { Client } from "../client";
 
 export type ListWorkerArgs = {
-    skip?: number;
-    take?: number;
+    commStyles?: string;
+    environmentIds?: string;
+    healthStatuses?: string;
+    isDisabled?: boolean;
     partialName?: string;
     roles?: string;
-    isDisabled?: boolean;
-    healthStatuses?: string;
-    commStyles?: string;
+    shellNames?: string;
     tenantIds?: string;
     tenantTags?: string;
-    environmentIds?: string;
-    shellNames?: string;
     workerPoolIds?: string;
-};
+} & ListArgs;
 
 export class WorkerRepository extends BasicRepository<WorkerMachineResource, NewWorkerMachineResource> {
     constructor(client: Client) {

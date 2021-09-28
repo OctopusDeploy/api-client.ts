@@ -12,17 +12,17 @@ import type {
     ResourceCollection
 } from "@octopusdeploy/message-contracts";
 import { FeedType } from "@octopusdeploy/message-contracts";
-import type { ListArgs } from "./basicRepository";
-import BasicRepository from "./basicRepository";
+import { BasicRepository } from "./basicRepository";
 import type { Client } from "../client";
+import type { ListArgs } from "./basicRepository";
 
 type FeedRepositoryListArgs = {
     feedType?: FeedType[];
-    name?: string | string[];
     ids?: string | string[];
+    name?: string | string[];
 } & ListArgs;
 
-interface PackageSearchOptions extends ListArgs {
+export interface PackageSearchOptions extends ListArgs {
     includePreRelease?: boolean;
     preReleaseTag?: string;
     versionRange?: string;
@@ -40,7 +40,7 @@ export class ExternalFeedsFilterTypes {
     }
 }
 
-class FeedRepository extends BasicRepository<FeedResource, FeedResource, FeedRepositoryListArgs> {
+export class FeedRepository extends BasicRepository<FeedResource, FeedResource, FeedRepositoryListArgs> {
     constructor(client: Client) {
         super("Feeds", client);
     }
@@ -84,6 +84,3 @@ class FeedRepository extends BasicRepository<FeedResource, FeedResource, FeedRep
         return this.client.getRaw(feed.Links["NotesTemplate"], { packageId, version });
     }
 }
-
-export { PackageSearchOptions };
-export default FeedRepository;

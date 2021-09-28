@@ -1,17 +1,15 @@
 import type { ArtifactResource } from "@octopusdeploy/message-contracts";
-import BasicRepository from "./basicRepository";
+import { BasicRepository } from "./basicRepository";
 import type { Client } from "../client";
 import type { ListArgs } from "./basicRepository";
 
-type ArtifactListArgs = {
-    regarding?: string;
+export type ArtifactListArgs = {
     order?: string;
+    regarding?: string;
 } & ListArgs;
 
-class ArtifactRepository extends BasicRepository<ArtifactResource, ArtifactResource, ArtifactListArgs> {
+export class ArtifactRepository extends BasicRepository<ArtifactResource, ArtifactResource, ArtifactListArgs> {
     constructor(client: Client) {
         super("Artifacts", client);
     }
 }
-
-export default ArtifactRepository;

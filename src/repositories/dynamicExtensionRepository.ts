@@ -5,15 +5,11 @@ import type {
 } from "@octopusdeploy/message-contracts";
 import type { Client } from "../client";
 
-export default class DynamicExtensionRepository {
+export class DynamicExtensionRepository {
     private client: Client;
 
     constructor(client: Client) {
         this.client = client;
-    }
-
-    getScripts(): Promise<DynamicExtensionsScriptsResource> {
-        return this.client.get<DynamicExtensionsScriptsResource>(this.client.getLink("DynamicExtensionsScripts"));
     }
 
     getFeaturesMetadata(): Promise<DynamicExtensionsFeaturesMetadataResource> {
@@ -22,6 +18,10 @@ export default class DynamicExtensionRepository {
 
     getFeaturesValues(): Promise<DynamicExtensionsFeaturesValuesResource> {
         return this.client.get<DynamicExtensionsFeaturesValuesResource>(this.client.getLink("DynamicExtensionsFeaturesValues"));
+    }
+
+    getScripts(): Promise<DynamicExtensionsScriptsResource> {
+        return this.client.get<DynamicExtensionsScriptsResource>(this.client.getLink("DynamicExtensionsScripts"));
     }
 
     putFeaturesValues(values: DynamicExtensionsFeaturesValuesResource): Promise<DynamicExtensionsFeaturesValuesResource> {

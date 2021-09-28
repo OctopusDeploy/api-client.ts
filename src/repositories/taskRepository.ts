@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/consistent-type-assertions */
-
 import type {
     AccountTestTaskArguments,
     ActionProperties,
@@ -28,7 +25,7 @@ import { TaskName, TaskRestrictedTo } from "@octopusdeploy/message-contracts";
 import type { ListArgs } from "./basicRepository";
 import type { Client } from "../client";
 import { chunk, flatMap } from "lodash";
-import MixedScopeBaseRepository from "./mixedScopeBaseRepository";
+import { MixedScopeBaseRepository } from "./mixedScopeBaseRepository";
 
 interface TaskListArgs extends ListArgs {
     name?: string;
@@ -64,7 +61,7 @@ export interface StatsResourceCollection extends ResourceCollection<TaskResource
     TotalCounts: { [state: string]: number };
 }
 
-class TaskRepository extends MixedScopeBaseRepository<TaskResource<any>, NewTaskResource<any>, TaskListArgs> {
+export class TaskRepository extends MixedScopeBaseRepository<TaskResource<any>, NewTaskResource<any>, TaskListArgs> {
     constructor(client: Client) {
         super("Tasks", client);
     }
@@ -288,5 +285,3 @@ class TaskRepository extends MixedScopeBaseRepository<TaskResource<any>, NewTask
         });
     }
 }
-
-export default TaskRepository;

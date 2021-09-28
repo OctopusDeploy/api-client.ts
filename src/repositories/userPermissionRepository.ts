@@ -2,7 +2,7 @@ import type { UserPermissionSetResource, UserResource } from "@octopusdeploy/mes
 import type { Client } from "../client";
 import { convertToSpacePartitionParameters } from "./mixedScopeBaseRepository";
 
-class UserPermissionRepository {
+export class UserPermissionRepository {
     private client: Client;
     constructor(client: Client) {
         this.client = client;
@@ -24,5 +24,3 @@ class UserPermissionRepository {
         return this.client.get<UserPermissionSetResource>(user.Links["PermissionsConfiguration"], convertToSpacePartitionParameters(this.client.spaceId, includeSystem));
     }
 }
-
-export default UserPermissionRepository;

@@ -11,7 +11,7 @@ import type {
     RunbookSnapshotTemplateResource
 } from "@octopusdeploy/message-contracts";
 import type { AllArgs } from "./basicRepository";
-import BasicRepository from "./basicRepository";
+import { BasicRepository } from "./basicRepository";
 import type { Client } from "../client";
 import type { RouteArgs } from "../resolver";
 
@@ -25,7 +25,7 @@ type RunbookRepositoryAllArgs = {
     projectIds?: string[];
 } & AllArgs;
 
-class RunbookRepository extends BasicRepository<NonVcsRunbookResource, NewNonVcsRunbookResource, RunbookRepositoryListArgs, RunbookRepositoryAllArgs> {
+export class RunbookRepository extends BasicRepository<NonVcsRunbookResource, NewNonVcsRunbookResource, RunbookRepositoryListArgs, RunbookRepositoryAllArgs> {
     constructor(client: Client) {
         super("Runbooks", client);
     }
@@ -67,5 +67,3 @@ class RunbookRepository extends BasicRepository<NonVcsRunbookResource, NewNonVcs
         return this.client.get<RunbookSnapshotTemplateResource>(runbook.Links["RunbookSnapshotTemplate"]);
     }
 }
-
-export default RunbookRepository;

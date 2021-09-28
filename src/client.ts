@@ -1,5 +1,12 @@
-import type { GlobalRootLinks, OctopusError, RootResource, SpaceRootLinks, SpaceRootResource } from "@octopusdeploy/message-contracts";
+import type {
+    GlobalRootLinks,
+    OctopusError,
+    RootResource,
+    SpaceRootLinks,
+    SpaceRootResource
+} from "@octopusdeploy/message-contracts";
 import consola from "consola";
+import ApiClient from "./apiClient";
 import type { RouteArgs } from "./resolver";
 import Caching from "./caching";
 import type { Callback } from "./subscriptionRecord";
@@ -9,9 +16,8 @@ import type { ClientRequestDetails } from "./clientRequestDetails";
 import type { ClientResponseDetails } from "./clientResponseDetails";
 import { ClientSession } from "./clientSession";
 import Environment from "./environment";
-import { SubscriptionRecord } from "./subscriptionRecord";
 import Resolver from "./resolver";
-import ApiClient from "./apiClient";
+import { SubscriptionRecord } from "./subscriptionRecord";
 
 const apiLocation = "~/api";
 

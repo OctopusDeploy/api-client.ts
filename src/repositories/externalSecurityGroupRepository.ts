@@ -1,7 +1,7 @@
 import type { NamedReferenceItem } from "@octopusdeploy/message-contracts";
 import type { Client } from "../client";
 
-class ExternalSecurityGroupRepository {
+export class ExternalSecurityGroupRepository {
     private client: Client;
     constructor(client: Client) {
         this.client = client;
@@ -10,5 +10,3 @@ class ExternalSecurityGroupRepository {
         return this.client.get(url, { partialName });
     }
 }
-
-export default ExternalSecurityGroupRepository;

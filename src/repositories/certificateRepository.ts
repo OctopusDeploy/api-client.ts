@@ -1,9 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-/* eslint-disable @typescript-eslint/consistent-type-assertions */
-
 import type { CertificateResource } from "@octopusdeploy/message-contracts";
-import BasicRepository from "./basicRepository";
+import { BasicRepository, ListArgs } from "./basicRepository";
 import type { Client } from "../client";
 
 type CertificateRepositoryListArgs = {
@@ -11,24 +7,18 @@ type CertificateRepositoryListArgs = {
     firstResult?: string;
     orderBy?: string;
     search?: string;
-    skip?: number;
-    take?: number;
     tenant?: string;
-};
+} & ListArgs;
 
-const CollectionLinkName = "Certificates";
 const SelfSignedEndpoint = "/generate";
 
-class CertificateRepository extends BasicRepository<CertificateResource, CertificateResource, CertificateRepositoryListArgs> {
+export class CertificateRepository extends BasicRepository<CertificateResource, CertificateResource, CertificateRepositoryListArgs> {
     constructor(client: Client) {
-        super(CollectionLinkName, client);
+        super("Certificates", client);
     }
 
-    names(projectId: string, projectEnvironmentsFilter: any) {
-        return this.client.get(this.client.getLink("VariableNames"), {
-            project: projectId,
-            projectEnvironmentsFilter: projectEnvironmentsFilter ? projectEnvironmentsFilter.join(",") : projectEnvironmentsFilter,
-        });
+    createSelfSigned(resource: CertificateResource, args?: {}): Promise<CertificateResource> {
+        return this.client.create<CertificateResource, CertificateResource>(this.client.getLink("Certificates") + SelfSignedEndpoint, resource, args!).then((r) => this.notifySubscribersToDataModifications(r));
     }
 
     async listForTenant(tenantId: string) {
@@ -36,6 +26,13 @@ class CertificateRepository extends BasicRepository<CertificateResource, Certifi
         // certificates/all is cached, and so does not support filtering by tenant.
         const certificates = (await this.list({ tenant: tenantId, take: this.takeAll })).Items;
         return certificates;
+    }
+
+    names(projectId: string, projectEnvironmentsFilter: any) {
+        return this.client.get(this.client.getLink("VariableNames"), {
+            project: projectId,
+            projectEnvironmentsFilter: projectEnvironmentsFilter ? projectEnvironmentsFilter.join(",") : projectEnvironmentsFilter,
+        });
     }
 
     saveSelfSigned(resource: CertificateResource): Promise<CertificateResource> {
@@ -49,10 +46,4 @@ class CertificateRepository extends BasicRepository<CertificateResource, Certifi
             return !!(r as CertificateResource).Links && !!(r as CertificateResource).Id;
         }
     }
-
-    createSelfSigned(resource: CertificateResource, args?: {}): Promise<CertificateResource> {
-        return this.client.create<CertificateResource, CertificateResource>(this.client.getLink(CollectionLinkName) + SelfSignedEndpoint, resource, args!).then((r) => this.notifySubscribersToDataModifications(r));
-    }
 }
-
-export default CertificateRepository;

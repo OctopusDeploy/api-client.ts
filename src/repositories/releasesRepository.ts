@@ -11,12 +11,12 @@ import type {
     ReleaseResource
 } from "@octopusdeploy/message-contracts"
 import type { ListArgs } from "./basicRepository";
-import BasicRepository from "./basicRepository";
+import { BasicRepository } from "./basicRepository";
 import type { Client } from "../client";
 
 type GetDeploymentArgs = ListArgs;
 
-class ReleasesRepository extends BasicRepository<ReleaseResource, ReleaseResource> {
+export class ReleasesRepository extends BasicRepository<ReleaseResource, ReleaseResource> {
     constructor(client: Client) {
         super("Releases", client);
     }
@@ -45,5 +45,3 @@ class ReleasesRepository extends BasicRepository<ReleaseResource, ReleaseResourc
         return this.client.get(release.Links["Lifecycle"]);
     }
 }
-
-export default ReleasesRepository;

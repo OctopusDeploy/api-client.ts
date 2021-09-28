@@ -50,5 +50,3 @@ export class DeploymentProcessRepository {
         return this.client.update<DeploymentProcessOclResource>(deploymentProcess.Links["RawOcl"], command);
     }
 }
-
-export default DeploymentProcessRepository;

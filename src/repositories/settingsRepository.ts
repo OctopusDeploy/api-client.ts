@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import type { Client } from "../client";
-import BasicRepository from "./basicRepository";
+import { BasicRepository } from "./basicRepository";
 import type { MetadataTypeCollection, SettingsMetadataItemResource } from "@octopusdeploy/message-contracts";
 
 class SettingsRepository extends BasicRepository<SettingsMetadataItemResource, SettingsMetadataItemResource> {

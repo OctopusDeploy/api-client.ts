@@ -8,7 +8,7 @@ import type {
     TenantResource
 } from "@octopusdeploy/message-contracts";
 import type { AllArgs, ListArgs } from "./basicRepository";
-import BasicRepository from "./basicRepository";
+import { BasicRepository } from "./basicRepository";
 import type { Client } from "../client";
 
 type TenantAllArgs = {

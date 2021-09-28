@@ -4,7 +4,7 @@ import type {
 } from "@octopusdeploy/message-contracts";
 import type { Client } from "../client";
 
-class UserIdentityMetadataRepository {
+export class UserIdentityMetadataRepository {
     private client: Client;
     constructor(client: Client) {
         this.client = client;
@@ -18,5 +18,3 @@ class UserIdentityMetadataRepository {
         return this.client.get<UserAuthenticationResource>(this.client.getLink("UserAuthentication"), { userId });
     }
 }
-
-export default UserIdentityMetadataRepository;

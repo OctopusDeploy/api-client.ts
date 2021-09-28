@@ -1,15 +1,15 @@
-import type { Client } from "../client";
 import type { ProjectResource, VcsBranchResource } from "@octopusdeploy/message-contracts";
-import { DeploymentProcessRepository } from "./deploymentProcessRepository";
-import { VcsRunbookRepository } from "./vcsRunbookRepository";
 import { BranchesRepository } from "./branchesRepository";
-import DeploymentSettingsRepository from "./deploymentSettingsRepository";
+import type { Client } from "../client";
+import { DeploymentProcessRepository } from "./deploymentProcessRepository";
+import { DeploymentSettingsRepository } from "./deploymentSettingsRepository";
+import { VcsRunbookRepository } from "./vcsRunbookRepository";
 
-class ProjectContextRepository {
+export class ProjectContextRepository {
+    Branches: BranchesRepository;
     DeploymentProcesses: DeploymentProcessRepository;
     DeploymentSettings: DeploymentSettingsRepository;
     Runbooks: VcsRunbookRepository;
-    Branches: BranchesRepository;
 
     constructor(client: Client, project: ProjectResource, branch: VcsBranchResource | undefined) {
         this.DeploymentProcesses = new DeploymentProcessRepository(client, project, branch);
@@ -18,5 +18,3 @@ class ProjectContextRepository {
         this.Branches = new BranchesRepository(client);
     }
 }
-
-export default ProjectContextRepository;

@@ -1,5 +1,5 @@
 import type { UserRoleResource } from "@octopusdeploy/message-contracts";
-import BasicRepository from "./basicRepository";
+import { BasicRepository } from "./basicRepository";
 import type { Client } from "../client";
 
 class UserRoleRepository extends BasicRepository<UserRoleResource, UserRoleResource> {

@@ -1,78 +1,78 @@
-import LetsEncryptConfigurationRepository from "./repositories/letsEncryptConfigurationRepository";
-import AuthenticationRepository from "./repositories/authenticationRepository";
+import { AuthenticationRepository } from "./repositories/authenticationRepository";
 import type { Client } from "./client";
-import SettingsRepository from "./repositories/settingsRepository";
-import AccountRepository from "./repositories/accountRepository";
-import ActionTemplateRepository from "./repositories/actionTemplateRepository";
-import ArtifactRepository from "./repositories/artifactRepository";
-import CertificateConfigurationRepository from "./repositories/certificateConfigurationRepository";
-import CertificateRepository from "./repositories/certificateRepository";
-import ChannelRepository from "./repositories/channelRepository";
-import CloudTemplateRepository from "./repositories/cloudTemplateRepository";
-import CommunityActionTemplateRepository from "./repositories/communityActionTemplateRepository";
-import DashboardRepository from "./repositories/dashboardRepository";
-import DashboardConfigurationRepository from "./repositories/dashboardConfigurationRepository";
-import DefectRepository from "./repositories/defectRepository";
-import DeploymentRepository from "./repositories/deploymentRepository";
-import EnvironmentRepository from "./repositories/environmentRepository";
-import EventRepository from "./repositories/eventRepository";
-import ExternalSecurityGroupProviderRepository from "./repositories/externalSecurityGroupProviderRepository";
-import ExternalSecurityGroupRepository from "./repositories/externalSecurityGroupRepository";
-import ExternalUsersRepository from "./repositories/externalUsersRepository";
-import FeaturesConfigurationRepository from "./repositories/featuresConfigurationRepository";
-import FeedRepository from "./repositories/feedRepository";
-import InterruptionRepository from "./repositories/interruptionRepository";
-import LibraryVariableRepository from "./repositories/libraryVariableRepository";
-import LicenseRepository from "./repositories/licenseRepository";
-import LifecycleRepository from "./repositories/lifecycleRepository";
-import MachinePolicyRepository from "./repositories/machinePolicyRepository";
-import MachineRepository from "./repositories/machineRepository";
-import MachineRoleRepository from "./repositories/machineRoleRepository";
-import MachineShellsRepository from "./repositories/machineShellsRepository";
-import MaintenanceConfigurationRepository from "./repositories/maintenanceConfigurationRepository";
-import OctopusServerNodeRepository from "./repositories/octopusServerNodeRepository";
-import RunbookRepository from "./repositories/runbookRepository";
-import RunbookProcessRepository from "./repositories/runbookProcessRepository";
-import PackageRepository from "./repositories/packageRepository";
-import PerformanceConfigurationRepository from "./repositories/performanceConfigurationRepository";
-import PermissionDescriptionRepository from "./repositories/permissionDescriptionRepository";
-import ProgressionRepository from "./repositories/progressionRepository";
-import ProjectGroupRepository from "./repositories/projectGroupRepository";
+import { AccountRepository } from "./repositories/accountRepository";
+import { ActionTemplateRepository } from "./repositories/actionTemplateRepository";
+import { ArtifactRepository } from "./repositories/artifactRepository";
+import { BuildInformationRepository } from "./repositories/buildInformationRepository";
+import { CertificateConfigurationRepository } from "./repositories/certificateConfigurationRepository";
+import { CertificateRepository } from "./repositories/certificateRepository";
+import { ChannelRepository } from "./repositories/channelRepository";
+import { CloudTemplateRepository } from "./repositories/cloudTemplateRepository";
+import { CommunityActionTemplateRepository } from "./repositories/communityActionTemplateRepository";
+import { DashboardRepository } from "./repositories/dashboardRepository";
+import { DashboardConfigurationRepository } from "./repositories/dashboardConfigurationRepository";
+import { DefectRepository } from "./repositories/defectRepository";
+import { DeploymentRepository } from "./repositories/deploymentRepository";
+import { DynamicExtensionRepository } from "./repositories/dynamicExtensionRepository";
+import { EnvironmentRepository } from "./repositories/environmentRepository";
+import { EventRepository } from "./repositories/eventRepository";
+import { ExternalSecurityGroupProviderRepository } from "./repositories/externalSecurityGroupProviderRepository";
+import { ExternalSecurityGroupRepository } from "./repositories/externalSecurityGroupRepository";
+import { ExternalUsersRepository } from "./repositories/externalUsersRepository";
+import { FeaturesConfigurationRepository } from "./repositories/featuresConfigurationRepository";
+import { FeedRepository } from "./repositories/feedRepository";
+import { ImportExportActions } from "./repositories/importExportActions";
+import { InterruptionRepository } from "./repositories/interruptionRepository";
+import { InvitationRepository } from "./repositories/inviteRepository";
+import { LetsEncryptConfigurationRepository } from "./repositories/letsEncryptConfigurationRepository";
+import { LibraryVariableRepository } from "./repositories/libraryVariableRepository";
+import { LicenseRepository } from "./repositories/licenseRepository";
+import { LifecycleRepository } from "./repositories/lifecycleRepository";
+import { MachinePolicyRepository } from "./repositories/machinePolicyRepository";
+import { MachineRepository } from "./repositories/machineRepository";
+import { MachineRoleRepository } from "./repositories/machineRoleRepository";
+import { MachineShellsRepository } from "./repositories/machineShellsRepository";
+import { MaintenanceConfigurationRepository } from "./repositories/maintenanceConfigurationRepository";
+import { OctopusServerNodeRepository } from "./repositories/octopusServerNodeRepository";
+import { RetentionDefaultConfigurationRepository } from "./repositories/retentionDefaultConfigurationRepository";
+import type { RouteArgs } from "./resolver";
+import { RunbookProcessRepository } from "./repositories/runbookProcessRepository";
+import { RunbookRepository } from "./repositories/runbookRepository";
+import { RunbookRunRepository } from "./repositories/runbookRunRepository";
+import { RunbookSnapshotRepository } from "./repositories/runbookSnapshotRepository";
+import { PackageRepository } from "./repositories/packageRepository";
+import { PerformanceConfigurationRepository } from "./repositories/performanceConfigurationRepository";
+import { PermissionDescriptionRepository } from "./repositories/permissionDescriptionRepository";
+import { ProgressionRepository } from "./repositories/progressionRepository";
+import { ProjectGroupRepository } from "./repositories/projectGroupRepository";
 import ProjectRepository from "./repositories/projectRepository";
-import ProjectTriggerRepository from "./repositories/projectTriggerRepository";
-import ProxyRepository from "./repositories/proxyRepository";
-import ReleasesRepository from "./repositories/releasesRepository";
-import SchedulerRepository from "./repositories/schedulerRepository";
-import ServerConfigurationRepository from "./repositories/serverConfigurationRepository";
-import ScopedUserRoleRepository from "./repositories/scopedUserRoleRepository";
-import ServerStatusRepository from "./repositories/serverStatusRepository";
-import SmtpConfigurationRepository from "./repositories/smtpConfigurationRepository";
+import { ProjectTriggerRepository } from "./repositories/projectTriggerRepository";
+import { ProxyRepository } from "./repositories/proxyRepository";
+import { ReleasesRepository } from "./repositories/releasesRepository";
+import { SchedulerRepository } from "./repositories/schedulerRepository";
+import { ScopedUserRoleRepository } from "./repositories/scopedUserRoleRepository";
+import { ServerConfigurationRepository } from "./repositories/serverConfigurationRepository";
+import { ServerStatusRepository } from "./repositories/serverStatusRepository";
+import SettingsRepository from "./repositories/settingsRepository";
+import { SmtpConfigurationRepository } from "./repositories/smtpConfigurationRepository";
 import SubscriptionRepository from "./repositories/subscriptionRepository";
-import SpaceRepository from "./repositories/spaceRepository";
+import { SpaceRepository } from "./repositories/spaceRepository";
 import TagSetRepository from "./repositories/tagSetRepository";
-import TaskRepository from "./repositories/taskRepository";
-import TeamRepository from "./repositories/teamRepository";
+import { TaskRepository } from "./repositories/taskRepository";
+import TeamMembershipRepository from "./repositories/teamMembershipRepository";
+import { TeamRepository } from "./repositories/teamRepository";
 import TenantRepository from "./repositories/tenantRepository";
 import TenantVariableRepository from "./repositories/tenantVariableRepository";
-import UpgradeConfigurationRepository from "./repositories/upgradeConfigurationRepository";
-import UserIdentityMetadataRepository from "./repositories/userIdentityMetadataRepository";
-import UserOnBoardingRepository from "./repositories/userOnBoardingRepository";
+import { UpgradeConfigurationRepository } from "./repositories/upgradeConfigurationRepository";
+import { UserIdentityMetadataRepository } from "./repositories/userIdentityMetadataRepository";
+import { UserOnBoardingRepository } from "./repositories/userOnBoardingRepository";
+import { UserPermissionRepository } from "./repositories/userPermissionRepository";
 import UserRepository from "./repositories/userRepository";
 import UserRoleRepository from "./repositories/userRoleRepository";
 import VariableRepository from "./repositories/variableRepository";
-import WorkerPoolsRepository from "./repositories/workerpoolsRepository";
+import { WorkerPoolsRepository } from "./repositories/workerPoolsRepository";
 import { WorkerRepository } from "./repositories/workerRepository";
-import WorkerShellsRepository from "./repositories/workerShellsRepository";
-import UserPermissionRepository from "./repositories/userPermissionRepository";
-import TeamMembershipRepository from "./repositories/teamMembershipRepository";
-import type { RouteArgs } from "./resolver";
-import InvitationRepository from "./repositories/inviteRepository";
-import RunbookRunRepository from "./repositories/runbookRunRepository";
-import RunbookSnapshotRepository from "./repositories/runbookSnapshotRepository";
-import BuildInformationRepository from "./repositories/buildInformationRepository";
-import DynamicExtensionRepository from "./repositories/dynamicExtensionRepository";
-import ImportExportActions from "./repositories/importExportActions";
-import RetentionDefaultConfigurationRepository from "./repositories/retentionDefaultConfigurationRepository";
+import { WorkerShellsRepository } from "./repositories/workerShellsRepository";
 
 interface ServerInformation {
     version: string;
@@ -320,14 +320,6 @@ export class Repository implements OctopusSpaceRepository, OctopusSystemReposito
         return this.client.spaceId;
     }
 
-    switchToSpace(spaceId: string): Promise<void> {
-        return this.client.switchToSpace(spaceId);
-    }
-
-    switchToSystem(): void {
-        this.client.switchToSystem();
-    }
-
     async forSpace(spaceId: string): Promise<OctopusSpaceRepository> {
         if (this.spaceId !== spaceId) {
             return new Repository(await this.client.forSpace(spaceId));
@@ -338,5 +330,13 @@ export class Repository implements OctopusSpaceRepository, OctopusSystemReposito
 
     forSystem(): OctopusSystemRepository {
         return new Repository(this.client.forSystem());
+    }
+
+    switchToSpace(spaceId: string): Promise<void> {
+        return this.client.switchToSpace(spaceId);
+    }
+
+    switchToSystem(): void {
+        this.client.switchToSystem();
     }
 }

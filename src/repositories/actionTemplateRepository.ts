@@ -8,10 +8,15 @@ import type {
     ActionUpdateResource,
     CommunityActionTemplateResource
 } from "@octopusdeploy/message-contracts";
-import BasicRepository from "./basicRepository";
+import { BasicRepository, ListArgs } from "./basicRepository";
 import type { Client } from "../client";
 
-class ActionTemplateRepository extends BasicRepository<ActionTemplateResource, ActionTemplateResource> {
+export type ActionTemplateRepositoryListArgs = {
+    ids?: string[],
+    partialName?: string;
+} & ListArgs;
+
+export class ActionTemplateRepository extends BasicRepository<ActionTemplateResource, ActionTemplateResource, ActionTemplateRepositoryListArgs> {
     constructor(client: Client) {
         super("ActionTemplates", client);
     }
@@ -47,5 +52,3 @@ class ActionTemplateRepository extends BasicRepository<ActionTemplateResource, A
         return this.client.post(actionTemplate.Links!["ActionsUpdate"], resource);
     }
 }
-
-export default ActionTemplateRepository;

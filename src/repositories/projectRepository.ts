@@ -22,7 +22,7 @@ import type {
 } from "@octopusdeploy/message-contracts";
 import { HasVcsProjectResourceLinks, HasVersionControlledPersistenceSettings } from "@octopusdeploy/message-contracts";
 import type { AllArgs } from "./basicRepository";
-import BasicRepository from "./basicRepository";
+import { BasicRepository } from "./basicRepository";
 import type { Client } from "../client";
 import type { RouteArgs } from "../resolver";
 
