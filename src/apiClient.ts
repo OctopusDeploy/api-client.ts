@@ -3,7 +3,6 @@ import type { ClientOptions } from "./clientOptions";
 import { OctopusError } from "@octopusdeploy/message-contracts";
 import { ResponseDetails } from "./responseDetails";
 import { ClientErrorResponseDetails } from "./clientErrorResponseDetails";
-// let Agent = require('keepalive-proxy-agent')
 
 export default class ApiClient<TResource> {
     options: ClientOptions;
@@ -13,21 +12,12 @@ export default class ApiClient<TResource> {
     }
 
     async execute() {
-        const body = JSON.stringify(this.options.requestBody);
-        const method = this.options.method as Method;
-
-        // NOTE: You can direct traffic through a proxy trace like Fiddler
-        // Everywhere by preconfiguring the client to route traffic through a
-        // proxy.
-        //
-        // const agent = new Agent({ proxy: { hostname: "127.0.0.1", port: 8866 } });
-
         try {
             const response: Response<TResource> = await got<TResource>({
-                // agent: {
-                //     https: agent
-                // },
-                body: body,
+                agent: {
+                    https: this.options.configuration.agent
+                },
+                body: JSON.stringify(this.options.requestBody),
                 retry: {
                     limit: 0
                 },
@@ -35,7 +25,7 @@ export default class ApiClient<TResource> {
                     "User-Agent": "node-octopusdeploy",
                     "X-Octopus-ApiKey": this.options.configuration.apiKey
                 },
-                method: method,
+                method: this.options.method as Method,
                 url: this.options.url,
             }).json();
             this.handleSuccess(response);
