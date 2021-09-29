@@ -1,6 +1,6 @@
 # api-client.ts
 
-Node.js API client for Octopus Deploy ✨🐙🚀✨
+TypeScript API client for Octopus Deploy ✨🐙🚀✨
 
 ## Usage
 
