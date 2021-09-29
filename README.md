@@ -6,11 +6,7 @@ TypeScript API client for Octopus Deploy ✨🐙🚀✨
 
 ```typescript
 import type { ProjectResource } from '@octopusdeploy/message-contracts';
-import {
-  Client,
-  ClientConfiguration,
-  Repository,
-} from '@octopusdeploy/api-client';
+import { Client, ClientConfiguration, Repository } from '@octopusdeploy/api-client';
 
 const configuration: ClientConfiguration = {
   apiKey: '<api-key>',
