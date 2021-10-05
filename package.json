@@ -5,6 +5,7 @@
   },
   "dependencies": {
     "@octopusdeploy/message-contracts": "file:../message-contracts.ts",
+    "@types/semver": "^7.3.8",
     "consola": "^2.15.3",
     "got": "^11.8.2"
   },

@@ -19,40 +19,51 @@ import Environment from "./environment";
 import Resolver from "./resolver";
 import { SubscriptionRecord } from "./subscriptionRecord";
 
+consola.wrapAll();
 const apiLocation = "~/api";
 
 export type GlobalAndSpaceRootLinks = keyof GlobalRootLinks | keyof SpaceRootLinks;
 
 // The Octopus Client implements the low-level semantics of the Octopus Deploy REST API
 export class Client {
-    public static async NewClient(configuration: ClientConfiguration) {
-        consola.wrapAll();
-        console.info("Creating Octopus client for endpoint: " + configuration.apiUri);
+    requestSubscriptions = new SubscriptionRecord<ClientRequestDetails>();
+    responseSubscriptions = new SubscriptionRecord<ClientResponseDetails>();
+    errorSubscriptions = new SubscriptionRecord<ClientErrorResponseDetails>();
 
-        const resolver = new Resolver(configuration.apiUri);
-        const client = new Client(null, resolver, null, null, null, configuration);
-        if (configuration.autoConnect) {
-            await client.connect(
-                (message, error) => { console.info(message); }
-            )
-        }
-        return client;
-    }
-
-    public static Create(configuration: ClientConfiguration, isAuthenticated: () => boolean, endSession: () => void) {
-        consola.wrapAll();
-        console.log("Creating Octopus client for endpoint: " + configuration.serverEndpoint);
-
+    public static async create(configuration: ClientConfiguration, isAuthenticated: () => boolean = () => true, endSession: () => void = () => { }) {
         if (configuration.serverEndpoint !== null && configuration.serverEndpoint !== undefined) {
+            console.log("Creating Octopus client for endpoint: " + configuration.serverEndpoint);
             const resolver = new Resolver(configuration.serverEndpoint);
             const clientSession = new ClientSession(new Caching(), isAuthenticated, endSession);
             return new Client(clientSession, resolver, null, null, null, configuration);
         }
-    }
 
-    requestSubscriptions = new SubscriptionRecord<ClientRequestDetails>();
-    responseSubscriptions = new SubscriptionRecord<ClientResponseDetails>();
-    errorSubscriptions = new SubscriptionRecord<ClientErrorResponseDetails>();
+        if (configuration.apiUri === null || configuration.apiUri === undefined) {
+            throw new Error();
+        }
+
+        const resolver = new Resolver(configuration.apiUri);
+        const client = new Client(null, resolver, null, null, null, configuration);
+        if (configuration.autoConnect) {
+            try {
+                await client.connect(
+                    (message, error) => { console.info(message); }
+                )
+            } catch (error) {
+                console.error(error);
+                return;
+            }
+            if (configuration.space !== null && configuration.space !== undefined) {
+                try {
+                    await client.switchToSpace(configuration.space);
+                } catch (error) {
+                    console.error(error);
+                    return;
+                }
+            }
+        }
+        return client;
+    }
 
     onRequestCallback: (details: ClientRequestDetails) => void = undefined!;
     onResponseCallback: (details: ClientResponseDetails) => void = undefined!;
