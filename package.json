@@ -4,7 +4,7 @@
     "url": "https://github.com/OctopusDeploy/api-client.ts/issues"
   },
   "dependencies": {
-    "@octopusdeploy/message-contracts": "file:../message-contracts.ts",
+    "@octopusdeploy/message-contracts": "^0.1.0",
     "@types/semver": "^7.3.8",
     "consola": "^2.15.3",
     "got": "^11.8.2"
