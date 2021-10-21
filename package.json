@@ -5,17 +5,20 @@
   },
   "dependencies": {
     "@octopusdeploy/message-contracts": "^0.1.0",
-    "@types/semver": "^7.3.8",
+    "@types/semver": "^7.3.9",
     "consola": "^2.15.3",
     "got": "^11.8.2"
   },
   "description": "TypeScript API client for Octopus Deploy",
   "devDependencies": {
-    "@octopusdeploy/runtime-inputs": "^0.11.0",
+    "@octopusdeploy/runtime-inputs": "^0.16.0",
     "@tsconfig/node16": "^1.0.2",
-    "@types/node": "^16.4.10",
+    "@types/lodash": "^4.14.176",
+    "@types/node": "^16.11.1",
+    "@types/urijs": "^1.19.17",
+    "lodash": "^4.17.21",
     "prop-types": "^15.7.2",
-    "typescript": "^4.3.5",
+    "typescript": "^4.4.4",
     "urijs": "^1.19.7"
   },
   "homepage": "https://github.com/OctopusDeploy/api-client.ts#readme",
@@ -35,7 +38,9 @@
     "url": "https://github.com/OctopusDeploy/api-client.ts.git"
   },
   "scripts": {
-    "build": "tsc --p tsconfig.json"
+    "build": "tsc --p tsconfig.json",
+    "docs": "typedoc --options typedoc.json --readme none",
+    "prepublish": "tsc --p tsconfig.json"
   },
   "types": "dist/index.d.ts",
   "version": "0.1.0"
