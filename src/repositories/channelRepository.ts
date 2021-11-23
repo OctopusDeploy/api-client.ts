@@ -6,16 +6,28 @@ import type {
     ICommitCommand,
     ModifyChannelCommand,
     ModifyChannelOclCommand,
+    NewChannelResource,
     ProjectResource,
     ResourceCollection,
     ReleaseResource,
     VersionRuleTestResponse
 } from "@octopusdeploy/message-contracts";
-import type { ListArgs } from "./basicRepository";
+import type { AllArgs, ListArgs } from "./basicRepository";
 import type { Client } from "../client";
 import { ProjectScopedRepository } from "./projectScopedRepository";
 import type ProjectRepository from "./projectRepository";
 import type { RouteArgs } from "../resolver";
+
+type ChannelRepositoryListArgs = {
+    name?: string;
+    partialName?: string;
+    skip?: number;
+    take?: number;
+} & RouteArgs;
+
+type ChannelRepositoryAllArgs = {
+    ids?: string[];
+} & AllArgs;
 
 export type ReleasesListArgs = {
     searchByVersion?: string;
@@ -28,9 +40,24 @@ export type SearchOptions = {
     feedType: FeedType;
 };
 
-export class ChannelRepository extends ProjectScopedRepository<ChannelResource, ChannelResource> {
+export class ChannelRepository extends ProjectScopedRepository<ChannelResource, NewChannelResource, ChannelRepositoryListArgs, ChannelRepositoryAllArgs> {
     constructor(projectRepository: ProjectRepository, client: Client) {
         super(projectRepository, "Channels", client);
+    }
+
+    async find(nameOrId: string): Promise<ChannelResource | undefined> {
+        if (nameOrId.length === 0) return;
+        try {
+            return await this.get(nameOrId);
+        } catch {
+            // silently capture any exceptions; it is assumed the ID cannot be found
+            // and the algorithm moves on to searching for matching names
+        }
+
+        const channels = await this.list({
+            partialName: nameOrId,
+        });
+        return channels.Items.find((e) => e.Name.localeCompare(nameOrId, undefined, { sensitivity: 'base' }) === 0);
     }
 
     ruleTest(searchOptions: SearchOptions) {
