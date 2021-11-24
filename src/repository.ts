@@ -73,6 +73,7 @@ import VariableRepository from "./repositories/variableRepository";
 import { WorkerPoolsRepository } from "./repositories/workerPoolsRepository";
 import { WorkerRepository } from "./repositories/workerRepository";
 import { WorkerShellsRepository } from "./repositories/workerShellsRepository";
+import { DeploymentProcessRepository } from ".";
 
 interface ServerInformation {
     version: string;
@@ -126,6 +127,7 @@ export interface OctopusSpaceRepository extends OctopusCommonRepository {
     dashboardConfiguration: DashboardConfigurationRepository;
     dashboards: DashboardRepository;
     defects: DefectRepository;
+    deploymentProcesses: DeploymentProcessRepository;
     deployments: DeploymentRepository;
     environments: EnvironmentRepository;
     feeds: FeedRepository;
@@ -176,6 +178,7 @@ export class Repository implements OctopusSpaceRepository, OctopusSystemReposito
     dashboardConfiguration: DashboardConfigurationRepository;
     dashboards: DashboardRepository;
     defects: DefectRepository;
+    deploymentProcesses: DeploymentProcessRepository;
     deployments: DeploymentRepository;
     dynamicExtensions: DynamicExtensionRepository;
     environments: EnvironmentRepository;
@@ -285,6 +288,7 @@ export class Repository implements OctopusSpaceRepository, OctopusSystemReposito
         this.projectGroups = new ProjectGroupRepository(client);
         this.projects = new ProjectRepository(client);
         this.channels = new ChannelRepository(this.projects, client);
+        this.deploymentProcesses = new DeploymentProcessRepository(this.projects, client);
         this.projectTriggers = new ProjectTriggerRepository(client);
         this.proxies = new ProxyRepository(client);
         this.releases = new ReleasesRepository(client);
