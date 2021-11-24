@@ -1,37 +1,45 @@
 import type {
+    ChannelResource,
     DeploymentProcessOclResource,
     DeploymentProcessResource,
     ModifyDeploymentProcessCommand,
+    NewDeploymentProcessResource,
     OctopusValidationResponse,
     ProjectResource,
     ReleaseResource,
     ReleaseTemplateResource,
     VcsBranchResource
 } from "@octopusdeploy/message-contracts";
+import type { AllArgs, ListArgs } from "./basicRepository";
 import type { Client } from "../client";
+import { ProjectScopedRepository } from "./projectScopedRepository";
+import type ProjectRepository from "./projectRepository";
+import type { RouteArgs } from "../resolver";
+import { channel } from "diagnostics_channel";
 
-export class DeploymentProcessRepository {
+type DeploymentProcessRepositoryListArgs = {
+    skip?: number;
+    take?: number;
+} & RouteArgs;
+
+type DeploymentProcessRepositoryAllArgs = {
+    ids?: string[];
+} & AllArgs;
+
+export class DeploymentProcessRepository extends ProjectScopedRepository<DeploymentProcessResource, NewDeploymentProcessResource, DeploymentProcessRepositoryListArgs, DeploymentProcessRepositoryAllArgs> {
     readonly resourceLink = "DeploymentProcess";
     readonly collectionLink = "DeploymentProcesses";
 
-    constructor(private readonly client: Client, private readonly project: ProjectResource, private readonly branch: VcsBranchResource | undefined) {
-        this.client = client;
-    }
-
-    get(): Promise<DeploymentProcessResource> {
-        if (this.project.IsVersionControlled && this.branch !== undefined) {
-            return this.client.get(this.branch.Links[this.resourceLink]);
-        }
-
-        return this.client.get(this.project.Links[this.resourceLink]);
+    constructor(projectRepository: ProjectRepository, client: Client) {
+        super(projectRepository, "DeploymentProcesses", client);
     }
 
     getForRelease(release: ReleaseResource): Promise<DeploymentProcessResource> {
         return this.client.get<DeploymentProcessResource>(this.client.getLink(this.collectionLink), { id: release.ProjectDeploymentProcessSnapshotId });
     }
 
-    getTemplate(deploymentProcess: DeploymentProcessResource, channelId: string, releaseId: string) {
-        return this.client.get<ReleaseTemplateResource>(deploymentProcess.Links["Template"], { channel: channelId, releaseId });
+    getTemplate(deploymentProcess: DeploymentProcessResource, channel: ChannelResource, releaseId?: string) {
+        return this.client.get<ReleaseTemplateResource>(deploymentProcess.Links["Template"], { channel: channel.Id, releaseId });
     }
 
     modify(deploymentProcess: ModifyDeploymentProcessCommand): Promise<DeploymentProcessResource> {
