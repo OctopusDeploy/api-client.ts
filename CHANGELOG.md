@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.1.2](https://www.github.com/OctopusDeploy/api-client.ts/compare/v1.1.1...v1.1.2) (2021-11-24)
+
+
+### Miscellaneous Chores
+
+* release 1.1.2 ([7f53f59](https://www.github.com/OctopusDeploy/api-client.ts/commit/7f53f59380c145d941763929837cfd545b8a3d6e))
+
 ### 1.1.1 (2021-11-24)
 
 
