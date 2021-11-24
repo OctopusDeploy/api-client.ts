@@ -31,7 +31,6 @@ export default class ApiClient<TResource> {
             this.handleSuccess(response);
         }
         catch (error) {
-            console.error(error);
             if (error instanceof RequestError) {
                 this.handleError(error);
             }

@@ -7,6 +7,7 @@ import type {
     DeploymentTemplateResource,
     LifecycleProgressionResource,
     LifecycleResource,
+    NewReleaseResource,
     ResourceCollection,
     ReleaseResource
 } from "@octopusdeploy/message-contracts"
@@ -16,7 +17,7 @@ import type { Client } from "../client";
 
 type GetDeploymentArgs = ListArgs;
 
-export class ReleasesRepository extends BasicRepository<ReleaseResource, ReleaseResource> {
+export class ReleasesRepository extends BasicRepository<ReleaseResource, NewReleaseResource> {
     constructor(client: Client) {
         super("Releases", client);
     }

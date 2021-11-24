@@ -43,7 +43,7 @@ export * from "./repositories/packageRepository";
 export * from "./repositories/performanceConfigurationRepository";
 export * from "./repositories/permissionDescriptionRepository";
 export * from "./repositories/progressionRepository";
-export * from "./repositories/projectContextRepository";
+// export * from "./repositories/projectContextRepository";
 export * from "./repositories/projectGroupRepository";
 export * from "./repositories/projectRepository";
 export * from "./repositories/projectScopedRepository";

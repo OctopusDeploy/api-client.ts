@@ -4,7 +4,7 @@
     "url": "https://github.com/OctopusDeploy/api-client.ts/issues"
   },
   "dependencies": {
-    "@octopusdeploy/message-contracts": "^1.0.0",
+    "@octopusdeploy/message-contracts": "^1.1.1",
     "@types/semver": "^7.3.9",
     "consola": "^2.15.3",
     "got": "^11.8.2"
@@ -18,10 +18,13 @@
     "@types/urijs": "^1.19.17",
     "lodash": "^4.17.21",
     "prop-types": "^15.7.2",
+    "semver": "^7.3.5",
     "typescript": "^4.4.4",
     "urijs": "^1.19.7"
   },
-  "files": ["dist/**/*"],
+  "files": [
+    "dist/**/*"
+  ],
   "homepage": "https://github.com/OctopusDeploy/api-client.ts#readme",
   "keywords": [
     "api",
