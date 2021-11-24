@@ -36,7 +36,6 @@
   "main": "dist/index.js",
   "module": "dist/index.js",
   "name": "@octopusdeploy/api-client",
-  "private": true,
   "repository": {
     "type": "git",
     "url": "https://github.com/OctopusDeploy/api-client.ts.git"
@@ -44,7 +43,10 @@
   "scripts": {
     "build": "tsc --p tsconfig.json",
     "docs": "typedoc --options typedoc.json --readme none",
-    "prepublish": "tsc --p tsconfig.json"
+    "lint": "tslint -p tsconfig.json",
+    "prepare": "npm run build",
+    "preversion": "npm run lint",
+    "test": "jest --config jestconfig.json"
   },
   "types": "dist/index.d.ts",
   "version": "1.1.1"
