@@ -88,9 +88,14 @@ The repository will retrieve and process the root document (`/api`) of the Octop
 
 Resources describe the message contracts that Octopus Deploy uses to serialize types into JSON. These resources are contained in a separate library: `@octopusdeploy/message-contracts`.
 
-Here is an example of conducting a search against the `projects` endpoint to find a project in Octopus Deploy by its ID (i.e. `Projects-123`) or by its name (i.e. `Deployment Project`):
+This is an example of conducting a search against the `projects` endpoint to find a project in Octopus Deploy by its ID (i.e. `Projects-123`) or by its name (i.e. `Deployment Project`):
 
 ```typescript
+// import the appropriate resources
+import { ProjectResource } from '@octopusdeploy/message-contracts';
+
+// ...
+
 const projectNameOrId: string = 'project-name-or-ID';
 
 console.log(`Getting project, "${projectNameOrId}"...`);
