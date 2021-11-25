@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "lib": [
+      "DOM",
+      "ScriptHost"
+    ],
+    "outDir": "dist",
+    "removeComments": true,
+    "sourceMap": true
+  },
+  "exclude": [
+    "node_modules"
+  ],
+  "extends": "@tsconfig/node16/tsconfig.json",
+  "include": [
+    "src/**/*"
+  ]
+}
