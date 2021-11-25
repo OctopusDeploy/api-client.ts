@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.1.4](https://www.github.com/OctopusDeploy/api-client.ts/compare/v1.1.3...v1.1.4) (2021-11-25)
+
+
+### Bug Fixes
+
+* **core:** adjusted dependencies ([0a1b0c6](https://www.github.com/OctopusDeploy/api-client.ts/commit/0a1b0c663354b34db6521f2d8932c3b628cd2777))
+
 ### [1.1.3](https://www.github.com/OctopusDeploy/api-client.ts/compare/v1.1.2...v1.1.3) (2021-11-25)
 
 
