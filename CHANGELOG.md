@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.2.0](https://www.github.com/OctopusDeploy/api-client.ts/compare/v1.1.2...v1.2.0) (2021-11-25)
+
+
+### Features
+
+* **examples:** added example for create and deploy release ([30b82b1](https://www.github.com/OctopusDeploy/api-client.ts/commit/30b82b15ad876b2e0b683f9098c1d231ff8bca1e))
+* **examples:** added example for projects ([418aa95](https://www.github.com/OctopusDeploy/api-client.ts/commit/418aa95672cbb2b01242300a4a2309c0edc4f62c))
+* **examples:** added examples for accounts ([55b3512](https://www.github.com/OctopusDeploy/api-client.ts/commit/55b351248a4070ae025d92c3b3fc4799f74abd4a))
+* **examples:** added runbook example ([b107045](https://www.github.com/OctopusDeploy/api-client.ts/commit/b1070450af5fd5c9aefbec00e09480782fe4c85e))
+
+
+### Bug Fixes
+
+* **apiClient:** output error to console upon failed connection ([f2bcaf2](https://www.github.com/OctopusDeploy/api-client.ts/commit/f2bcaf2c007960d86451da7e59b0de9663e0c6ea))
+
 ### [1.1.2](https://www.github.com/OctopusDeploy/api-client.ts/compare/v1.1.1...v1.1.2) (2021-11-24)
 
 
