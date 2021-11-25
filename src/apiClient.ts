@@ -32,7 +32,9 @@ export default class ApiClient<TResource> {
         }
         catch (error) {
             if (error instanceof RequestError) {
-                this.handleError(error);
+                this.handleError(error as RequestError);
+            } else {
+                console.error(error);
             }
         }
     }
