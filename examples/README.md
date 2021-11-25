@@ -1,6 +1,6 @@
 # TypeScript API Client Examples
 
-❗️ The TypeScript API Client for Octopus Deploy currently assumes [Node.js](https://nodejs.org/) for the host runtime. Installation packages for Node.js can be found on [Downloads](https://nodejs.org/download/).
+❗️ The TypeScript API Client for Octopus Deploy currently assumes [Node.js](https://nodejs.org/) for the host runtime. Installation packages for Node.js can be found on [Downloads](https://nodejs.org/en/download/).
 
 ## Setup
 
