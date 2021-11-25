@@ -1,4 +1,4 @@
-# 🚀 Getting Started
+# 🚀 Getting Started with the TypeScript API Client for Octopus Deploy
 
 The TypeScript API Client for Octopus Deploy provides a collection of repositories that target their respective service endpoints available in Octopus Deploy.
 
