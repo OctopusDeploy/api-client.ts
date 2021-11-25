@@ -1,0 +1,20 @@
+{
+  "author": "Octopus Deploy",
+  "description": "A collection of examples to use with the TypeScript API Client for Octopus Deploy.",
+  "name": "@octopusdeploy/api-client-examples",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc --p tsconfig.json"
+  },
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@octopusdeploy/api-client": "^1.1.2",
+    "@octopusdeploy/message-contracts": "^1.1.1"
+  },
+  "private": true,
+  "devDependencies": {
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.2"
+  }
+}
