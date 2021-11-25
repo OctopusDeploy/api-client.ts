@@ -4,7 +4,11 @@ TypeScript API client for Octopus Deploy ✨🐙🚀✨
 
 ❗️ The TypeScript API Client for Octopus Deploy currently assumes [Node.js](https://nodejs.org/) for the host runtime. Installation packages for Node.js can be found on [Downloads](https://nodejs.org/en/download/).
 
-## Usage
+## 🚀 Getting Started
+
+The TypeScript API Client for Octopus Deploy is easy to use after it's been initialized. Refer to [Getting Started](getting-started.md) for step-by-step set of instructions on setup, initialization, and usage of its functionality.
+
+## 🏎 Usage
 
 ```typescript
 import { Client, ClientConfiguration, Repository } from '@octopusdeploy/api-client';

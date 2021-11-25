@@ -1,6 +1,25 @@
-# Getting Started
+# 🚀 Getting Started
 
 The TypeScript API Client for Octopus Deploy provides a collection of repositories that target their respective service endpoints available in Octopus Deploy.
+
+❗️ The TypeScript API Client for Octopus Deploy currently assumes [Node.js](https://nodejs.org/) for the host runtime. Installation packages for Node.js can be found on [Downloads](https://nodejs.org/en/download/).
+
+## 🪄 Install and Import Dependencies
+
+To begin, the first step is to ensure the initialization of the project via `npm init`. This command will establish the directory and create the `project.json` file that's used by npm.
+
+Next, dependencies will need to be installed:
+
+```shell
+npm install -D typescript
+npm install -D ts-node # optional but recommended for TypeScript projects
+npm install @octopusdeploy/message-contracts
+npm install @octopusdeploy/api-client
+```
+
+The dependency, `@octopusdeploy/message-contracts` contains the resource types used to represent the messages that are sent/received by the service endpoints in Octopus Deploy. (See "Example: Getting a Project Resource" below for a detailed explanation.)
+
+The dependency `@octopusdeploy/api-client` contains the types used to communicate with a target instance of Octopus Deploy. It also contains types that represent the various service endpoints that are available in Octopus Deploy. (See "Initialization of Repositories and Processing API Root Document" below for more information regarding endpoints and repositories.)
 
 Import the following types to your TypeScript source file:
 
@@ -13,6 +32,8 @@ These types serve different functions:
 * `Client` is used to manage connections with Octopus Deploy and provides events for successful/failed requests
 * `ClientConfiguration` describes the configuration parameters needed to establish a connection to Octopus Deploy, including the API key
 * `Repository` is the base "entry point" for developers to access the available repositories that represent service endpoints available in Octopus Deploy
+
+## 📜 Client Configuration
 
 Next, define a `ClientConfiguration` to define the parameters to use for connecting to Octopus Deploy:
 
@@ -34,6 +55,8 @@ Each parameter serve a specific purpose:
 * `autoConnect` (optional) informs the `Client` to automatically attempt to connect to the target instance of Octopus Deploy when `Client.create()` is invoked
 * `space`: (optional) defines the target space in Octopus Deploy for API operations -- assumes the default space if undefined
 
+## 🐙 Connecting to Octopus Deploy
+
 Once you've defined the client configuration, the next step is to connect to the target instance of Octopus Deploy:
 
 ```typescript
@@ -51,6 +74,8 @@ if (client === null || client === undefined) {
 }
 ```
 
+## ✨ Initialization of Repositories and Processing API Root Document
+
 At this point, a client connection to the target instance of Octopus Deploy has been established and the repository is set to be initialized. This step is accomplished as follows:
 
 ```typescript
@@ -58,6 +83,10 @@ const repository = new Repository(client);
 ```
 
 The repository will retrieve and process the root document (`/api`) of the Octopus API (i.e. `HTTP GET https://demo.octopus.app/api`). This document provides key/value mappings of the endpoints available by the target instance of Octopus Deploy. Once this document is processed by the `repository`, API calls may be invoked.
+
+## 👩🏼‍💻 Example: Getting a Project Resource
+
+Resources describe the message contracts that Octopus Deploy uses to serialize types into JSON. These resources are contained in a separate library: `@octopusdeploy/message-contracts`.
 
 Here is an example of conducting a search against the `projects` endpoint to find a project in Octopus Deploy by its ID (i.e. `Projects-123`) or by its name (i.e. `Deployment Project`):
 

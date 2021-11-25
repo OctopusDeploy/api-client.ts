@@ -17,3 +17,7 @@ You can use [`ts-node`](https://typestrong.org/ts-node/) to run examples via the
 ```
 % npx ts-node [relative-path-to-example-file]
 ```
+
+### Why ts-node?
+
+[`ts-node`](https://typestrong.org/ts-node/) makes it easy to directly execute TypeScript on Node.js without precompilation.
