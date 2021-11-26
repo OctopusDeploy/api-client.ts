@@ -8,6 +8,10 @@ This repository contains the source code for the TypeScript API Client for Octop
 
 The TypeScript API Client for Octopus Deploy is easy to use after it's been initialized. Refer to [Getting Started](getting-started.md) for step-by-step set of instructions on setup, initialization, and usage of its functionality.
 
+## Documentation
+
+The reference documentation for this library is auto-generated via [Typedoc](https://typedoc.org/) and made available through GitHub Pages: [octopusdeploy.github.io/api-client.ts](https://octopusdeploy.github.io/api-client.ts/)
+
 ## 🏎 Usage
 
 ```typescript
