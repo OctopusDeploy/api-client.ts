@@ -1,19 +1,18 @@
 {
   "compilerOptions": {
-    "declaration": true,
-    "lib": [
-      "DOM",
-      "ScriptHost"
-    ],
+    "removeComments": false,
     "outDir": "dist",
-    "removeComments": true,
-    "sourceMap": true
+    "target": "es5",
+    "allowJs": true,
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "declaration": true
   },
   "exclude": [
     "examples",
-    "node_modules"
+    "node_modules",
+    "dist",
   ],
-  "extends": "@tsconfig/node16/tsconfig.json",
   "include": [
     "src/**/*",
     "examples"

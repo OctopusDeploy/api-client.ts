@@ -5,7 +5,6 @@ import type {
     SpaceRootLinks,
     SpaceRootResource
 } from "@octopusdeploy/message-contracts";
-import consola from "consola";
 import ApiClient from "./apiClient";
 import type { RouteArgs } from "./resolver";
 import Caching from "./caching";
@@ -19,7 +18,6 @@ import Environment from "./environment";
 import Resolver from "./resolver";
 import { SubscriptionRecord } from "./subscriptionRecord";
 
-consola.wrapAll();
 const apiLocation = "~/api";
 
 export type GlobalAndSpaceRootLinks = keyof GlobalRootLinks | keyof SpaceRootLinks;
