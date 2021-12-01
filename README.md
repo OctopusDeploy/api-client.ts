@@ -2,8 +2,6 @@
 
 This repository contains the source code for the TypeScript API Client for Octopus Deploy.
 
-❗️ Please note that the TypeScript API Client for Octopus Deploy currently assumes [Node.js](https://nodejs.org/) for the host runtime. Installation packages for Node.js can be found on [Downloads](https://nodejs.org/en/download/).
-
 ## 🚀 Getting Started
 
 The TypeScript API Client for Octopus Deploy is easy to use after it's been initialized. Refer to [Getting Started](getting-started.md) for step-by-step set of instructions on setup, initialization, and usage of its functionality.
