@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.0](https://www.github.com/OctopusDeploy/api-client.ts/compare/v1.1.4...v1.2.0) (2021-12-01)
+
+
+### Features
+
+* added documentation ([9462cb8](https://www.github.com/OctopusDeploy/api-client.ts/commit/9462cb88f3fcef60454e928a6d5cbf7d0f6eb388))
+* **apiClient:** browser support ([1ae4004](https://www.github.com/OctopusDeploy/api-client.ts/commit/1ae40049df16062228e5e86e20f2dfaeb8f7cb0f))
+
 ### [1.1.4](https://www.github.com/OctopusDeploy/api-client.ts/compare/v1.1.3...v1.1.4) (2021-11-25)
 
 
