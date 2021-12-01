@@ -241,7 +241,7 @@ export class Repository implements OctopusSpaceRepository, OctopusSystemReposito
     workerShells: WorkerShellsRepository;
     workers: WorkerRepository;
 
-    constructor(private readonly client: Client) {
+    constructor(public readonly client: Client) {
         this.accounts = new AccountRepository(client);
         this.actionTemplates = new ActionTemplateRepository(client);
         this.artifacts = new ArtifactRepository(client);
