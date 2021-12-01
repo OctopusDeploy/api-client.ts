@@ -38,8 +38,8 @@ export class DeploymentProcessRepository extends ProjectScopedRepository<Deploym
         return this.client.get<DeploymentProcessResource>(this.client.getLink(this.collectionLink), { id: release.ProjectDeploymentProcessSnapshotId });
     }
 
-    getTemplate(deploymentProcess: DeploymentProcessResource, channel: ChannelResource, releaseId?: string) {
-        return this.client.get<ReleaseTemplateResource>(deploymentProcess.Links["Template"], { channel: channel.Id, releaseId });
+    getTemplate(deploymentProcess: DeploymentProcessResource, channel?: ChannelResource, releaseId?: string) {
+        return this.client.get<ReleaseTemplateResource>(deploymentProcess.Links["Template"], { channel: channel?.Id, releaseId });
     }
 
     modify(deploymentProcess: ModifyDeploymentProcessCommand): Promise<DeploymentProcessResource> {
