@@ -65,9 +65,9 @@ class ProjectRepository extends BasicRepository<ProjectResource, NewProjectResou
         return projects.Items.find((p) => p.Name === nameOrId);
     }
 
-    getChannels(project: ProjectResource, branch: VcsBranchResource | undefined, skip: number = 0, take: number = this.takeAll): Promise<ResourceCollection<ChannelResource>> {
-        if (branch && HasVcsProjectResourceLinks(project.Links) && HasVersionControlledPersistenceSettings(project.PersistenceSettings)) {
-            return this.client.get<ResourceCollection<ChannelResource>>(branch.Links["Channels"], { skip, take });
+    getChannels(project: ProjectResource, gitRef: string | undefined, skip: number = 0, take: number = this.takeAll): Promise<ResourceCollection<ChannelResource>> {
+        if (gitRef && HasVersionControlledPersistenceSettings(project.PersistenceSettings)) {
+            return this.client.get<ResourceCollection<ChannelResource>>(project.Links["Channels"], { skip, take, gitRef });
         }
         return this.client.get<ResourceCollection<ChannelResource>>(project.Links["Channels"], { skip, take });
     }
@@ -76,7 +76,11 @@ class ProjectRepository extends BasicRepository<ProjectResource, NewProjectResou
         return this.client.get(this.client.getLink("Deployments"), { projects: project.Id });
     }
 
-    getDeploymentSettings(project: ProjectResource): Promise<DeploymentSettingsResource> {
+    getDeploymentSettings(project: ProjectResource, gitRef: string | undefined): Promise<DeploymentSettingsResource> {
+        if (gitRef && HasVersionControlledPersistenceSettings(project.PersistenceSettings)) {
+            return this.client.get(project.Links["DeploymentSettings"], { gitRef });
+        }
+
         return this.client.get(project.Links["DeploymentSettings"]);
     }
 
@@ -98,7 +102,7 @@ class ProjectRepository extends BasicRepository<ProjectResource, NewProjectResou
 
     getTriggers(
         project: ProjectResource,
-        branch: VcsBranchResource | string | undefined,
+        gitRef: string | undefined,
         skip?: number,
         take?: number,
         triggerActionType?: TriggerActionType,
@@ -106,7 +110,7 @@ class ProjectRepository extends BasicRepository<ProjectResource, NewProjectResou
         runbooks?: string[],
         partialName?: string
     ): Promise<ResourceCollection<TriggerResource>> {
-        return this.client.get<ResourceCollection<TriggerResource>>(project.Links["Triggers"], { skip, take, gitRef: GetBranchDetails(branch), triggerActionType, triggerActionCategory, runbooks, partialName });
+        return this.client.get<ResourceCollection<TriggerResource>>(project.Links["Triggers"], { skip, take, gitRef, triggerActionType, triggerActionCategory, runbooks, partialName });
     }
 
     orderChannels(project: ProjectResource) {

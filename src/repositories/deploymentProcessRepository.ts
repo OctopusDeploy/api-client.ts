@@ -34,6 +34,10 @@ export class DeploymentProcessRepository extends ProjectScopedRepository<Deploym
         super(projectRepository, "DeploymentProcesses", client);
     }
 
+    get(id: string, gitRef: string | undefined): Promise<DeploymentProcessResource> {
+        return super.get(id, { gitRef });
+    }
+
     getForRelease(release: ReleaseResource): Promise<DeploymentProcessResource> {
         return this.client.get<DeploymentProcessResource>(this.client.getLink(this.collectionLink), { id: release.ProjectDeploymentProcessSnapshotId });
     }
