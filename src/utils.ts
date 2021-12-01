@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/init-declarations */
 
-import URI from "urijs";
+import * as URI from "urijs";
 import { curry } from "lodash";
 import Resolver from "./resolver";
 

@@ -1,48 +1,45 @@
-import got, { Response, Method, RequestError } from "got";
+import type { Adapter, AdapterResponse } from "./adapter";
+import { AdapterError } from "./adapter";
 import type { ClientOptions } from "./clientOptions";
 import { OctopusError } from "@octopusdeploy/message-contracts";
 import { ResponseDetails } from "./responseDetails";
 import { ClientErrorResponseDetails } from "./clientErrorResponseDetails";
+import { GotAdapter } from "./adapters/gotAdapter";
+import { KyAdapter } from "./adapters/kyAdapter";
 
 export default class ApiClient<TResource> {
     options: ClientOptions;
+    adapter: Adapter<TResource>;
 
     constructor(options: ClientOptions) {
         this.options = options;
+        if (typeof XMLHttpRequest !== 'undefined') {
+            this.adapter = new KyAdapter<TResource>();
+        }
+        else {
+            this.adapter = new GotAdapter<TResource>();
+        }
     }
 
     async execute() {
         try {
-            const response: Response<TResource> = await got<TResource>({
-                agent: {
-                    https: this.options.configuration.agent
-                },
-                body: JSON.stringify(this.options.requestBody),
-                retry: {
-                    limit: 0
-                },
-                headers: {
-                    "User-Agent": "node-octopusdeploy",
-                    "X-Octopus-ApiKey": this.options.configuration.apiKey
-                },
-                method: this.options.method as Method,
-                url: this.options.url,
-            }).json();
+            const response = await this.adapter.execute(this.options);
             this.handleSuccess(response);
         }
         catch (error) {
-            if (error instanceof RequestError) {
-                this.handleError(error as RequestError);
-            } else {
+            if (error instanceof AdapterError) {
+                this.handleError(error);
+            } 
+            else {
                 console.error(error);
             }
         }
     }
 
-    private handleSuccess = (response: Response<TResource>) => {
+    private handleSuccess = (response: AdapterResponse) => {
         if (this.options.onResponseCallback) {
             const details: ResponseDetails = {
-                method: this.options.method as Method,
+                method: this.options.method as any,
                 url: this.options.url,
                 statusCode: response.statusCode,
             };
@@ -51,11 +48,11 @@ export default class ApiClient<TResource> {
         this.options.success(deserialize(JSON.stringify(response), this.options.raw));
     };
 
-    private handleError = async (requestError: RequestError) => {
+    private handleError = async (requestError: AdapterError) => {
         const err = generateOctopusError(requestError);
         if (this.options.onErrorResponseCallback) {
             const details: ClientErrorResponseDetails = {
-                method: this.options.method as Method,
+                method: this.options.method as any,
                 url: this.options.url,
                 statusCode: err.StatusCode,
                 errorMessage: err.ErrorMessage,
@@ -73,7 +70,7 @@ const deserialize = (responseText?: string, raw?: boolean, forceJson: boolean = 
     return null;
 };
 
-const generateOctopusError = (requestError: RequestError) => {
+const generateOctopusError = (requestError: AdapterError) => {
     if (requestError.code) {
         const code = requestError.code;
         return new OctopusError(parseInt(code), requestError.message);
