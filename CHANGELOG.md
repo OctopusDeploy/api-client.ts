@@ -1,5 +1,17 @@
 # Changelog
 
+### [1.1.6](https://www.github.com/OctopusDeploy/api-client.ts/compare/v1.1.5...v1.1.6) (2021-12-01)
+
+
+### Features
+
+* **repository:** Exposed client in Repository to match C# client and improve developer experience ([7611f2d](https://www.github.com/OctopusDeploy/api-client.ts/commit/7611f2db88becacb93039b4089a9b8e65074bc69))
+
+
+### Miscellaneous Chores
+
+* release 1.1.6 ([63526b7](https://www.github.com/OctopusDeploy/api-client.ts/commit/63526b79a537e8be40ad2c57f981925f7e74977e))
+
 ### [1.1.5](https://www.github.com/OctopusDeploy/api-client.ts/compare/v1.1.4...v1.1.5) (2021-12-01)
 
 
