@@ -88,6 +88,7 @@ export interface OctopusCommonRepository {
     teamMembership: TeamMembershipRepository;
     invitations: InvitationRepository;
     spaceId: string | null;
+    client: Client;
 }
 
 export interface OctopusSystemRepository extends OctopusCommonRepository {
