@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://www.github.com/OctopusDeploy/api-client.ts/compare/v1.1.6...v1.2.0) (2021-12-02)
+
+
+### Features
+
+* **adapter:** Created axios adapter to replace ky and  got adapters ([e3b31bd](https://www.github.com/OctopusDeploy/api-client.ts/commit/e3b31bdbd97f8eee29c63fde078f59127ff8e30c))
+
 ### [1.1.6](https://www.github.com/OctopusDeploy/api-client.ts/compare/v1.1.5...v1.1.6) (2021-12-01)
 
 
