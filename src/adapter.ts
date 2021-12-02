@@ -10,10 +10,10 @@ export interface AdapterResponse {
 }
 
 export class AdapterError {
-    public readonly code: string;
+    public readonly code: number;
     public readonly message: string;
 
-    constructor(code: string, message: string) {
+    constructor(code: number, message: string) {
         this.code = code;
         this.message = message;
     }
