@@ -4,8 +4,7 @@ import type { ClientOptions } from "./clientOptions";
 import { OctopusError } from "@octopusdeploy/message-contracts";
 import { ResponseDetails } from "./responseDetails";
 import { ClientErrorResponseDetails } from "./clientErrorResponseDetails";
-import { GotAdapter } from "./adapters/gotAdapter";
-import { KyAdapter } from "./adapters/kyAdapter";
+import { AxiosAdapter } from "./adapters/axiosAdapter";
 
 export default class ApiClient<TResource> {
     options: ClientOptions;
@@ -13,12 +12,7 @@ export default class ApiClient<TResource> {
 
     constructor(options: ClientOptions) {
         this.options = options;
-        if (typeof XMLHttpRequest !== 'undefined') {
-            this.adapter = new KyAdapter<TResource>();
-        }
-        else {
-            this.adapter = new GotAdapter<TResource>();
-        }
+        this.adapter = new AxiosAdapter<TResource>();
     }
 
     async execute() {
@@ -73,7 +67,7 @@ const deserialize = (responseText?: string, raw?: boolean, forceJson: boolean = 
 const generateOctopusError = (requestError: AdapterError) => {
     if (requestError.code) {
         const code = requestError.code;
-        return new OctopusError(parseInt(code), requestError.message);
+        return new OctopusError(code, requestError.message);
     }
     return new OctopusError(0, requestError.message);
 };

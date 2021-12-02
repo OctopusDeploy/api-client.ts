@@ -2,11 +2,12 @@
   "compilerOptions": {
     "removeComments": false,
     "outDir": "dist",
-    "target": "es5",
+    "target": "ES5",
     "allowJs": true,
     "module": "CommonJS",
     "moduleResolution": "node",
-    "declaration": true
+    "declaration": true,
+    "esModuleInterop": true,
   },
   "exclude": [
     "examples",

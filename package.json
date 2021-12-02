@@ -5,9 +5,7 @@
   },
   "dependencies": {
     "@octopusdeploy/message-contracts": "^1.1.1",
-    "got": "^11.8.3",
-    "http2": "^3.3.7",
-    "ky": "^0.28.7",
+    "axios": "^0.24.0",
     "lodash": "^4.17.21",
     "semver": "^7.3.5",
     "urijs": "^1.19.7"
@@ -22,6 +20,7 @@
     "@types/node": "^16.11.11",
     "@types/semver": "^7.3.9",
     "@types/urijs": "^1.19.17",
+    "process": "^0.11.10",
     "prop-types": "^15.7.2",
     "ts-node": "^10.4.0",
     "typedoc": "^0.22.10",
