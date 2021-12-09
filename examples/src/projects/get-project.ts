@@ -1,11 +1,11 @@
-import { Client, ClientConfiguration, Repository } from '@octopusdeploy/api-client';
-import { ProjectResource } from '@octopusdeploy/message-contracts';
+import { Client, ClientConfiguration, Repository } from "@octopusdeploy/api-client";
+import { ProjectResource } from "@octopusdeploy/message-contracts";
 
 const main = async () => {
     const configuration: ClientConfiguration = {
-        apiKey: 'api-key', // required
-        apiUri: 'api-uri', // required
-        autoConnect: true
+        apiKey: "api-key", // required
+        apiUri: "api-uri", // required
+        autoConnect: true,
     };
 
     let client: Client | undefined;
@@ -13,7 +13,7 @@ const main = async () => {
     try {
         client = await Client.create(configuration);
     } catch (error) {
-        console.error('The TypeScript API client could not be constructed.');
+        console.error("The TypeScript API client could not be constructed.");
         return;
     }
 
@@ -22,7 +22,7 @@ const main = async () => {
     }
 
     const repository = new Repository(client);
-    const projectNameOrId: string = 'project-name-or-ID';
+    const projectNameOrId: string = "project-name-or-ID";
 
     console.log(`Getting project, "${projectNameOrId}"...`);
 
@@ -39,6 +39,6 @@ const main = async () => {
     } else {
         console.error(`Project, "${projectNameOrId}" not found`);
     }
-}
+};
 
 main();

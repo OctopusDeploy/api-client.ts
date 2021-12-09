@@ -13,12 +13,14 @@ export class AxiosAdapter<TResource> implements Adapter<TResource> {
                 method: options.method as Method,
                 data: options.requestBody,
                 headers: {
-                    "X-Octopus-ApiKey": options.configuration.apiKey
+                    "X-Octopus-ApiKey": options.configuration.apiKey ?? ''
                 },
                 responseType: "json", 
             };
             if (typeof XMLHttpRequest === 'undefined') {
-                config.headers["User-Agent"] = "ts-octopusdeploy";
+                if (config.headers) {
+                    config.headers["User-Agent"] = "ts-octopusdeploy";
+                }
             }
             const response = await axios.request<TResource>(config);
             

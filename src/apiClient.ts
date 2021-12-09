@@ -20,12 +20,12 @@ export default class ApiClient<TResource> {
             const response = await this.adapter.execute(this.options);
             this.handleSuccess(response);
         }
-        catch (error) {
+        catch (error: unknown) {
             if (error instanceof AdapterError) {
                 this.handleError(error);
             } 
-            else {
-                console.error(error);
+            else if (error instanceof Error) {
+                this.options.error(error);
             }
         }
     }
@@ -42,7 +42,7 @@ export default class ApiClient<TResource> {
         this.options.success(deserialize(JSON.stringify(response), this.options.raw));
     };
 
-    private handleError = async (requestError: AdapterError) => {
+    private handleError = (requestError: AdapterError) => {
         const err = generateOctopusError(requestError);
         if (this.options.onErrorResponseCallback) {
             const details: ClientErrorResponseDetails = {
