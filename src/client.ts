@@ -1,10 +1,4 @@
-import type {
-    GlobalRootLinks,
-    OctopusError,
-    RootResource,
-    SpaceRootLinks,
-    SpaceRootResource
-} from "@octopusdeploy/message-contracts";
+import type { GlobalRootLinks, OctopusError, RootResource, SpaceRootLinks, SpaceRootResource } from "@octopusdeploy/message-contracts";
 import ApiClient from "./apiClient";
 import type { RouteArgs } from "./resolver";
 import type { Callback } from "./subscriptionRecord";
@@ -16,7 +10,7 @@ import { ClientSession } from "./clientSession";
 import Environment from "./environment";
 import Resolver from "./resolver";
 import { SubscriptionRecord } from "./subscriptionRecord";
-import {Logger} from "./clientConfiguration";
+import { Logger } from "./clientConfiguration";
 
 const apiLocation = "~/api";
 
@@ -29,7 +23,7 @@ export class Client {
     errorSubscriptions = new SubscriptionRecord<ClientErrorResponseDetails>();
     private readonly logger: Logger;
 
-    public static async create(configuration: ClientConfiguration, isAuthenticated: () => boolean = () => true, endSession: () => void = () => { }) {
+    public static async create(configuration: ClientConfiguration, isAuthenticated: () => boolean = () => true, endSession: () => void = () => {}) {
         if (!configuration.apiUri) {
             throw new Error("Server url not specified.");
         }
@@ -38,20 +32,18 @@ export class Client {
         const client = new Client(null, resolver, null, null, null, configuration);
         if (configuration.autoConnect) {
             try {
-                await client.connect(
-                    (message, error) => { client.info(message); }
-                )
+                await client.connect((message, error) => {
+                    client.info(message);
+                });
             } catch (error: unknown) {
-                if(error instanceof Error)
-                    client.error("Could not connect", error);
+                if (error instanceof Error) client.error("Could not connect", error);
                 throw error;
             }
             if (configuration.space !== null && configuration.space !== undefined) {
                 try {
                     await client.switchToSpace(configuration.space);
                 } catch (error: unknown) {
-                    if(error instanceof Error)
-                        client.error("Could not switch to Space", error);
+                    if (error instanceof Error) client.error("Could not switch to Space", error);
                     throw error;
                 }
             }
@@ -79,14 +71,30 @@ export class Client {
         this.logger.error && this.logger.error(message, error);
     };
 
-    private constructor(readonly session: ClientSession | null, private readonly resolver: Resolver, private rootDocument: RootResource | null, public spaceId: string | null, private spaceRootDocument: SpaceRootResource | null, private readonly  configuration: ClientConfiguration) {
+    private constructor(
+        readonly session: ClientSession | null,
+        private readonly resolver: Resolver,
+        private rootDocument: RootResource | null,
+        public spaceId: string | null,
+        private spaceRootDocument: SpaceRootResource | null,
+        private readonly configuration: ClientConfiguration
+    ) {
         this.configuration = configuration;
-        this.logger = { ...{debug: message => console.debug(message), info: message => console.info(message), warn: message => console.warn(message), error: (message, er) => {
-            if(er !== undefined) {
-                console.error(er)
-            } else {
-                console.error(message);
-            }}}, ...configuration.logging } ;
+        this.logger = {
+            ...{
+                debug: (message) => console.debug(message),
+                info: (message) => console.info(message),
+                warn: (message) => console.warn(message),
+                error: (message, er) => {
+                    if (er !== undefined) {
+                        console.error(er);
+                    } else {
+                        console.error(message);
+                    }
+                },
+            },
+            ...configuration.logging,
+        };
         this.resolver = resolver;
         this.rootDocument = rootDocument;
         this.spaceRootDocument = spaceRootDocument;
@@ -353,9 +361,9 @@ export class Client {
     tryGetServerInformation() {
         return this.rootDocument
             ? {
-                version: this.rootDocument.Version,
-                installationId: this.rootDocument.InstallationId,
-            }
+                  version: this.rootDocument.Version,
+                  installationId: this.rootDocument.InstallationId,
+              }
             : null;
     }
 

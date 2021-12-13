@@ -25,8 +25,8 @@ function deploymentOptionsDefaults() : DeploymentOptions {
     return {
         cancelOnTimeout: false,
         deployTo: [],
-        deploymentCheckSleepCycle: 0,
-        deploymentTimeout: 0,
+        deploymentCheckSleepCycle: 10000, // 10 seconds
+        deploymentTimeout: 600000, // 10 minutes
         excludeMachines: [],
         force: false,
         forcePackageDownload: false,
@@ -570,7 +570,7 @@ class CreateRelease {
         }
 
         const viablePlans = releasePlans.filter((p) => p.isViableReleasePlan());
-        if (viablePlans.length <= 0)
+        if (viablePlans.length === 0)
             throw new Error(
                 "There are no viable release plans in any channels using the provided arguments. The following release plans were considered:" +
                     `Sorry not implemented yet!`
