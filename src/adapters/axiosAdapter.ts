@@ -5,7 +5,7 @@ import { AdapterError } from '../adapter';
 import axios from 'axios';
 
 export class AxiosAdapter<TResource> implements Adapter<TResource> {
-    public async execute (options: ClientOptions): Promise<TResource & AdapterResponse> {
+    public async execute (options: ClientOptions): Promise<AdapterResponse<TResource>> {
         try {
             const config: AxiosRequestConfig = {
                 httpsAgent: options.configuration.agent,
@@ -25,7 +25,7 @@ export class AxiosAdapter<TResource> implements Adapter<TResource> {
             const response = await axios.request<TResource>(config);
             
             return {
-                ...response.data,
+                data: response.data,
                 statusCode: response.status
             }
         } catch (error) {

@@ -65,10 +65,10 @@ export class ReleasePlanBuilder {
         pkg =>
           pkg.DeploymentAction.localeCompare(stepName, undefined, {
             sensitivity: 'accent'
-          }) &&
+          }) === 0 &&
           pkg.PackageReference?.localeCompare(packageReferenceName, undefined, {
             sensitivity: 'accent'
-          })
+          }) === 0
       )
     );
 
@@ -285,14 +285,14 @@ export class ReleasePlanBuilder {
             pkg =>
               pkg.DeploymentAction.localeCompare(step.actionName, undefined, {
                 sensitivity: 'accent'
-              }) &&
+              }) === 0 &&
               pkg.PackageReference?.localeCompare(
                 step.packageReferenceName as string,
                 undefined,
                 {
                   sensitivity: 'accent'
                 }
-              )
+              ) === 0
           )
         );
         const result = await this.channelVersionRuleTester.test(
