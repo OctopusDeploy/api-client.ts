@@ -2,7 +2,6 @@ import type { ClientOptions } from "./clientOptions";
 
 export interface Adapter<TResource> {
     execute: (options: ClientOptions) => Promise<TResource & AdapterResponse>;
-
 }
 
 export interface AdapterResponse {
@@ -18,4 +17,3 @@ export class AdapterError {
         this.message = message;
     }
 }
-

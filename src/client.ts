@@ -1,13 +1,6 @@
-import type {
-    GlobalRootLinks,
-    OctopusError,
-    RootResource,
-    SpaceRootLinks,
-    SpaceRootResource
-} from "@octopusdeploy/message-contracts";
+import type { GlobalRootLinks, OctopusError, RootResource, SpaceRootLinks, SpaceRootResource } from "@octopusdeploy/message-contracts";
 import ApiClient from "./apiClient";
 import type { RouteArgs } from "./resolver";
-import Caching from "./caching";
 import type { Callback } from "./subscriptionRecord";
 import type { ClientConfiguration } from "./clientConfiguration";
 import type { ClientErrorResponseDetails } from "./clientErrorResponseDetails";
@@ -17,6 +10,7 @@ import { ClientSession } from "./clientSession";
 import Environment from "./environment";
 import Resolver from "./resolver";
 import { SubscriptionRecord } from "./subscriptionRecord";
+import { Logger } from "./clientConfiguration";
 
 const apiLocation = "~/api";
 
@@ -27,36 +21,30 @@ export class Client {
     requestSubscriptions = new SubscriptionRecord<ClientRequestDetails>();
     responseSubscriptions = new SubscriptionRecord<ClientResponseDetails>();
     errorSubscriptions = new SubscriptionRecord<ClientErrorResponseDetails>();
+    private readonly logger: Logger;
 
-    public static async create(configuration: ClientConfiguration, isAuthenticated: () => boolean = () => true, endSession: () => void = () => { }) {
-        if (configuration.serverEndpoint !== null && configuration.serverEndpoint !== undefined) {
-            console.log("Creating Octopus client for endpoint: " + configuration.serverEndpoint);
-            const resolver = new Resolver(configuration.serverEndpoint);
-            const clientSession = new ClientSession(new Caching(), isAuthenticated, endSession);
-            return new Client(clientSession, resolver, null, null, null, configuration);
-        }
-
-        if (configuration.apiUri === null || configuration.apiUri === undefined) {
-            throw new Error();
+    public static async create(configuration: ClientConfiguration, isAuthenticated: () => boolean = () => true, endSession: () => void = () => {}) {
+        if (!configuration.apiUri) {
+            throw new Error("Server url not specified.");
         }
 
         const resolver = new Resolver(configuration.apiUri);
         const client = new Client(null, resolver, null, null, null, configuration);
         if (configuration.autoConnect) {
             try {
-                await client.connect(
-                    (message, error) => { console.info(message); }
-                )
-            } catch (error) {
-                console.error(error);
-                return;
+                await client.connect((message, error) => {
+                    client.info(message);
+                });
+            } catch (error: unknown) {
+                if (error instanceof Error) client.error("Could not connect", error);
+                throw error;
             }
             if (configuration.space !== null && configuration.space !== undefined) {
                 try {
                     await client.switchToSpace(configuration.space);
-                } catch (error) {
-                    console.error(error);
-                    return;
+                } catch (error: unknown) {
+                    if (error instanceof Error) client.error("Could not switch to Space", error);
+                    throw error;
                 }
             }
         }
@@ -67,8 +55,46 @@ export class Client {
     onResponseCallback: (details: ClientResponseDetails) => void = undefined!;
     onErrorResponseCallback: (details: ClientErrorResponseDetails) => void = undefined!;
 
-    private constructor(readonly session: ClientSession | null, private readonly resolver: Resolver, private rootDocument: RootResource | null, public spaceId: string | null, private spaceRootDocument: SpaceRootResource | null, private configuration: ClientConfiguration) {
+    debug = (message: string) => {
+        this.logger.debug && this.logger.debug(message);
+    };
+
+    info = (message: string) => {
+        this.logger.info && this.logger.info(message);
+    };
+
+    warn = (message: string) => {
+        this.logger.warn && this.logger.warn(message);
+    };
+
+    error = (message: string, error: Error | undefined = undefined) => {
+        this.logger.error && this.logger.error(message, error);
+    };
+
+    private constructor(
+        readonly session: ClientSession | null,
+        private readonly resolver: Resolver,
+        private rootDocument: RootResource | null,
+        public spaceId: string | null,
+        private spaceRootDocument: SpaceRootResource | null,
+        private readonly configuration: ClientConfiguration
+    ) {
         this.configuration = configuration;
+        this.logger = {
+            ...{
+                debug: (message) => console.debug(message),
+                info: (message) => console.info(message),
+                warn: (message) => console.warn(message),
+                error: (message, er) => {
+                    if (er !== undefined) {
+                        console.error(er);
+                    } else {
+                        console.error(message);
+                    }
+                },
+            },
+            ...configuration.logging,
+        };
         this.resolver = resolver;
         this.rootDocument = rootDocument;
         this.spaceRootDocument = spaceRootDocument;
@@ -136,6 +162,7 @@ export class Client {
                     }
                 } else {
                     progressCallback("Unable to connect to the Octopus Server. Is your server online?", err);
+                    reject(err);
                 }
                 setTimeout(() => {
                     attempt(onSuccess, onFail);
@@ -334,9 +361,9 @@ export class Client {
     tryGetServerInformation() {
         return this.rootDocument
             ? {
-                version: this.rootDocument.Version,
-                installationId: this.rootDocument.InstallationId,
-            }
+                  version: this.rootDocument.Version,
+                  installationId: this.rootDocument.InstallationId,
+              }
             : null;
     }
 

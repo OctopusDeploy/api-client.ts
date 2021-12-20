@@ -6,7 +6,10 @@
   "dependencies": {
     "@octopusdeploy/message-contracts": "^1.1.1",
     "axios": "^0.24.0",
+    "glob": "^7.2.0",
+    "hpagent": "^0.1.2",
     "lodash": "^4.17.21",
+    "moment": "^2.29.1",
     "semver": "^7.3.5",
     "urijs": "^1.19.7"
   },
@@ -14,17 +17,34 @@
   "devDependencies": {
     "@octopusdeploy/runtime-inputs": "^0.16.0",
     "@tsconfig/node16": "^1.0.2",
+    "@types/glob": "^7.2.0",
+    "@types/jest": "^27.0.3",
     "@types/json-patch": "^0.0.30",
     "@types/lodash": "^4.14.176",
-    "@types/moment": "^2.13.0",
-    "@types/node": "^16.11.11",
+    "@types/node": "^16.11.12",
     "@types/semver": "^7.3.9",
     "@types/urijs": "^1.19.17",
+    "@typescript-eslint/eslint-plugin": "^5.6.0",
+    "@typescript-eslint/parser": "^5.6.0",
+    "eslint": "^8.4.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-jest": "^25.3.0",
+    "eslint-plugin-prefer-arrow": "^1.2.3",
+    "eslint-plugin-prettier": "^4.0.0",
+    "jest": "^27.4.3",
+    "jest-cli": "^27.4.3",
+    "jest-expect-message": "^1.0.2",
+    "jest-extended": "^1.2.0",
+    "jest-runner-eslint": "^1.0.0",
+    "prettier": "^2.5.1",
     "process": "^0.11.10",
     "prop-types": "^15.7.2",
+    "ts-jest": "^27.1.1",
     "ts-node": "^10.4.0",
     "typedoc": "^0.22.10",
-    "typescript": "^4.5.2"
+    "typescript": "^4.5.2",
+    "unique-names-generator": "^4.6.0"
   },
   "files": [
     "dist/**/*"
@@ -47,10 +67,11 @@
   "scripts": {
     "build": "tsc --p tsconfig.json",
     "docs": "typedoc --options typedoc.json --readme none",
-    "lint": "tslint -p tsconfig.json",
+    "lint:fix": "eslint . --fix",
+    "lint": "eslint .",
     "prepare": "npm run build",
     "preversion": "npm run lint",
-    "test": "jest --config jestconfig.json"
+    "test": "jest --maxWorkers 4 --config jest.config.js"
   },
   "types": "dist/index.d.ts",
   "version": "1.1.7"

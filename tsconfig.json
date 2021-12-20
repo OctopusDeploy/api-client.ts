@@ -1,21 +1,15 @@
 {
-  "compilerOptions": {
-    "removeComments": false,
-    "outDir": "dist",
-    "target": "ES5",
-    "allowJs": true,
-    "module": "CommonJS",
-    "moduleResolution": "node",
-    "declaration": true,
-    "esModuleInterop": true,
-  },
-  "exclude": [
-    "examples",
-    "node_modules",
-    "dist",
-  ],
-  "include": [
-    "src/**/*",
-    "examples"
-  ]
+    "compilerOptions": {
+        "removeComments": false,
+        "outDir": "dist",
+        "target": "ES5",
+        "allowJs": true,
+        "module": "CommonJS",
+        "moduleResolution": "node",
+        "declaration": true,
+        "esModuleInterop": true,
+        "strict": true
+    },
+    "exclude": ["examples", "node_modules", "dist"],
+    "include": ["src/**/*"]
 }

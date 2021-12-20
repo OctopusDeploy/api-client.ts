@@ -3,7 +3,6 @@ import type { ClientRequestDetails } from "./clientRequestDetails";
 import type { ClientResponseDetails } from "./clientResponseDetails";
 import type { ClientConfiguration } from "./clientConfiguration";
 import type { ClientSession } from "./clientSession";
-import type { OctopusError } from "@octopusdeploy/message-contracts";
 import type { ServerInformation } from "./serverInformation";
 
 export interface ClientOptions {
@@ -12,7 +11,7 @@ export interface ClientOptions {
   url: string;
   method?: string;
   success: (data: PromiseLike<string> | string) => void;
-  error: (error: OctopusError) => void;
+  error: (error: Error) => void;
   raw?: boolean;
   requestBody?: string;
   nonStale?: boolean;
