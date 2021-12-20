@@ -220,7 +220,7 @@ class CreateRelease {
                 tp.PromoteTo.some((promo) =>
                     promo.Name.localeCompare(environmentName, undefined, {
                         sensitivity: "accent",
-                    })
+                    }) === 0
                 )
             ).map((tp) => tp.Id);
             const tenants = await this.repository.tenants.all({
@@ -249,14 +249,12 @@ class CreateRelease {
                 unDeployableTenants = deployableTenants
                     .filter((dt) => {
                         const tenantPromo = releaseTemplate.TenantPromotions.find((tp) => tp.Id === dt.Id);
-                        return (
-                            tenantPromo === undefined ||
-                            !tenantPromo.PromoteTo.some((tdt) =>
+                        const result = tenantPromo === undefined || !tenantPromo?.PromoteTo.some((tdt) =>
                                 tdt.Name.localeCompare(environmentName, undefined, {
                                     sensitivity: "accent",
-                                })
-                            )
-                        );
+                                }) === 0
+                            );
+                        return result;
                     })
                     .map((dt) => dt.Name);
                 if (unDeployableTenants.length > 0)
@@ -285,7 +283,7 @@ class CreateRelease {
                         tenantPromo.PromoteTo.some((tdt) =>
                             tdt.Name.localeCompare(environmentName, undefined, {
                                 sensitivity: "accent",
-                            })
+                            }) === 0
                         )
                     );
                 }).filter((tenant) => !deployableTenants.some((deployable) => deployable.Id === tenant.Id));
@@ -451,7 +449,7 @@ class CreateRelease {
             const promotion = releaseTemplate.TenantPromotions.find((t) => t.Id === tenant.Id)?.PromoteTo.find((tt) =>
                 tt.Name.localeCompare(environment.Name, undefined, {
                     sensitivity: "accent",
-                })
+                }) === 0
             );
 
             this.promotionTargets.push(promotion as DeploymentPromotionTarget);

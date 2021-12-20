@@ -30,7 +30,7 @@ export default class ApiClient<TResource> {
         }
     }
 
-    private handleSuccess = (response: AdapterResponse) => {
+    private handleSuccess = (response: AdapterResponse<TResource>) => {
         if (this.options.onResponseCallback) {
             const details: ResponseDetails = {
                 method: this.options.method as any,
@@ -39,7 +39,20 @@ export default class ApiClient<TResource> {
             };
             this.options.onResponseCallback(details);
         }
-        this.options.success(deserialize(JSON.stringify(response), this.options.raw));
+
+        let responseText: string = '';
+
+        if (this.options.raw)
+        {
+            responseText = response.data as unknown as string;
+        } else {
+            responseText = JSON.stringify(response.data)
+            if (responseText && responseText.length > 0) {
+                responseText = JSON.parse(responseText);
+            }
+        }
+
+        this.options.success(responseText);
     };
 
     private handleError = (requestError: AdapterError) => {

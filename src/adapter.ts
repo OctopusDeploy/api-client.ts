@@ -1,11 +1,12 @@
 import type { ClientOptions } from "./clientOptions";
 
 export interface Adapter<TResource> {
-    execute: (options: ClientOptions) => Promise<TResource & AdapterResponse>;
+    execute: (options: ClientOptions) => Promise<AdapterResponse<TResource>>;
 }
 
-export interface AdapterResponse {
+export interface AdapterResponse<TResource> {
     statusCode: number;
+    data: TResource;
 }
 
 export class AdapterError {

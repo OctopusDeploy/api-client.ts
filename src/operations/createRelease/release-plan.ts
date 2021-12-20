@@ -111,13 +111,13 @@ export class ReleasePlan {
       s =>
         s.actionName.localeCompare(packageStepName, undefined, {
           sensitivity: 'accent'
-        }) &&
+        }) === 0 &&
         (!s.packageReferenceName ||
           s.packageReferenceName.localeCompare(
             packageReferenceName ?? '',
             undefined,
             { sensitivity: 'accent' }
-          ))
+          ) === 0)
     );
     if (step === undefined)
       throw new Error(
