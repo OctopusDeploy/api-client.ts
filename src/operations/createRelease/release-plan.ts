@@ -64,7 +64,7 @@ export class ReleasePlan {
   }
 
   get unresolvedSteps() {
-    return this.packageSteps.filter(s => !!s.version);
+    return this.packageSteps.filter(s => !s.version);
   }
 
   channelHasAnyEnabledSteps() {

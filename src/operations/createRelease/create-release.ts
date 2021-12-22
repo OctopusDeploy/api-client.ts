@@ -20,6 +20,7 @@ import {ReleasePlanBuilder} from "./release-plan-builder";
 import {throwIfUndefined} from "./throw-if-undefined";
 import {ReleaseOptions} from "./release-options";
 import {DeploymentOptions} from "./deployment-options";
+import moment from "moment";
 
 function deploymentOptionsDefaults() : DeploymentOptions {
     return {
@@ -32,7 +33,7 @@ function deploymentOptionsDefaults() : DeploymentOptions {
         forcePackageDownload: false,
         noRawLog: false,
         progress: true,
-        skip: [],
+        skipStepNames: [],
         specificMachines: [],
         tenantTags: [],
         tenants: [],
@@ -43,7 +44,6 @@ function deploymentOptionsDefaults() : DeploymentOptions {
 
 function releaseOptionsDefaults() : ReleaseOptions {
     return {
-        defaultPackageVersion: true,
         ignoreChannelRules: false,
         ignoreExisting: false,
         packages: [],
@@ -51,7 +51,7 @@ function releaseOptionsDefaults() : ReleaseOptions {
     }
 }
 
-export async function createRelease(configuration: ClientConfiguration, serverUrl: string, space: string, project: string, releaseOptions?: Partial<ReleaseOptions>, deploymentOptions?: Partial<DeploymentOptions>): Promise<void> {
+export async function createRelease(configuration: ClientConfiguration, space: string, project: string, releaseOptions?: Partial<ReleaseOptions>, deploymentOptions?: Partial<DeploymentOptions>): Promise<void> {
     const client = await Client.create(configuration);
     if (client === undefined) {
         throw new Error("client could not be constructed");
@@ -80,7 +80,7 @@ export async function createRelease(configuration: ClientConfiguration, serverUr
         project
     );
 
-    await new CreateRelease(client, repository, serverUrl, proj, releaseConfiguration, deploymentConfiguration).execute();
+    await new CreateRelease(client, repository, configuration.apiUri, proj, releaseConfiguration, deploymentConfiguration).execute();
 }
 
 class CreateRelease {
@@ -90,6 +90,7 @@ class CreateRelease {
     private versionNumber: string | undefined;
     private promotionTargets: DeploymentPromotionTarget[] = [];
     private deployments: DeploymentResource[] = [];
+    private readonly packageVersionResolver: PackageVersionResolver;
 
     constructor(
         private readonly client: Client,
@@ -97,7 +98,8 @@ class CreateRelease {
         private readonly serverUrl: string,
         private readonly project: ProjectResource,
         private readonly releaseOptions: ReleaseOptions, private readonly deploymentOptions: DeploymentOptions) {
-        this.releasePlanBuilder = new ReleasePlanBuilder(client, new PackageVersionResolver(client), new ChannelVersionRuleTester(client));
+        this.packageVersionResolver = new PackageVersionResolver(client);
+        this.releasePlanBuilder = new ReleasePlanBuilder(client, this.packageVersionResolver, new ChannelVersionRuleTester(client));
     }
 
     async releaseNotesFallBackToDeploymentSettings() {
@@ -106,6 +108,19 @@ class CreateRelease {
 
     async execute(): Promise<void> {
         this.validateProjectPersistenceRequirements();
+
+        if(this.releaseOptions.defaultPackageVersion != undefined){
+            this.packageVersionResolver.setDefault(this.releaseOptions.defaultPackageVersion)
+        }
+
+        if (this.releaseOptions.packagesFolder != undefined) {
+            await this.packageVersionResolver.addFolder(this.releaseOptions.packagesFolder);
+        }
+
+        for (const pkg of this.releaseOptions.packages) {
+            await this.packageVersionResolver.addPackage(pkg.id, pkg.version);
+        }
+
         const plan = await this.buildReleasePlan();
 
         if (this.releaseOptions.releaseNumber) {
@@ -331,7 +346,7 @@ class CreateRelease {
 
     logScheduledDeployment() {
         if (this.deploymentOptions.deployAt) {
-            this.client.info(`Deployment will be scheduled to start in: ${this.deploymentOptions.deployAt.toNow()}`);
+            this.client.info(`Deployment will be scheduled to start at ${this.deploymentOptions.deployAt.toLocaleString()}`);
         }
     }
 
@@ -347,7 +362,7 @@ class CreateRelease {
 
         // Validate skipped steps
         const skip: string[] = [];
-        for (const step of this.deploymentOptions.skip) {
+        for (const step of this.deploymentOptions.skipStepNames) {
             const stepToExecute = preview.StepsToExecute.find((s) => s.ActionName === step);
             if (stepToExecute === undefined) {
                 this.client.warn(
@@ -370,22 +385,14 @@ class CreateRelease {
                         return previousValue;
                     }
 
-                    const index =
-                        [":", "="]
-                            .map((s) => currentValue.indexOf(s))
-                            .filter((i) => i > 0)
-                            .sort((a, b) => a - b)
-                            .find(() => true) ?? -1;
-                    if (index <= 0) return "";
-
-                    const variableName = currentValue.substring(0, index);
-                    const variableValue = index >= currentValue.length - 1 ? "" : currentValue.substring(index + 1);
+                    const variableName = currentValue.name;
+                    const variableValue = currentValue.value;
 
                     if (variableName === variableInput.Label) {
-                        return variableValue;
+                        return variableValue.toString();
                     }
                     if (variableName === variableInput.Name) {
-                        return variableValue;
+                        return variableValue.toString();
                     }
 
                     return undefined;
@@ -413,8 +420,8 @@ class CreateRelease {
             ExcludedMachineIds: excludedMachineIds,
             ForcePackageRedeployment: this.deploymentOptions.force,
             FormValues: preview.Form.Values,
-            QueueTime: this.deploymentOptions.deployAt,
-            QueueTimeExpiry: this.deploymentOptions.noDeployAfter,
+            QueueTime: this.deploymentOptions.deployAt ? moment(this.deploymentOptions.deployAt) : undefined,
+            QueueTimeExpiry: this.deploymentOptions.noDeployAfter ? moment(this.deploymentOptions.noDeployAfter) : undefined,
         } as CreateDeploymentResource);
 
         this.client.info(
