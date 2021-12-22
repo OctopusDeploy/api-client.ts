@@ -1,8 +1,6 @@
-import {Moment} from "moment";
-
 export interface DeploymentOptions {
     cancelOnTimeout: boolean;
-    deployAt?: Moment | undefined;
+    deployAt?: Date | undefined;
     deployTo: string[];
     deploymentCheckSleepCycle: number;
     deploymentTimeout: number;
@@ -10,14 +8,19 @@ export interface DeploymentOptions {
     force: boolean;
     forcePackageDownload: boolean;
     guidedFailure?: string | undefined;
-    noDeployAfter?: Moment | undefined;
+    noDeployAfter?: Date | undefined;
     noRawLog: boolean;
     progress: boolean;
     rawLogFile?: string | undefined;
-    skip: string[];
+    skipStepNames: string[];
     specificMachines: string[];
     tenants: string[];
     tenantTags: string[];
-    variable: string[];
+    variable: Variable[];
     waitForDeployment: boolean;
+}
+
+export interface Variable {
+    name: string;
+    value: string | number | boolean;
 }

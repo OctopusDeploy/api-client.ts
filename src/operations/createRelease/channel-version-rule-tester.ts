@@ -15,11 +15,11 @@ export class ChannelVersionRuleTester implements IChannelVersionRuleTester {
   constructor(readonly client: Client) {}
 
   async test(
-    rule: ChannelVersionRuleResource,
+    rule: ChannelVersionRuleResource | undefined,
     packageVersion: string | undefined,
     feedId: string
   ) {
-    if (rule === null)
+    if (rule === undefined)
       // Anything goes if there is no rule defined for this step
       return ChannelVersionRuleTestResult.Null();
 
