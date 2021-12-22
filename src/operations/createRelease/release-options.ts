@@ -15,8 +15,3 @@ export interface ReleaseOptions {
     releaseNumber?: string | undefined;
     whatIf: boolean;
 }
-
-export interface Package {
-    packageId: string;
-    version: string;
-}
