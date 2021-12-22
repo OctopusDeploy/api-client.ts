@@ -1,4 +1,4 @@
-name: Test-Please
+name: 'Run Tests'
 on: push
 env:
   SA_PASSWORD: 'yourStrong45@Password'
@@ -54,6 +54,6 @@ jobs:
         if: success() || failure()
         name: Tests report
         with:
-          name: JEST tests
+          name: Tests report
           path: 'reports/jest-*.xml'
           reporter: jest-junit
