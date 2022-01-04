@@ -1,7 +1,6 @@
 import type { AllArgs } from "./basicRepository";
 import { BasicRepository } from "./basicRepository";
 import type { PackageResource } from "@octopusdeploy/message-contracts";
-import { PackageFromBuiltInFeedResource, ResourceCollection } from "@octopusdeploy/message-contracts";
 import type { Client } from "../client";
 
 export type PackageListArgs = {
@@ -34,6 +33,12 @@ type PackageGetArgs = {
     includeNotes?: boolean;
 };
 
+export enum OverwriteMode {
+    "FailIfExists",
+    "OverwriteExisting",
+    "IgnoreIfExists",
+}
+
 export class PackageRepository extends BasicRepository<PackageResource, PackageResource, PackageListArgs, AllArgs, PackageGetArgs> {
     constructor(client: Client) {
         super("Packages", client);
@@ -42,10 +47,10 @@ export class PackageRepository extends BasicRepository<PackageResource, PackageR
     deleteMany(packageIds: string[]) {
         return this.client.del(this.client.getLink("PackagesBulk"), null, { ids: packageIds });
     }
-    upload(pkg: File, replace: boolean) {
+    upload(pkg: File, overwriteMode: OverwriteMode = OverwriteMode.FailIfExists) {
         const fd = new FormData();
         fd.append("fileToUpload", pkg);
-        return this.client.post<PackageResource>(this.client.getLink("PackageUpload"), fd, { replace });
+        return this.client.post<PackageResource>(this.client.getLink("PackageUpload"), fd, { overwriteMode });
     }
     getNotes(packages: PackageNote[]) {
         const packageIds = packages.reduce((result, item) => result + (result.length === 0 ? "" : ",") + encodeURIComponent(item.FeedId) + ":" + encodeURIComponent(item.PackageId) + ":" + encodeURIComponent(item.Version), "");

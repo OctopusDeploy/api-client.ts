@@ -1,4 +1,4 @@
-import {Client, ClientConfiguration, OctopusSpaceRepository, Repository} from "../../";
+import {Client, ClientConfiguration, OctopusSpaceRepository} from "../../";
 import type {
     ChannelResource,
     CreateDeploymentResource,
@@ -21,6 +21,7 @@ import {throwIfUndefined} from "./throw-if-undefined";
 import {ReleaseOptions} from "./release-options";
 import {DeploymentOptions} from "./deployment-options";
 import moment from "moment";
+import {connect} from "../connect";
 
 function deploymentOptionsDefaults() : DeploymentOptions {
     return {
@@ -52,11 +53,6 @@ function releaseOptionsDefaults() : ReleaseOptions {
 }
 
 export async function createRelease(configuration: ClientConfiguration, space: string, project: string, releaseOptions?: Partial<ReleaseOptions>, deploymentOptions?: Partial<DeploymentOptions>): Promise<void> {
-    const client = await Client.create(configuration);
-    if (client === undefined) {
-        throw new Error("client could not be constructed");
-    }
-
     const releaseConfiguration = {
         ...releaseOptionsDefaults(),
         ...releaseOptions
@@ -67,11 +63,8 @@ export async function createRelease(configuration: ClientConfiguration, space: s
         ...deploymentOptions
     }
 
-    if(!client.isConnected() && !configuration.autoConnect) {
-        await client.connect((message, error) => error ? client.error("Could not connect", error) : client.info(message));
-    }
+    const [repository, client] = await connect(configuration, space);
 
-    const repository = await new Repository(client).forSpace(space);
     const proj = await throwIfUndefined<ProjectResource>(
         async (nameOrId) => await repository.projects.find(nameOrId),
         async (id) => repository.projects.get(id),

@@ -412,7 +412,7 @@ describe("create a release", () => {
                 const fileName = path.basename(filePath);
 
                 console.log(`Uploading ${fileName} package`);
-                await repository.packages.upload(new File([data], fileName), false);
+                await repository.packages.upload(new File([data], fileName));
             }
         });
 
