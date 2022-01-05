@@ -11,7 +11,7 @@ import AdmZip from "adm-zip";
 import {pushPackage} from "./push-package";
 import {OverwriteMode} from "../../repositories/packageRepository";
 
-describe("create a release", () => {
+describe("push package", () => {
     let configuration: ClientConfiguration;
     let serverEndpoint: string;
     let space: SpaceResource;
@@ -65,7 +65,7 @@ describe("create a release", () => {
         repository = await systemRepository.forSpace(space.Id);
     });
 
-    test('upload single package', async () => {
+    test('single package', async () => {
         await pushPackage(configuration, space.Id, [path.join(tempOutDir, `Hello.1.0.0.zip`)], OverwriteMode.OverwriteExisting);
 
         const results = await repository.packages.list({filter: 'Hello'});
@@ -76,7 +76,7 @@ describe("create a release", () => {
         expect(result.Version).toStrictEqual('1.0.0');
     });
 
-    test('upload multiple package', async () => {
+    test('multiple packages', async () => {
         await pushPackage(configuration, space.Id, [path.join(tempOutDir, `Hello.1.0.0.zip`), path.join(tempOutDir, `GoodBye.2.0.0.zip`)], OverwriteMode.OverwriteExisting);
 
         let results = await repository.packages.list({filter: 'Hello'});
