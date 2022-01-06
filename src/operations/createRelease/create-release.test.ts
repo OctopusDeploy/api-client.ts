@@ -21,10 +21,9 @@ import { PackageRequirement } from "@octopusdeploy/message-contracts/dist/deploy
 import { RunConditionForAction } from "@octopusdeploy/message-contracts/dist/runConditionForAction";
 import moment from "moment";
 import AdmZip from "adm-zip";
-import {mkdtemp, open, readdir, rm} from "fs/promises";
+import {mkdtemp, readdir, readFile, rm} from "fs/promises";
 import { tmpdir } from "os";
 import path from "path";
-import { blob } from "stream/consumers";
 import { PackageIdentity } from "./package-identity";
 
 
@@ -407,12 +406,11 @@ describe("create a release", () => {
             }
 
             async function uploadPackage(filePath: string) {
-                const fileHandle = await open(filePath, "r");
-                const data = await blob(fileHandle.createReadStream());
+                const buffer = await readFile(filePath);
                 const fileName = path.basename(filePath);
 
                 console.log(`Uploading ${fileName} package`);
-                await repository.packages.upload(new File([data], fileName), false);
+                await repository.packages.upload(new File([buffer], fileName));
             }
         });
 

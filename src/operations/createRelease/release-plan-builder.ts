@@ -8,7 +8,7 @@ import {
   PackageResource
 } from '@octopusdeploy/message-contracts';
 import { IChannelVersionRuleTester } from './channel-version-rule-tester';
-import { CouldNotFindError } from './could-not-find-error';
+import { CouldNotFindError } from '../could-not-find-error';
 import { IPackageVersionResolver } from './package-version-resolver';
 import { ReleasePlan } from './release-plan';
 import { ReleasePlanItem } from './release-plan-item';

@@ -13,7 +13,7 @@ export interface ClientOptions {
   success: (data: PromiseLike<string> | string) => void;
   error: (error: Error) => void;
   raw?: boolean;
-  requestBody?: string;
+  requestBody?: any;
   nonStale?: boolean;
   tryGetServerInformation: () => ServerInformation | null;
   getAntiForgeryTokenCallback: () => string | null;

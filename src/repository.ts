@@ -122,6 +122,7 @@ export interface OctopusSpaceRepository extends OctopusCommonRepository {
     accounts: AccountRepository;
     actionTemplates: ActionTemplateRepository;
     artifacts: ArtifactRepository;
+    buildInformation: BuildInformationRepository;
     certificateConfiguration: CertificateConfigurationRepository;
     certificates: CertificateRepository;
     channels: ChannelRepository;
@@ -170,7 +171,7 @@ export class Repository implements OctopusSpaceRepository, OctopusSystemReposito
     actionTemplates: ActionTemplateRepository;
     artifacts: ArtifactRepository;
     authentication: AuthenticationRepository;
-    buildInformationRepository: BuildInformationRepository;
+    buildInformation: BuildInformationRepository;
     certificateConfiguration: CertificateConfigurationRepository;
     certificates: CertificateRepository;
     channels: ChannelRepository;
@@ -247,7 +248,7 @@ export class Repository implements OctopusSpaceRepository, OctopusSystemReposito
         this.actionTemplates = new ActionTemplateRepository(client);
         this.artifacts = new ArtifactRepository(client);
         this.authentication = new AuthenticationRepository(client);
-        this.buildInformationRepository = new BuildInformationRepository(client);
+        this.buildInformation = new BuildInformationRepository(client);
         this.certificateConfiguration = new CertificateConfigurationRepository(client);
         this.certificates = new CertificateRepository(client);
         this.cloudTemplates = new CloudTemplateRepository(client);
