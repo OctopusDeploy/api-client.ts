@@ -1,6 +1,5 @@
 import {ClientConfiguration} from "../../clientConfiguration";
-import {open} from "fs/promises";
-import {blob} from "stream/consumers";
+import {readFile} from "fs/promises";
 import path from "path";
 import {OverwriteMode} from "../../repositories/packageRepository";
 import {connect} from "../connect";
@@ -19,11 +18,10 @@ export async function pushPackage(configuration: ClientConfiguration, space: str
     console.log("Packages uploaded");
 
     async function uploadPackage(filePath: string) {
-        const fileHandle = await open(filePath, "r");
-        const data = await blob(fileHandle.createReadStream());
+        const buffer = await readFile(filePath);
         const fileName = path.basename(filePath);
 
         console.log(`Uploading ${fileName} package`);
-        await repository.packages.upload(new File([data], fileName),  overwriteMode);
+        await repository.packages.upload(new File([buffer], fileName),  overwriteMode);
     }
 }

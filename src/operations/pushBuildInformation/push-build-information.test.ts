@@ -3,13 +3,12 @@ import { Client } from "../../client";
 import { OctopusSpaceRepository, Repository } from "../../repository";
 import { SpaceResource } from "@octopusdeploy/message-contracts";
 import { ClientConfiguration } from "../../clientConfiguration";
-import { mkdtemp, open, rm } from "fs/promises";
+import {mkdtemp, readFile, rm} from "fs/promises";
 import { PackageIdentity } from "../createRelease/package-identity";
 import path from "path";
 import { tmpdir } from "os";
 import AdmZip from "adm-zip";
 import { pushBuildInformation } from "./push-build-information";
-import { blob } from "stream/consumers";
 
 describe("push build information", () => {
     let configuration: ClientConfiguration;
@@ -69,12 +68,11 @@ describe("push build information", () => {
         await uploadPackage(path.join(tempOutDir, "Hello.1.0.0.zip"));
 
         async function uploadPackage(filePath: string) {
-            const fileHandle = await open(filePath, "r");
-            const data = await blob(fileHandle.createReadStream());
+            const buffer = await readFile(filePath);
             const fileName = path.basename(filePath);
 
             console.log(`Uploading ${fileName} package`);
-            await repository.packages.upload(new File([data], fileName));
+            await repository.packages.upload(new File([buffer], fileName));
         }
 
         await pushBuildInformation(configuration, space.Id, [{ id: "Hello", version: "1.0.0" }], {
