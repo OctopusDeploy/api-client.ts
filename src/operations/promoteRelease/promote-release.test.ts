@@ -1,29 +1,35 @@
-import {ClientConfiguration} from "../../clientConfiguration";
+import { ClientConfiguration } from "../../clientConfiguration";
 import {
     CommunicationStyle,
     DeploymentTargetResource,
-    EnvironmentResource, NewDeploymentTargetResource,
-    ProjectResource, RunCondition,
-    SpaceResource, StartTrigger, TenantedDeploymentMode
+    EnvironmentResource,
+    NewDeploymentTargetResource,
+    ProjectResource,
+    RunCondition,
+    SpaceResource,
+    StartTrigger,
+    TenantedDeploymentMode,
 } from "@octopusdeploy/message-contracts";
-import {OctopusSpaceRepository, Repository} from "../../repository";
-import {Config, starWars, uniqueNamesGenerator} from "unique-names-generator";
-import {Client} from "../../client";
-import {PackageRequirement} from "@octopusdeploy/message-contracts/dist/deploymentStepResource";
-import {RunConditionForAction} from "@octopusdeploy/message-contracts/dist/runConditionForAction";
-import {createRelease} from "../createRelease/create-release";
-import {deployRelease} from "./deploy-release";
+import { OctopusSpaceRepository, Repository } from "../../repository";
+import { Config, starWars, uniqueNamesGenerator } from "unique-names-generator";
+import { Client } from "../../client";
+import { PackageRequirement } from "@octopusdeploy/message-contracts/dist/deploymentStepResource";
+import { RunConditionForAction } from "@octopusdeploy/message-contracts/dist/runConditionForAction";
+import { createRelease } from "../createRelease/create-release";
+import { deployRelease } from "../deployRelease/deploy-release";
+import { promoteRelease } from "./promote-release";
 
-describe("deploy a release", () => {
+describe("promote a release", () => {
     let configuration: ClientConfiguration;
     let serverEndpoint: string;
     let space: SpaceResource;
     let project: ProjectResource;
-    let environment: EnvironmentResource;
+    let environment1: EnvironmentResource;
+    let environment2: EnvironmentResource;
     let systemRepository: Repository;
     let repository: OctopusSpaceRepository;
     let machine: DeploymentTargetResource;
-    const randomConfig: Config = {dictionaries: [starWars]};
+    const randomConfig: Config = { dictionaries: [starWars] };
 
     jest.setTimeout(100000);
 
@@ -55,8 +61,8 @@ describe("deploy a release", () => {
         });
         repository = await systemRepository.forSpace(space.Id);
 
-        const groupId = (await repository.projectGroups.list({take: 1})).Items[0].Id;
-        const lifecycleId = (await repository.lifecycles.list({take: 1})).Items[0].Id;
+        const groupId = (await repository.projectGroups.list({ take: 1 })).Items[0].Id;
+        const lifecycleId = (await repository.lifecycles.list({ take: 1 })).Items[0].Id;
         const projectName = uniqueName();
         console.log(`Creating ${projectName} project`);
         project = await repository.projects.create({
@@ -75,7 +81,7 @@ describe("deploy a release", () => {
                 StartTrigger: StartTrigger.StartAfterPrevious,
                 Id: "",
                 Name: uniqueName(),
-                Properties: {"Octopus.Action.TargetRoles": "deploy"},
+                Properties: { "Octopus.Action.TargetRoles": "deploy" },
                 Actions: [
                     {
                         Id: "",
@@ -111,8 +117,9 @@ describe("deploy a release", () => {
         console.log("Updating process");
         await repository.deploymentProcesses.saveToProject(project, dp);
 
-        console.log("Creating environment");
-        environment = await repository.environments.create({Name: uniqueName()});
+        console.log("Creating environments");
+        environment1 = await repository.environments.create({ Name: uniqueName() });
+        environment2 = await repository.environments.create({ Name: uniqueName() });
 
         console.log("Creating machine");
 
@@ -120,19 +127,21 @@ describe("deploy a release", () => {
             Endpoint: {
                 CommunicationStyle: CommunicationStyle.None,
             },
-            EnvironmentIds: [environment.Id],
+            EnvironmentIds: [environment1.Id, environment2.Id],
             Name: uniqueName(),
             Roles: ["deploy"],
             TenantedDeploymentParticipation: TenantedDeploymentMode.TenantedOrUntenanted,
         } as NewDeploymentTargetResource);
     });
 
-    test("deploy to single environment", async () => {
+    test("promote to single environment", async () => {
         await createRelease(configuration, space.Id, project.Name);
 
-        await deployRelease(configuration, space.Id, project.Name, "latest", [environment.Name], undefined, false, {
-            waitForDeployment: true
+        await deployRelease(configuration, space.Id, project.Name, "latest", [environment1.Name], undefined, false, {
+            waitForDeployment: true,
         });
+
+        await promoteRelease(configuration, space.Id, project.Name, environment1.Name, [environment2.Name], true, true, { waitForDeployment: true });
     });
 
     afterEach(async () => {
