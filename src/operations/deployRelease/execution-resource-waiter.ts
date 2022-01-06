@@ -1,4 +1,4 @@
-import { OctopusSpaceRepository } from '../../';
+import { OctopusSpaceRepository } from '../../index';
 import {
   DeploymentResource,
   ProjectResource,
