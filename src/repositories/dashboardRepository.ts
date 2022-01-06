@@ -14,6 +14,18 @@ export class DashboardRepository {
     getDashboard(dashboardFilter?: DashboardFilter): Promise<DashboardResource> {
         return this.client.get<DashboardResource>(this.client.getLink("Dashboard"), dashboardFilter);
     }
+
+    getDynamicDashboard(
+        projects: string[],
+        environments: string[],
+        dashboardItemsOptions: DashboardItemsOptions = DashboardItemsOptions.IncludeCurrentDeploymentOnly
+    ): Promise<DashboardResource> {
+        return this.client.get<DashboardResource>(this.client.getLink("DashboardDynamic"), {
+            projects: projects,
+            environments: environments,
+            includePrevious: dashboardItemsOptions === DashboardItemsOptions.IncludeCurrentAndPreviousSuccessfulDeployment,
+        });
+    }
 }
 
 export type DashboardFilter = {
@@ -22,3 +34,8 @@ export type DashboardFilter = {
     releaseId?: string;
     showAll?: boolean;
 };
+
+export enum DashboardItemsOptions {
+    IncludeCurrentDeploymentOnly,
+    IncludeCurrentAndPreviousSuccessfulDeployment,
+}
