@@ -1,16 +1,17 @@
 import type { GlobalRootLinks, OctopusError, RootResource, SpaceRootLinks, SpaceRootResource } from "@octopusdeploy/message-contracts";
 import ApiClient from "./apiClient";
-import type { RouteArgs } from "./resolver";
-import type { Callback } from "./subscriptionRecord";
 import type { ClientConfiguration } from "./clientConfiguration";
+import { processConfiguration } from "./clientConfiguration";
 import type { ClientErrorResponseDetails } from "./clientErrorResponseDetails";
 import type { ClientRequestDetails } from "./clientRequestDetails";
 import type { ClientResponseDetails } from "./clientResponseDetails";
 import { ClientSession } from "./clientSession";
 import Environment from "./environment";
+import { Logger } from "./logger";
+import type { RouteArgs } from "./resolver";
 import Resolver from "./resolver";
+import type { Callback } from "./subscriptionRecord";
 import { SubscriptionRecord } from "./subscriptionRecord";
-import { Logger } from "./clientConfiguration";
 
 const apiLocation = "~/api";
 
@@ -23,9 +24,11 @@ export class Client {
     errorSubscriptions = new SubscriptionRecord<ClientErrorResponseDetails>();
     private readonly logger: Logger;
 
-    public static async create(configuration: ClientConfiguration, isAuthenticated: () => boolean = () => true, endSession: () => void = () => {}) {
+    public static async create(configuration?: ClientConfiguration): Promise<Client> {
+        configuration = processConfiguration(configuration);
+
         if (!configuration.apiUri) {
-            throw new Error("Server url not specified.");
+            throw new Error("The host is not specified");
         }
 
         const resolver = new Resolver(configuration.apiUri);
@@ -33,7 +36,7 @@ export class Client {
         if (configuration.autoConnect) {
             try {
                 await client.connect((message, error) => {
-                    client.info(message);
+                    client.debug("Connect");
                 });
             } catch (error: unknown) {
                 if (error instanceof Error) client.error("Could not connect", error);
@@ -43,7 +46,7 @@ export class Client {
                 try {
                     await client.switchToSpace(configuration.space);
                 } catch (error: unknown) {
-                    if (error instanceof Error) client.error("Could not switch to Space", error);
+                    if (error instanceof Error) client.error("Could not switch to space", error);
                     throw error;
                 }
             }
@@ -87,7 +90,7 @@ export class Client {
                 warn: (message) => console.warn(message),
                 error: (message, er) => {
                     if (er !== undefined) {
-                        console.error(er);
+                        console.error(er.message);
                     } else {
                         console.error(message);
                     }
@@ -127,7 +130,7 @@ export class Client {
     resolve = (path: string, uriTemplateParameters?: RouteArgs) => this.resolver.resolve(path, uriTemplateParameters);
 
     connect(progressCallback: (message: string, error?: OctopusError) => void): Promise<void> {
-        progressCallback("Checking your credentials. Please wait...");
+        progressCallback("Checking credentials...");
 
         return new Promise((resolve, reject) => {
             if (this.rootDocument) {
@@ -146,15 +149,8 @@ export class Client {
                 resolve();
             };
 
-            let fails = 0;
             const onFail = (err: any) => {
-                if (err.StatusCode !== 503 && fails < 20) {
-                    fails++;
-                }
-
-                const timeout = fails === 20 ? 5000 : 1000;
-
-                if ((err.StatusCode === 0 || err.StatusCode === 503) && fails < 20) {
+                if (err.StatusCode === 0 || err.StatusCode === 503) {
                     if (err.StatusCode === 503) {
                         progressCallback("Octopus Server unavailable.", err);
                     } else if (err.StatusCode === 0) {
@@ -164,9 +160,6 @@ export class Client {
                     progressCallback("Unable to connect to the Octopus Server. Is your server online?", err);
                     reject(err);
                 }
-                setTimeout(() => {
-                    attempt(onSuccess, onFail);
-                }, timeout);
             };
 
             attempt(onSuccess, onFail);
