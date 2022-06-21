@@ -8,8 +8,7 @@ import { ClientSession } from "./clientSession";
 import Environment from "./environment";
 import { Logger } from "./logger";
 import { Resolver, RouteArgs } from "./resolver";
-import type { Callback } from "./subscriptionRecord";
-import { SubscriptionRecord } from "./subscriptionRecord";
+import { Callback, SubscriptionRecord } from "./subscriptionRecord";
 
 const apiLocation = "~/api";
 
