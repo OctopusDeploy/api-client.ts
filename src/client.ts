@@ -33,7 +33,7 @@ export class Client {
         if (configuration.autoConnect) {
             try {
                 await client.connect((message, error) => {
-                    client.debug("Connect");
+                    client.debug(`Attempting to connect to API endpoint...`);
                 });
             } catch (error: unknown) {
                 if (error instanceof Error) client.error("Could not connect", error);
@@ -146,17 +146,9 @@ export class Client {
                 resolve();
             };
 
-            const onFail = (err: any) => {
-                if (err.StatusCode === 0 || err.StatusCode === 503) {
-                    if (err.StatusCode === 503) {
-                        progressCallback("Octopus Server unavailable.", err);
-                    } else if (err.StatusCode === 0) {
-                        progressCallback("The Octopus Server does not appear to have started, trying again...", err);
-                    }
-                } else {
-                    progressCallback("Unable to connect to the Octopus Server. Is your server online?", err);
-                    reject(err);
-                }
+            const onFail = (err: OctopusError) => {
+                progressCallback("Unable to connect.", err);
+                reject(err);
             };
 
             attempt(onSuccess, onFail);
@@ -179,8 +171,14 @@ export class Client {
     }
 
     async switchToSpace(spaceId: string): Promise<void> {
+        if (this.rootDocument === null) {
+            throw new Error(
+                "Root document is null; this document is required for the API client. Please ensure that the API endpoint is accessible along with its root document."
+            );
+        }
+
         this.spaceId = spaceId;
-        this.spaceRootDocument = await this.get<SpaceRootResource>(this.rootDocument!.Links["SpaceHome"], { spaceId: this.spaceId });
+        this.spaceRootDocument = await this.get<SpaceRootResource>(this.rootDocument.Links["SpaceHome"], { spaceId: this.spaceId });
     }
 
     switchToSystem(): void {
