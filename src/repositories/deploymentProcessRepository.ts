@@ -8,7 +8,7 @@ import type {
     ProjectResource,
     ReleaseResource,
     ReleaseTemplateResource,
-    VcsBranchResource
+    VcsBranchResource,
 } from "@octopusdeploy/message-contracts";
 import type { AllArgs, ListArgs } from "./basicRepository";
 import type { Client } from "../client";
@@ -26,7 +26,12 @@ type DeploymentProcessRepositoryAllArgs = {
     ids?: string[];
 } & AllArgs;
 
-export class DeploymentProcessRepository extends ProjectScopedRepository<DeploymentProcessResource, NewDeploymentProcessResource, DeploymentProcessRepositoryListArgs, DeploymentProcessRepositoryAllArgs> {
+export class DeploymentProcessRepository extends ProjectScopedRepository<
+    DeploymentProcessResource,
+    NewDeploymentProcessResource,
+    DeploymentProcessRepositoryListArgs,
+    DeploymentProcessRepositoryAllArgs
+> {
     readonly resourceLink = "DeploymentProcess";
     readonly collectionLink = "DeploymentProcesses";
 

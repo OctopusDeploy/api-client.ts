@@ -18,7 +18,7 @@ import type {
     TriggerActionCategory,
     TriggerResource,
     VcsBranchResource,
-    VersionControlCompatibilityResponse
+    VersionControlCompatibilityResponse,
 } from "@octopusdeploy/message-contracts";
 import { HasVcsProjectResourceLinks, HasVersionControlledPersistenceSettings } from "@octopusdeploy/message-contracts";
 import type { AllArgs } from "./basicRepository";
@@ -65,7 +65,12 @@ class ProjectRepository extends BasicRepository<ProjectResource, NewProjectResou
         return projects.Items.find((p) => p.Name === nameOrId);
     }
 
-    getChannels(project: ProjectResource, gitRef: string | undefined, skip: number = 0, take: number = this.takeAll): Promise<ResourceCollection<ChannelResource>> {
+    getChannels(
+        project: ProjectResource,
+        gitRef: string | undefined,
+        skip: number = 0,
+        take: number = this.takeAll
+    ): Promise<ResourceCollection<ChannelResource>> {
         if (gitRef && HasVersionControlledPersistenceSettings(project.PersistenceSettings)) {
             return this.client.get<ResourceCollection<ChannelResource>>(project.Links["Channels"], { skip, take, gitRef });
         }
@@ -110,7 +115,15 @@ class ProjectRepository extends BasicRepository<ProjectResource, NewProjectResou
         runbooks?: string[],
         partialName?: string
     ): Promise<ResourceCollection<TriggerResource>> {
-        return this.client.get<ResourceCollection<TriggerResource>>(project.Links["Triggers"], { skip, take, gitRef, triggerActionType, triggerActionCategory, runbooks, partialName });
+        return this.client.get<ResourceCollection<TriggerResource>>(project.Links["Triggers"], {
+            skip,
+            take,
+            gitRef,
+            triggerActionType,
+            triggerActionCategory,
+            runbooks,
+            partialName,
+        });
     }
 
     orderChannels(project: ProjectResource) {

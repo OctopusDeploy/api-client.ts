@@ -27,7 +27,7 @@ export class BasicRepository<
     TGetArgs extends RouteArgs = {},
     TCreateArgs extends RouteArgs = {},
     TModifyArgs extends RouteArgs = {}
-    > {
+> {
     readonly takeAll = 2147483647;
     readonly takeDefaultPageSize = 30;
     protected client: Client;
@@ -73,7 +73,9 @@ export class BasicRepository<
     }
 
     create(resource: TNewResource, args?: TCreateArgs): Promise<TExistingResource> {
-        return this.client.create<TNewResource, TExistingResource>(this.client.getLink(this.collectionLinkName), resource, args!).then((r) => this.notifySubscribersToDataModifications(r));
+        return this.client
+            .create<TNewResource, TExistingResource>(this.client.getLink(this.collectionLinkName), resource, args!)
+            .then((r) => this.notifySubscribersToDataModifications(r));
     }
 
     get(id: string, args?: TGetArgs): Promise<TExistingResource> {
