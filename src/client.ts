@@ -7,8 +7,7 @@ import type { ClientResponseDetails } from "./clientResponseDetails";
 import { ClientSession } from "./clientSession";
 import Environment from "./environment";
 import { Logger } from "./logger";
-import type { RouteArgs } from "./resolver";
-import Resolver from "./resolver";
+import { Resolver, RouteArgs } from "./resolver";
 import type { Callback } from "./subscriptionRecord";
 import { SubscriptionRecord } from "./subscriptionRecord";
 

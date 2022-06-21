@@ -1,6 +1,6 @@
-import URI from "urijs";
 import { curry } from "lodash";
-import Resolver from "./resolver";
+import URI from "urijs";
+import { Resolver } from "./resolver";
 
 export type LocationProps = Pick<Location, "pathname" | "host" | "protocol" | "href">;
 
