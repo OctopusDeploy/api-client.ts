@@ -1,6 +1,8 @@
 import { ClientConfiguration, processConfiguration } from "./clientConfiguration";
 
 describe("configuration", () => {
+    jest.setTimeout(10000);
+
     test("undefined", async () => {
         let configuration = processConfiguration();
         expect(configuration.apiKey).not.toBeNull();
