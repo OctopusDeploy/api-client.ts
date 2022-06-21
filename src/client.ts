@@ -85,9 +85,9 @@ export class Client {
                 debug: (message) => console.debug(message),
                 info: (message) => console.info(message),
                 warn: (message) => console.warn(message),
-                error: (message, er) => {
-                    if (er !== undefined) {
-                        console.error(er.message);
+                error: (message, err) => {
+                    if (err !== undefined) {
+                        console.error(err.message);
                     } else {
                         console.error(message);
                     }
