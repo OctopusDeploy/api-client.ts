@@ -8,6 +8,6 @@ describe("client", () => {
             apiUri: "123",
             autoConnect: true,
         };
-        await Client.create(clientConfiguration);
+        await expect(Client.create(clientConfiguration)).rejects.toThrow();
     });
 });
