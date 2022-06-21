@@ -5,12 +5,12 @@ describe("configuration", () => {
         let configuration = processConfiguration();
         expect(configuration.apiKey).not.toBeNull();
         expect(configuration.apiUri).not.toBeNull();
-        expect(configuration.space).toBeUndefined();
+        expect(configuration.space).not.toBeNull();
 
         configuration = processConfiguration(undefined);
         expect(configuration.apiKey).not.toBeNull();
         expect(configuration.apiUri).not.toBeNull();
-        expect(configuration.space).toBeUndefined();
+        expect(configuration.space).not.toBeNull();
     });
 
     test("blank", async () => {
