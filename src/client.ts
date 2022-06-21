@@ -1,7 +1,6 @@
 import type { GlobalRootLinks, OctopusError, RootResource, SpaceRootLinks, SpaceRootResource } from "@octopusdeploy/message-contracts";
 import ApiClient from "./apiClient";
-import type { ClientConfiguration } from "./clientConfiguration";
-import { processConfiguration } from "./clientConfiguration";
+import { ClientConfiguration, processConfiguration } from "./clientConfiguration";
 import type { ClientErrorResponseDetails } from "./clientErrorResponseDetails";
 import type { ClientRequestDetails } from "./clientRequestDetails";
 import type { ClientResponseDetails } from "./clientResponseDetails";
