@@ -4,7 +4,7 @@
     "url": "https://github.com/OctopusDeploy/api-client.ts/issues"
   },
   "dependencies": {
-    "@octopusdeploy/message-contracts": "^1.2.0",
+    "@octopusdeploy/message-contracts": "^1.3.0",
     "axios": "^0.27.2",
     "glob": "^8.0.3",
     "hpagent": "^1.0.0",
