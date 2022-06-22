@@ -1,7 +1,7 @@
 import type { ResourceCollection, ResourceWithId } from "@octopusdeploy/message-contracts";
-import type { Client, GlobalAndSpaceRootLinks } from "../client";
 import type { Dictionary } from "lodash";
 import { chunk, flatten } from "lodash";
+import type { Client, GlobalAndSpaceRootLinks } from "../client";
 import type { RouteArgs } from "../resolver";
 
 export type ListArgs = {

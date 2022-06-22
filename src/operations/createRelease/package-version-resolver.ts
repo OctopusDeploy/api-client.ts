@@ -1,8 +1,8 @@
 import glob from "glob";
 import path from "path";
 import { SemVer, valid } from "semver";
-import { PackageIdentity } from "./package-identity";
 import { Client } from "../../client";
+import { PackageIdentity } from "./package-identity";
 
 const WildCard = "*";
 
@@ -31,7 +31,7 @@ export class PackageVersionResolver implements IPackageVersionResolver {
     async addFolder(folderPath: string) {
         const retrievePackages = async (pattern: string): Promise<string[]> => {
             return new Promise((resolve, reject) => {
-                glob(`${folderPath}/**/${pattern}`, { }, (err, matches) => {
+                glob(`${folderPath}/**/${pattern}`, {}, (err, matches) => {
                     if (err) {
                         reject(err);
                         return;

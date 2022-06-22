@@ -6,13 +6,13 @@ import type {
     ActionTemplateSearchResource,
     ActionTemplateUsageResource,
     ActionUpdateResource,
-    CommunityActionTemplateResource
+    CommunityActionTemplateResource,
 } from "@octopusdeploy/message-contracts";
-import { BasicRepository, ListArgs } from "./basicRepository";
 import type { Client } from "../client";
+import { BasicRepository, ListArgs } from "./basicRepository";
 
 export type ActionTemplateRepositoryListArgs = {
-    ids?: string[],
+    ids?: string[];
     partialName?: string;
 } & ListArgs;
 
@@ -42,7 +42,12 @@ export class ActionTemplateRepository extends BasicRepository<ActionTemplateReso
         return this.client.get<ActionTemplateSearchResource[]>(this.client.getLink("ActionTemplatesSearch"), args);
     }
 
-    updateActions(actionTemplate: Partial<ActionTemplateResource>, actionsToUpdate: ActionsUpdateProcessResource[], defaults: ActionProperties = {}, overrides: ActionProperties = {}) {
+    updateActions(
+        actionTemplate: Partial<ActionTemplateResource>,
+        actionsToUpdate: ActionsUpdateProcessResource[],
+        defaults: ActionProperties = {},
+        overrides: ActionProperties = {}
+    ) {
         const resource: ActionUpdateResource = {
             ActionsToUpdate: actionsToUpdate,
             Overrides: overrides || {},
