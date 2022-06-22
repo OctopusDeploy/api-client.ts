@@ -4,7 +4,7 @@ import type { ClientConfiguration } from "./clientConfiguration";
 describe("client", () => {
     test("throws with invalid configuration", async () => {
         const clientConfiguration: ClientConfiguration = {
-            apiKey: "qwe",
+            apiKey: "API-XXXXXXXXXXXXXXXXXXXXXXXX",
             apiUri: "123",
             autoConnect: true,
         };
