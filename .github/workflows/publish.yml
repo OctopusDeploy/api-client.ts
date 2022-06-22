@@ -12,6 +12,7 @@ jobs:
         with:
           command: github-release
           release-type: node
+          token: ${{ secrets.INTEGRATIONS_FNM_BOT_TOKEN }}
       - uses: actions/checkout@v3
         if: ${{ steps.release.outputs.release_created }}
         with:
