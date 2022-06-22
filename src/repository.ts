@@ -1,3 +1,4 @@
+import { SpaceResource } from "@octopusdeploy/message-contracts";
 import { DeploymentProcessRepository } from ".";
 import type { Client } from "./client";
 import { AccountRepository } from "./repositories/accountRepository";
@@ -326,9 +327,9 @@ export class Repository implements OctopusSpaceRepository, OctopusSystemReposito
         return this.client.spaceId;
     }
 
-    async forSpace(spaceId: string): Promise<OctopusSpaceRepository> {
-        if (this.spaceId !== spaceId) {
-            return new Repository(await this.client.forSpace(spaceId));
+    async forSpace(space: SpaceResource): Promise<OctopusSpaceRepository> {
+        if (this.spaceId !== space.Id) {
+            return new Repository(await this.client.forSpace(space.Id));
         }
 
         return this;
