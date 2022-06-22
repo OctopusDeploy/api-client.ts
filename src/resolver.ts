@@ -15,7 +15,7 @@ type RouteParameter = RouteParameterSimpleTypes | RouteParameterSimpleTypes[] | 
 type RouteArgLookup = { [key: string]: RouteParameter };
 export type RouteArgs<TOther extends RouteArgLookup = RouteArgLookup> = Pick<TOther, keyof TOther> | TOther;
 
-class Resolver {
+export class Resolver {
     private baseUri: string;
     private rootUri: string;
     constructor(baseUri: string) {
@@ -55,5 +55,3 @@ class Resolver {
         return result;
     }
 }
-
-export default Resolver;

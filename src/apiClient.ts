@@ -1,10 +1,10 @@
+import { OctopusError } from "@octopusdeploy/message-contracts";
 import type { Adapter, AdapterResponse } from "./adapter";
 import { AdapterError } from "./adapter";
-import type { ClientOptions } from "./clientOptions";
-import { OctopusError } from "@octopusdeploy/message-contracts";
-import { ResponseDetails } from "./responseDetails";
-import { ClientErrorResponseDetails } from "./clientErrorResponseDetails";
 import { AxiosAdapter } from "./adapters/axiosAdapter";
+import { ClientErrorResponseDetails } from "./clientErrorResponseDetails";
+import type { ClientOptions } from "./clientOptions";
+import { ResponseDetails } from "./responseDetails";
 
 export default class ApiClient<TResource> {
     options: ClientOptions;
@@ -19,13 +19,13 @@ export default class ApiClient<TResource> {
         try {
             const response = await this.adapter.execute(this.options);
             this.handleSuccess(response);
-        }
-        catch (error: unknown) {
+        } catch (error: unknown) {
             if (error instanceof AdapterError) {
                 this.handleError(error);
-            } 
-            else if (error instanceof Error) {
+            } else if (error instanceof Error) {
                 this.options.error(error);
+            } else {
+                this.options.error(Error(`An unknown error occurred: ${error}`));
             }
         }
     }
@@ -40,13 +40,12 @@ export default class ApiClient<TResource> {
             this.options.onResponseCallback(details);
         }
 
-        let responseText: string = '';
+        let responseText: string = "";
 
-        if (this.options.raw)
-        {
+        if (this.options.raw) {
             responseText = response.data as unknown as string;
         } else {
-            responseText = JSON.stringify(response.data)
+            responseText = JSON.stringify(response.data);
             if (responseText && responseText.length > 0) {
                 responseText = JSON.parse(responseText);
             }
