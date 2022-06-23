@@ -1,6 +1,6 @@
 export class CouldNotFindError extends Error {
     static createWhat(what: string, quotedName: string | null = null): CouldNotFindError {
-        const message = quotedName == null ? what : `${what} '${quotedName}'`;
+        const message = quotedName === null ? what : `${what} '${quotedName}'`;
         const e = new CouldNotFindError(`Could not find ${message}; either it does not exist or you lack permissions to view it.`);
 
         return e;
