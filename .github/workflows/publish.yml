@@ -10,7 +10,6 @@ jobs:
       - uses: google-github-actions/release-please-action@v3
         id: release
         with:
-          command: github-release
           release-type: node
           token: ${{ secrets.INTEGRATIONS_FNM_BOT_TOKEN }}
       - uses: actions/checkout@v3
