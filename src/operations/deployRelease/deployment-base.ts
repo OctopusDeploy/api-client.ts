@@ -230,7 +230,7 @@ export abstract class DeploymentBase {
         }
 
         // Validate form values supplied
-        if (preview.Form != null && preview.Form.Elements != null && preview.Form.Values != null)
+        if (preview.Form !== null && preview.Form.Elements !== null && preview.Form.Values !== null)
             for (const element of preview.Form.Elements) {
                 if (element.Control.Type !== ControlType.VariableValue) continue;
 
