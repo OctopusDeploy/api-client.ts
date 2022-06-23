@@ -1,36 +1,36 @@
-import { ClientConfiguration } from "../../clientConfiguration";
-import { connect } from "../connect";
-import { throwIfUndefined } from "../throw-if-undefined";
-import { DashboardItemResource, EnvironmentResource, ProjectResource, TaskState } from "@octopusdeploy/message-contracts";
-import { Client } from "../../client";
-import { OctopusSpaceRepository } from "../../repository";
+import { DashboardItemResource, EnvironmentResource, ProjectResource, SpaceResource, TaskState } from "@octopusdeploy/message-contracts";
 import { SemVer } from "semver";
-import { CouldNotFindError } from "../could-not-find-error";
-import { DeploymentOptions } from "../deployRelease/deployment-options";
-import { DeploymentBase } from "../deployRelease/deployment-base";
+import { Client } from "../../client";
+import { processConfiguration } from "../../clientConfiguration";
 import { DashboardItemsOptions } from "../../repositories/dashboardRepository";
+import { OctopusSpaceRepository } from "../../repository";
+import { connect } from "../connect";
+import { CouldNotFindError } from "../could-not-find-error";
+import { DeploymentBase } from "../deployRelease/deployment-base";
+import { DeploymentOptions } from "../deployRelease/deployment-options";
+import { throwIfUndefined } from "../throw-if-undefined";
 
 export async function promoteRelease(
-    configuration: ClientConfiguration,
-    space: string,
-    project: string,
-    from: string,
+    space: SpaceResource,
+    project: ProjectResource,
+    from: EnvironmentResource,
     deployTo: string[],
     lastSuccessful?: boolean | undefined,
     updateVariables?: boolean | undefined,
     deploymentOptions?: Partial<DeploymentOptions>
 ): Promise<void> {
-    const [repository, client] = await connect(configuration, space);
+    const [repository, client] = await connect(space);
 
     const proj = await throwIfUndefined<ProjectResource>(
         async (nameOrId) => repository.projects.find(nameOrId),
         async (id) => repository.projects.get(id),
         "Projects",
         "project",
-        project
+        project.Id
     );
 
-    await new PromoteRelease(client, repository, configuration.apiUri, proj, deployTo, deploymentOptions).execute(from, lastSuccessful, updateVariables);
+    const configuration = processConfiguration();
+    await new PromoteRelease(client, repository, configuration.apiUri, proj, deployTo, deploymentOptions).execute(from.Name, lastSuccessful, updateVariables);
 }
 
 class PromoteRelease extends DeploymentBase {
