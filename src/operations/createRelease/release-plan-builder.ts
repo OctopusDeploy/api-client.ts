@@ -52,7 +52,7 @@ export class ReleasePlanBuilder {
             )
         );
 
-        if (rule == null) return filters;
+        if (rule === null || rule === undefined) return filters;
 
         if (!rule.VersionRange) filters["versionRange"] = rule.VersionRange;
 
@@ -82,12 +82,12 @@ export class ReleasePlanBuilder {
     ) {
         if (project.IsVersionControlled) throw new Error(GitReferenceMissingForVersionControlledProjectErrorMessage);
 
-        repository.client.debug("Finding deployment process...");
+        console.debug("Finding deployment process...");
         const deploymentProcess = await repository.deploymentProcesses.get(project.DeploymentProcessId, undefined);
         if (deploymentProcess === undefined) throw new CouldNotFindError(`a deployment process for project ${project.Name}`);
 
-        repository.client.debug("Finding release template...");
-        const releaseTemplate = await repository.deploymentProcesses.getTemplate(deploymentProcess, channel as ChannelResource);
+        console.debug("Finding release template...");
+        const releaseTemplate = await repository.deploymentProcesses.getTemplate(deploymentProcess, channel);
         if (releaseTemplate === undefined)
             throw new CouldNotFindError(
                 channel ? `a release template for project ${project.Name} and channel ${channel.Name}` : `a release template for project ${project.Name}`
@@ -109,11 +109,11 @@ export class ReleasePlanBuilder {
 
         if (!project.IsVersionControlled) throw new Error(ReleasePlanBuilder.gitReferenceSuppliedForDatabaseProjectErrorMessage(gitObjectName));
 
-        repository.client.debug(`Finding deployment process at git ${gitObjectName}...`);
+        console.debug(`Finding deployment process at git ${gitObjectName}...`);
         const deploymentProcess = await repository.deploymentProcesses.get(project.DeploymentProcessId, gitObject);
         if (deploymentProcess === undefined) throw new CouldNotFindError(`a deployment process for project ${project.Name} and git ${gitObjectName}`);
 
-        repository.client.debug(`Finding release template at git ${gitObjectName}...`);
+        console.debug(`Finding release template at git ${gitObjectName}...`);
         const releaseTemplate = await repository.deploymentProcesses.getTemplate(deploymentProcess, channel);
         if (releaseTemplate === undefined)
             throw new CouldNotFindError(`a release template for project ${project.Name}, channel ${channel.Name} and git ${gitObjectName}`);
@@ -132,21 +132,21 @@ export class ReleasePlanBuilder {
         const plan = new ReleasePlan(project, channel, releaseTemplate, deploymentProcess, this.versionResolver);
 
         if (plan.unresolvedSteps.length > 0) {
-            repository.client.debug("The package version for some steps was not specified. Going to try and resolve those automatically...");
+            console.debug("The package version for some steps was not specified. Attempting to resolve those automatically...");
 
             const allRelevantFeeds = await ReleasePlanBuilder.loadFeedsForSteps(repository, project, plan.unresolvedSteps);
 
             for (const unresolved of plan.unresolvedSteps) {
                 if (!unresolved.isResolvable) {
-                    repository.client.error(
-                        `The version number for step '${unresolved.actionName}' cannot be automatically resolved because the feed or package ID is dynamic.`
+                    console.error(
+                        `The version number for step, '${unresolved.actionName}' cannot be automatically resolved because the feed or package ID is dynamic.`
                     );
                     continue;
                 }
 
                 if (versionPreReleaseTag)
-                    repository.client.debug(`Finding latest package with pre-release '${versionPreReleaseTag}' for step: ${unresolved.actionName}`);
-                else repository.client.debug(`Finding latest package for step: ${unresolved.actionName}`);
+                    console.debug(`Finding latest package with pre-release '${versionPreReleaseTag}' for step, ${unresolved.actionName}...`);
+                else console.debug(`Finding latest package for step, ${unresolved.actionName}...`);
 
                 if (!allRelevantFeeds.has(unresolved.packageFeedId as string)) {
                     throw new Error(`Could not find a feed with ID ${unresolved.packageFeedId}, which is used by step: ${unresolved.actionName}`);
@@ -160,11 +160,9 @@ export class ReleasePlanBuilder {
                 const latestPackage = packages[0];
 
                 if (packages.length === 0) {
-                    repository.client.info(
-                        `Could not find any packages with ID '${unresolved.packageId}' that match the channel filter, in the feed '${feed.Name}'`
-                    );
+                    console.info(`Could not find any packages with ID '${unresolved.packageId}' that match the channel filter, in the feed '${feed.Name}'`);
                 } else {
-                    repository.client.debug(`Selected '${latestPackage.PackageId}' version '${latestPackage.Version}' for '${unresolved.actionName}'`);
+                    console.debug(`Selected '${latestPackage.PackageId}' version '${latestPackage.Version}' for '${unresolved.actionName}'`);
                     unresolved.setVersionFromLatest(latestPackage.Version);
                 }
             }
