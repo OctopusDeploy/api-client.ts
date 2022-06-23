@@ -52,7 +52,7 @@ describe("promote a release", () => {
         const lifecycle = (await repository.lifecycles.list({ take: 1 })).Items[0];
         const projectName = uniqueName();
 
-        console.log(`Creating ${projectName} project`);
+        console.log(`Creating ${projectName} project...`);
         project = await repository.projects.create(NewProject(projectName, projectGroup, lifecycle));
 
         const deploymentProcess = await repository.deploymentProcesses.get(project.DeploymentProcessId, undefined);
@@ -127,7 +127,9 @@ describe("promote a release", () => {
     });
 
     afterEach(async () => {
-        console.log(`Deleting ${space?.Name} space...`);
+        if (space === undefined || space === null) return;
+
+        console.log(`Deleting ${space.Name} space...`);
         space.TaskQueueStopped = true;
         await systemRepository.spaces.modify(space);
         await systemRepository.spaces.del(space);

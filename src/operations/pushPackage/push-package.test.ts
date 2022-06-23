@@ -86,7 +86,9 @@ describe("push package", () => {
     });
 
     afterEach(async () => {
-        console.log(`Deleting ${space.Name} space`);
+        if (space === undefined || space === null) return;
+
+        console.log(`Deleting ${space.Name} space...`);
         space.TaskQueueStopped = true;
         await systemRepository.spaces.modify(space);
         await systemRepository.spaces.del(space);

@@ -1,4 +1,4 @@
-import { SpaceResource } from "@octopusdeploy/message-contracts";
+import { NewSpace, SpaceResource } from "@octopusdeploy/message-contracts";
 import AdmZip from "adm-zip";
 import { mkdtemp, readFile, rm } from "fs/promises";
 import { tmpdir } from "os";
@@ -42,14 +42,9 @@ describe("push build information", () => {
         const user = await systemRepository.users.getCurrent();
 
         const spaceName = uniqueName();
-        console.log(`Creating ${spaceName} space`);
-        space = await systemRepository.spaces.create({
-            IsDefault: false,
-            Name: spaceName,
-            SpaceManagersTeamMembers: [user.Id],
-            SpaceManagersTeams: [],
-            TaskQueueStopped: false,
-        });
+        console.log(`Creating ${spaceName} space...`);
+
+        space = await systemRepository.spaces.create(NewSpace(spaceName, undefined, [user]));
         repository = await systemRepository.forSpace(space);
     });
 
@@ -92,7 +87,9 @@ describe("push build information", () => {
     });
 
     afterEach(async () => {
-        console.log(`Deleting ${space.Name} space`);
+        if (space === undefined || space === null) return;
+
+        console.log(`Deleting ${space.Name} space...`);
         space.TaskQueueStopped = true;
         await systemRepository.spaces.modify(space);
         await systemRepository.spaces.del(space);
