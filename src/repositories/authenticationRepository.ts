@@ -1,6 +1,6 @@
 import type { AuthenticationResource, LoginInitiatedResource } from "@octopusdeploy/message-contracts";
-import { BasicRepository } from "./basicRepository";
 import type { Client } from "../client";
+import { BasicRepository } from "./basicRepository";
 
 export class AuthenticationRepository extends BasicRepository<AuthenticationResource, AuthenticationResource> {
     constructor(client: Client) {

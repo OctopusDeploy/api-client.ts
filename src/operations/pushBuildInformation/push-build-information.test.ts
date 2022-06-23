@@ -1,18 +1,15 @@
+import { NewSpace, SpaceResource } from "@octopusdeploy/message-contracts";
+import AdmZip from "adm-zip";
+import { mkdtemp, readFile, rm } from "fs/promises";
+import { tmpdir } from "os";
+import path from "path";
 import { Config, starWars, uniqueNamesGenerator } from "unique-names-generator";
 import { Client } from "../../client";
 import { OctopusSpaceRepository, Repository } from "../../repository";
-import { SpaceResource } from "@octopusdeploy/message-contracts";
-import { ClientConfiguration } from "../../clientConfiguration";
-import {mkdtemp, readFile, rm} from "fs/promises";
 import { PackageIdentity } from "../createRelease/package-identity";
-import path from "path";
-import { tmpdir } from "os";
-import AdmZip from "adm-zip";
 import { pushBuildInformation } from "./push-build-information";
 
 describe("push build information", () => {
-    let configuration: ClientConfiguration;
-    let serverEndpoint: string;
     let space: SpaceResource;
     let systemRepository: Repository;
     let repository: OctopusSpaceRepository;
@@ -40,28 +37,15 @@ describe("push build information", () => {
     });
 
     beforeEach(async () => {
-        serverEndpoint = process.env.OCTOPUS_SERVER as string;
-
-        configuration = {
-            autoConnect: true,
-            apiUri: serverEndpoint,
-            apiKey: process.env.OCTOPUS_API_KEY as string,
-        };
-
-        const client = await Client.create(configuration);
+        const client = await Client.create();
         systemRepository = new Repository(client);
         const user = await systemRepository.users.getCurrent();
 
         const spaceName = uniqueName();
-        console.log(`Creating ${spaceName} space`);
-        space = await systemRepository.spaces.create({
-            IsDefault: false,
-            Name: spaceName,
-            SpaceManagersTeamMembers: [user.Id],
-            SpaceManagersTeams: [],
-            TaskQueueStopped: false,
-        });
-        repository = await systemRepository.forSpace(space.Id);
+        console.log(`Creating ${spaceName} space...`);
+
+        space = await systemRepository.spaces.create(NewSpace(spaceName, undefined, [user]));
+        repository = await systemRepository.forSpace(space);
     });
 
     test("to single package", async () => {
@@ -75,7 +59,7 @@ describe("push build information", () => {
             await repository.packages.upload(new File([buffer], fileName));
         }
 
-        await pushBuildInformation(configuration, space.Id, [{ id: "Hello", version: "1.0.0" }], {
+        await pushBuildInformation(space, [{ id: "Hello", version: "1.0.0" }], {
             buildEnvironment: "BitBucket",
             branch: "main",
             buildNumber: "288",
@@ -103,7 +87,9 @@ describe("push build information", () => {
     });
 
     afterEach(async () => {
-        console.log(`Deleting ${space.Name} space`);
+        if (space === undefined || space === null) return;
+
+        console.log(`Deleting ${space.Name} space...`);
         space.TaskQueueStopped = true;
         await systemRepository.spaces.modify(space);
         await systemRepository.spaces.del(space);

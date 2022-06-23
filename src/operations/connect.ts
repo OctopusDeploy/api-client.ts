@@ -1,15 +1,11 @@
-import {ClientConfiguration} from "../clientConfiguration";
-import {Client} from "../client";
-import {OctopusSpaceRepository, Repository} from "../repository";
+import { SpaceResource } from "@octopusdeploy/message-contracts";
+import { Client } from "../client";
+import { OctopusSpaceRepository, Repository } from "../repository";
 
-export async function connect(configuration: ClientConfiguration, space: string): Promise<[repository: OctopusSpaceRepository, client: Client]> {
-    const client = await Client.create(configuration);
+export async function connect(space: SpaceResource): Promise<[repository: OctopusSpaceRepository, client: Client]> {
+    const client = await Client.create();
     if (client === undefined) {
-        throw new Error("client could not be constructed");
-    }
-
-    if (!client.isConnected() && !configuration.autoConnect) {
-        await client.connect((message, error) => error ? client.error("Could not connect", error) : client.info(message));
+        throw new Error("The API client failed initialize");
     }
 
     const repository = await new Repository(client).forSpace(space);

@@ -1,18 +1,18 @@
 import type {
     AccountResource,
+    AccountType,
     AccountUsageResource,
     AzureEnvironment,
-    AccountType,
     AzureWebSite,
     AzureWebSiteSlot,
-    NewAccountResource
+    NewAccountResource,
 } from "@octopusdeploy/message-contracts";
-import { BasicRepository, ListArgs } from "./basicRepository";
 import type { Client } from "../client";
+import { BasicRepository, ListArgs } from "./basicRepository";
 
 export type AccountRepositoryListArgs = {
     accountType?: AccountType[];
-    ids?: string[],
+    ids?: string[];
     orderBy?: string;
     partialName?: string;
 } & ListArgs;

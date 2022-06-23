@@ -1,8 +1,7 @@
-import { ClientConfiguration } from "../../clientConfiguration";
+import { OctopusPackageVersionBuildInformationMappedResource, SpaceResource } from "@octopusdeploy/message-contracts";
 import { OverwriteMode } from "../../repositories/packageRepository";
-import { PackageIdentity } from "../createRelease/package-identity";
 import { connect } from "../connect";
-import { OctopusPackageVersionBuildInformationMappedResource } from "@octopusdeploy/message-contracts";
+import { PackageIdentity } from "../createRelease/package-identity";
 
 export interface IOctopusBuildInformation {
     buildEnvironment: string;
@@ -21,16 +20,15 @@ export interface IOctopusBuildInformationCommit {
 }
 
 export async function pushBuildInformation(
-    configuration: ClientConfiguration,
-    space: string,
+    space: SpaceResource,
     packages: PackageIdentity[],
     buildInformation: IOctopusBuildInformation,
     overwriteMode: OverwriteMode = OverwriteMode.FailIfExists
 ): Promise<void> {
-    const [repository] = await connect(configuration, space);
+    const [repository] = await connect(space);
     const tasks: Promise<OctopusPackageVersionBuildInformationMappedResource>[] = [];
 
-    for (let pkg of packages) {
+    for (const pkg of packages) {
         tasks.push(
             repository.buildInformation.create(
                 {

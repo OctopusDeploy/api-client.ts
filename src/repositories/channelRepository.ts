@@ -8,15 +8,15 @@ import type {
     ModifyChannelOclCommand,
     NewChannelResource,
     ProjectResource,
-    ResourceCollection,
     ReleaseResource,
-    VersionRuleTestResponse
+    ResourceCollection,
+    VersionRuleTestResponse,
 } from "@octopusdeploy/message-contracts";
-import type { AllArgs, ListArgs } from "./basicRepository";
 import type { Client } from "../client";
-import { ProjectScopedRepository } from "./projectScopedRepository";
-import type ProjectRepository from "./projectRepository";
 import type { RouteArgs } from "../resolver";
+import type { AllArgs, ListArgs } from "./basicRepository";
+import type ProjectRepository from "./projectRepository";
+import { ProjectScopedRepository } from "./projectScopedRepository";
 
 type ChannelRepositoryListArgs = {
     name?: string;
@@ -57,7 +57,7 @@ export class ChannelRepository extends ProjectScopedRepository<ChannelResource, 
         const channels = await this.list({
             partialName: nameOrId,
         });
-        return channels.Items.find((e) => e.Name.localeCompare(nameOrId, undefined, { sensitivity: 'base' }) === 0);
+        return channels.Items.find((e) => e.Name.localeCompare(nameOrId, undefined, { sensitivity: "base" }) === 0);
     }
 
     ruleTest(searchOptions: SearchOptions) {
@@ -87,13 +87,13 @@ export class ChannelRepository extends ProjectScopedRepository<ChannelResource, 
         }
     }
 
-    createForProject(projectResource: ProjectResource, channel: ChannelResource, args: RouteArgs): Promise<ChannelResource> {
+    createForProject(projectResource: ProjectResource, channel: NewChannelResource, args: RouteArgs): Promise<ChannelResource> {
         const payload: CreateChannelCommand = channel;
         this.addCommitMessage(payload, args);
 
         if (payload !== undefined) {
             const link = projectResource.Links[this.collectionLinkName];
-            return this.client.create<ChannelResource, ChannelResource>(link, payload, args).then((r) => this.notifySubscribersToDataModifications(r));
+            return this.client.create<NewChannelResource, ChannelResource>(link, payload, args).then((r) => this.notifySubscribersToDataModifications(r));
         } else {
             return super.createForProject(projectResource, channel, args);
         }

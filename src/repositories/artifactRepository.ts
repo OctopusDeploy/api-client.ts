@@ -1,7 +1,7 @@
 import type { ArtifactResource } from "@octopusdeploy/message-contracts";
-import { BasicRepository } from "./basicRepository";
 import type { Client } from "../client";
 import type { ListArgs } from "./basicRepository";
+import { BasicRepository } from "./basicRepository";
 
 export type ArtifactListArgs = {
     order?: string;

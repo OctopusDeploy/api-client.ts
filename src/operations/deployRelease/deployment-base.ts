@@ -5,17 +5,16 @@ import {
     DeploymentTemplateResource,
     ProjectResource,
     ReleaseResource,
-    TenantResource
+    TenantResource,
 } from "@octopusdeploy/message-contracts";
-import {Client} from "../../client";
-import {OctopusSpaceRepository} from "../../repository";
-import {DeploymentOptions} from "./deployment-options";
-import {ExecutionResourceWaiter} from "./execution-resource-waiter";
-import {CouldNotFindError} from "../could-not-find-error";
-import {ControlType, VariableValue} from "@octopusdeploy/message-contracts/dist/form";
+import { ControlType, VariableValue } from "@octopusdeploy/message-contracts/dist/form";
 import moment from "moment";
-import {throwIfUndefined} from "../throw-if-undefined";
-
+import { Client } from "../../client";
+import { OctopusSpaceRepository } from "../../repository";
+import { CouldNotFindError } from "../could-not-find-error";
+import { throwIfUndefined } from "../throw-if-undefined";
+import { DeploymentOptions } from "./deployment-options";
+import { ExecutionResourceWaiter } from "./execution-resource-waiter";
 
 function deploymentOptionsDefaults(): DeploymentOptions {
     return {
@@ -42,11 +41,12 @@ export abstract class DeploymentBase {
     private promotionTargets: DeploymentPromotionTarget[] = [];
     protected readonly deploymentOptions: DeploymentOptions;
 
-    protected constructor(protected readonly client: Client,
-                          protected readonly repository: OctopusSpaceRepository,
-                          private readonly serverUrl: string,
-                          deploymentConfiguration?: Partial<DeploymentOptions>) {
-
+    protected constructor(
+        protected readonly client: Client,
+        protected readonly repository: OctopusSpaceRepository,
+        private readonly serverUrl: string,
+        deploymentConfiguration?: Partial<DeploymentOptions>
+    ) {
         this.deploymentOptions = {
             ...deploymentOptionsDefaults(),
             ...deploymentConfiguration,
@@ -82,10 +82,11 @@ export abstract class DeploymentBase {
 
         if (this.deploymentOptions.tenants.some((t) => t === "*")) {
             const tenantPromotions = releaseTemplate.TenantPromotions.filter((tp) =>
-                tp.PromoteTo.some((promo) =>
-                    promo.Name.localeCompare(environmentName, undefined, {
-                        sensitivity: "accent",
-                    }) === 0
+                tp.PromoteTo.some(
+                    (promo) =>
+                        promo.Name.localeCompare(environmentName, undefined, {
+                            sensitivity: "accent",
+                        }) === 0
                 )
             ).map((tp) => tp.Id);
             const tenants = await this.repository.tenants.all({
@@ -114,10 +115,14 @@ export abstract class DeploymentBase {
                 unDeployableTenants = deployableTenants
                     .filter((dt) => {
                         const tenantPromo = releaseTemplate.TenantPromotions.find((tp) => tp.Id === dt.Id);
-                        return tenantPromo === undefined || !tenantPromo?.PromoteTo.some((tdt) =>
-                            tdt.Name.localeCompare(environmentName, undefined, {
-                                sensitivity: "accent",
-                            }) === 0
+                        return (
+                            tenantPromo === undefined ||
+                            !tenantPromo?.PromoteTo.some(
+                                (tdt) =>
+                                    tdt.Name.localeCompare(environmentName, undefined, {
+                                        sensitivity: "accent",
+                                    }) === 0
+                            )
                         );
                     })
                     .map((dt) => dt.Name);
@@ -144,10 +149,11 @@ export abstract class DeploymentBase {
                     const tenantPromo = releaseTemplate.TenantPromotions.find((tp) => tp.Id === dt.Id);
                     return (
                         tenantPromo !== undefined &&
-                        tenantPromo.PromoteTo.some((tdt) =>
-                            tdt.Name.localeCompare(environmentName, undefined, {
-                                sensitivity: "accent",
-                            }) === 0
+                        tenantPromo.PromoteTo.some(
+                            (tdt) =>
+                                tdt.Name.localeCompare(environmentName, undefined, {
+                                    sensitivity: "accent",
+                                }) === 0
                         )
                     );
                 }).filter((tenant) => !deployableTenants.some((deployable) => deployable.Id === tenant.Id));
@@ -224,7 +230,7 @@ export abstract class DeploymentBase {
         }
 
         // Validate form values supplied
-        if (preview.Form != null && preview.Form.Elements != null && preview.Form.Values != null)
+        if (preview.Form !== null && preview.Form.Elements !== null && preview.Form.Values !== null)
             for (const element of preview.Form.Elements) {
                 if (element.Control.Type !== ControlType.VariableValue) continue;
 
@@ -302,10 +308,11 @@ export abstract class DeploymentBase {
         this.logScheduledDeployment();
 
         const createTasks = deploymentTenants.map(async (tenant) => {
-            const promotion = releaseTemplate.TenantPromotions.find((t) => t.Id === tenant.Id)?.PromoteTo.find((tt) =>
-                tt.Name.localeCompare(environment.Name, undefined, {
-                    sensitivity: "accent",
-                }) === 0
+            const promotion = releaseTemplate.TenantPromotions.find((t) => t.Id === tenant.Id)?.PromoteTo.find(
+                (tt) =>
+                    tt.Name.localeCompare(environment.Name, undefined, {
+                        sensitivity: "accent",
+                    }) === 0
             );
 
             this.promotionTargets.push(promotion as DeploymentPromotionTarget);

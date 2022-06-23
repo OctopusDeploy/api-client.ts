@@ -1,34 +1,34 @@
-import { ClientConfiguration } from "../../clientConfiguration";
-import { connect } from "../connect";
-import { throwIfUndefined } from "../throw-if-undefined";
-import { ChannelResource, ProjectResource, ReleaseResource, ResourceCollection } from "@octopusdeploy/message-contracts";
-import { DeploymentBase } from "./deployment-base";
-import { Client } from "../../client";
-import { OctopusSpaceRepository } from "../../repository";
-import { DeploymentOptions } from "./deployment-options";
+import { ChannelResource, ProjectResource, ReleaseResource, ResourceCollection, SpaceResource } from "@octopusdeploy/message-contracts";
 import { SemVer } from "semver";
+import { Client } from "../../client";
+import { processConfiguration } from "../../clientConfiguration";
+import { OctopusSpaceRepository } from "../../repository";
+import { connect } from "../connect";
 import { CouldNotFindError } from "../could-not-find-error";
+import { throwIfUndefined } from "../throw-if-undefined";
+import { DeploymentBase } from "./deployment-base";
+import { DeploymentOptions } from "./deployment-options";
 
 export async function deployRelease(
-    configuration: ClientConfiguration,
-    space: string,
-    project: string,
+    space: SpaceResource,
+    project: ProjectResource,
     version: string | "latest",
     deployTo: string[],
     channel?: string | undefined,
     updateVariables?: boolean | undefined,
     deploymentOptions?: Partial<DeploymentOptions>
 ): Promise<void> {
-    const [repository, client] = await connect(configuration, space);
+    const [repository, client] = await connect(space);
 
     const proj = await throwIfUndefined<ProjectResource>(
         async (nameOrId) => await repository.projects.find(nameOrId),
         async (id) => repository.projects.get(id),
         "Projects",
         "project",
-        project
+        project.Id
     );
 
+    const configuration = processConfiguration();
     await new DeployRelease(client, repository, configuration.apiUri, proj, deployTo, deploymentOptions).execute(version, channel, updateVariables);
 }
 
@@ -48,7 +48,7 @@ class DeployRelease extends DeploymentBase {
     }
 
     async execute(version: string, channel: string | undefined, updateVariables: boolean | undefined = false) {
-        let channelResource: ChannelResource | undefined;
+        let channelResource: ChannelResource | undefined = undefined;
         if (channel) {
             channelResource = await throwIfUndefined<ChannelResource>(
                 async (nameOrId) => await this.repository.channels.find(nameOrId),
@@ -69,11 +69,10 @@ class DeployRelease extends DeploymentBase {
     }
 
     async getReleaseByVersion(versionNumber: string, project: ProjectResource, channel: ChannelResource | undefined) {
-        let message: string;
-        let releaseToPromote: ReleaseResource | undefined;
-        
+        let releaseToPromote: ReleaseResource | undefined = undefined;
+
         if (versionNumber === "latest") {
-            message = channel == null ? "latest release for project" : `latest release in channel '${channel.Name}'`;
+            const message = channel === null ? "latest release for project" : `latest release in channel '${channel?.Name}'`;
 
             this.client.debug(`Finding ${message}`);
 
@@ -97,8 +96,7 @@ class DeployRelease extends DeploymentBase {
                     });
                 }
             } else {
-                message = `release ${versionNumber}`;
-                this.client.debug(`Finding ${message}`);
+                this.client.debug(`Finding release ${versionNumber}`);
                 releaseToPromote = await this.repository.projects.getReleaseByVersion(project, versionNumber);
             }
         }

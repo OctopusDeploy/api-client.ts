@@ -1,4 +1,4 @@
-import {PackageIdentity} from "./package-identity";
+import { PackageIdentity } from "./package-identity";
 
 export interface ReleaseOptions {
     channel?: string | undefined;
