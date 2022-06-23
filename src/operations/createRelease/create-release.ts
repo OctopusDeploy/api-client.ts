@@ -1,20 +1,22 @@
-import { Client, ClientConfiguration, OctopusSpaceRepository } from "../../";
-import type {
+import {
     ChannelResource,
+    HasVersionControlledPersistenceSettings,
+    PersistenceSettingsType,
     ProjectResource,
-
+    ReleaseResource,
+    SpaceResource,
 } from "@octopusdeploy/message-contracts";
-import { PersistenceSettingsType, ReleaseResource } from "@octopusdeploy/message-contracts";
-import { HasVersionControlledPersistenceSettings } from "@octopusdeploy/message-contracts/dist/projectResource";
-import { ChannelVersionRuleTester } from "./channel-version-rule-tester";
-import { PackageVersionResolver } from "./package-version-resolver";
-import { ReleasePlan } from "./release-plan";
-import { ReleasePlanBuilder } from "./release-plan-builder";
-import { throwIfUndefined } from "../throw-if-undefined";
-import { ReleaseOptions } from "./release-options";
-import { DeploymentOptions } from "../deployRelease/deployment-options";
+import { Client, OctopusSpaceRepository } from "../../";
+import { processConfiguration } from "../../clientConfiguration";
 import { connect } from "../connect";
 import { DeploymentBase } from "../deployRelease/deployment-base";
+import { DeploymentOptions } from "../deployRelease/deployment-options";
+import { throwIfUndefined } from "../throw-if-undefined";
+import { ChannelVersionRuleTester } from "./channel-version-rule-tester";
+import { PackageVersionResolver } from "./package-version-resolver";
+import { ReleaseOptions } from "./release-options";
+import { ReleasePlan } from "./release-plan";
+import { ReleasePlanBuilder } from "./release-plan-builder";
 
 function releaseOptionsDefaults(): ReleaseOptions {
     return {
@@ -26,23 +28,22 @@ function releaseOptionsDefaults(): ReleaseOptions {
 }
 
 export async function createRelease(
-    configuration: ClientConfiguration,
-    space: string,
-    project: string,
+    space: SpaceResource,
+    project: ProjectResource,
     releaseOptions?: Partial<ReleaseOptions>,
     deploymentOptions?: Partial<DeploymentOptions>
 ): Promise<void> {
-
-    const [repository, client] = await connect(configuration, space);
+    const [repository, client] = await connect(space);
 
     const proj = await throwIfUndefined<ProjectResource>(
         async (nameOrId) => await repository.projects.find(nameOrId),
         async (id) => repository.projects.get(id),
         "Projects",
         "project",
-        project
+        project.Name
     );
 
+    const configuration = processConfiguration();
     await new CreateRelease(client, repository, configuration.apiUri, proj, releaseOptions, deploymentOptions).execute();
 }
 
@@ -93,6 +94,7 @@ class CreateRelease extends DeploymentBase {
         }
 
         const plan = await this.buildReleasePlan();
+        if (!plan) return;
 
         if (this.releaseOptions.releaseNumber) {
             this.versionNumber = this.releaseOptions.releaseNumber;
@@ -103,7 +105,7 @@ class CreateRelease extends DeploymentBase {
         } else if (plan.releaseTemplate.VersioningPackageStepName) {
             this.versionNumber = plan.getActionVersionNumber(
                 plan.releaseTemplate.VersioningPackageStepName,
-                plan.releaseTemplate.VersioningPackageReferenceName as string | undefined
+                plan.releaseTemplate.VersioningPackageReferenceName
             );
             this.client.debug(`Using version number from package step: ${this.versionNumber}`);
         } else {
@@ -163,15 +165,12 @@ class CreateRelease extends DeploymentBase {
             await this.releaseNotesFallBackToDeploymentSettings();
 
             const releaseResource: Partial<ReleaseResource> = {
-                Version: this.versionNumber,
+                ChannelId: plan.channel?.Id,
                 ProjectId: this.project.Id,
+                SelectedPackages: plan.getSelections(),
+                Version: this.versionNumber,
             };
-            if (plan.channel?.Id) {
-                releaseResource.ChannelId = plan.channel?.Id;
-            }
 
-            releaseResource.ReleaseNotes = "";
-            releaseResource.SelectedPackages = plan.getSelections();
             releaseResource.VersionControlReference =
                 this.project.PersistenceSettings.Type === PersistenceSettingsType.VersionControlled
                     ? {
@@ -179,6 +178,7 @@ class CreateRelease extends DeploymentBase {
                           GitCommit: this.releaseOptions.gitCommit,
                       }
                     : undefined;
+
             const release = await this.repository.releases.create(releaseResource as ReleaseResource, this.releaseOptions.ignoreChannelRules);
 
             this.client.info(`Release ${release.Version} created successfully!`);
@@ -255,9 +255,9 @@ class CreateRelease extends DeploymentBase {
         }
 
         if (viablePlans.length > 1 && viablePlans.some((p) => p.channel?.IsDefault)) {
-            const selectedPlan = viablePlans.find((p) => p.channel?.IsDefault) as ReleasePlan;
+            const selectedPlan = viablePlans.find((p) => p.channel?.IsDefault);
             this.client.info(
-                `Selected the release plan for Channel '${selectedPlan.channel?.Name}' - there were multiple matching Channels (${viablePlans
+                `Selected the release plan for Channel '${selectedPlan?.channel?.Name}' - there were multiple matching Channels (${viablePlans
                     .map((p) => p.channel?.Name)
                     .reduce((previousValue, currentValue) => `${previousValue},${currentValue}`, "")}) so we selected the default channel.`
             );
