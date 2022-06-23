@@ -105,15 +105,16 @@ describe("create a release", () => {
                 ],
             },
         ];
+
         console.log("Updating deployment process...");
         await repository.deploymentProcesses.saveToProject(project, deploymentProcess);
-
-        const machineName = uniqueName();
 
         console.log("Creating environment...");
         environment = await repository.environments.create({ Name: uniqueName() });
 
         console.log("Creating machine...");
+
+        const machineName = uniqueName();
 
         machine = await repository.machines.create(
             NewDeploymentTarget(
@@ -425,6 +426,7 @@ describe("create a release", () => {
     });
 
     afterEach(async () => {
+        console.log(`Deleting ${space?.Name} space...`);
         space.TaskQueueStopped = true;
         await systemRepository.spaces.modify(space);
         await systemRepository.spaces.del(space);
