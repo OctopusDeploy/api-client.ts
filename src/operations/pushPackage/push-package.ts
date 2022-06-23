@@ -1,11 +1,11 @@
-import {ClientConfiguration} from "../../clientConfiguration";
-import {readFile} from "fs/promises";
+import { SpaceResource } from "@octopusdeploy/message-contracts";
+import { readFile } from "fs/promises";
 import path from "path";
-import {OverwriteMode} from "../../repositories/packageRepository";
-import {connect} from "../connect";
+import { OverwriteMode } from "../../repositories/packageRepository";
+import { connect } from "../connect";
 
-export async function pushPackage(configuration: ClientConfiguration, space: string, packages: string[], overwriteMode: OverwriteMode = OverwriteMode.FailIfExists): Promise<void> {
-    const [repository] = await connect(configuration, space);
+export async function pushPackage(space: SpaceResource, packages: string[], overwriteMode: OverwriteMode = OverwriteMode.FailIfExists): Promise<void> {
+    const [repository] = await connect(space);
 
     const tasks: Promise<void>[] = [];
 
@@ -22,6 +22,6 @@ export async function pushPackage(configuration: ClientConfiguration, space: str
         const fileName = path.basename(filePath);
 
         console.log(`Uploading ${fileName} package`);
-        await repository.packages.upload(new File([buffer], fileName),  overwriteMode);
+        await repository.packages.upload(new File([buffer], fileName), overwriteMode);
     }
 }
