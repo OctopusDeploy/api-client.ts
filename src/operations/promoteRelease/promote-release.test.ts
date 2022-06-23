@@ -1,4 +1,3 @@
-import { ClientConfiguration } from "../../clientConfiguration";
 import {
     CommunicationStyle,
     DeploymentTargetResource,
@@ -10,18 +9,18 @@ import {
     StartTrigger,
     TenantedDeploymentMode,
 } from "@octopusdeploy/message-contracts";
-import { OctopusSpaceRepository, Repository } from "../../repository";
-import { Config, starWars, uniqueNamesGenerator } from "unique-names-generator";
-import { Client } from "../../client";
 import { PackageRequirement } from "@octopusdeploy/message-contracts/dist/deploymentStepResource";
 import { RunConditionForAction } from "@octopusdeploy/message-contracts/dist/runConditionForAction";
+import { Config, starWars, uniqueNamesGenerator } from "unique-names-generator";
+import { Client } from "../../client";
+import { ClientConfiguration } from "../../clientConfiguration";
+import { OctopusSpaceRepository, Repository } from "../../repository";
 import { createRelease } from "../createRelease/create-release";
 import { deployRelease } from "../deployRelease/deploy-release";
 import { promoteRelease } from "./promote-release";
 
 describe("promote a release", () => {
     let configuration: ClientConfiguration;
-    let serverEndpoint: string;
     let space: SpaceResource;
     let project: ProjectResource;
     let environment1: EnvironmentResource;
@@ -38,15 +37,7 @@ describe("promote a release", () => {
     }
 
     beforeEach(async () => {
-        serverEndpoint = process.env.OCTOPUS_SERVER as string;
-
-        configuration = {
-            autoConnect: true,
-            apiUri: serverEndpoint,
-            apiKey: process.env.OCTOPUS_API_KEY as string,
-        };
-
-        const client = await Client.create(configuration);
+        const client = await Client.create();
         systemRepository = new Repository(client);
         const user = await systemRepository.users.getCurrent();
 
@@ -59,7 +50,7 @@ describe("promote a release", () => {
             SpaceManagersTeams: [],
             TaskQueueStopped: false,
         });
-        repository = await systemRepository.forSpace(space.Id);
+        repository = await systemRepository.forSpace(space);
 
         const groupId = (await repository.projectGroups.list({ take: 1 })).Items[0].Id;
         const lifecycleId = (await repository.lifecycles.list({ take: 1 })).Items[0].Id;
@@ -106,8 +97,8 @@ describe("promote a release", () => {
                         Properties: {
                             "Octopus.Action.RunOnServer": "false",
                             "Octopus.Action.Script.ScriptSource": "Inline",
-                            "Octopus.Action.Script.Syntax": "Bash",
-                            "Octopus.Action.Script.ScriptBody": "echo 'hello'",
+                            "Octopus.Action.Script.Syntax": "CSharp",
+                            "Octopus.Action.Script.ScriptBody": 'Console.WriteLine("Hello");',
                         },
                         Links: {},
                     },
@@ -135,13 +126,13 @@ describe("promote a release", () => {
     });
 
     test("promote to single environment", async () => {
-        await createRelease(configuration, space.Id, project.Name);
+        await createRelease(space, project);
 
-        await deployRelease(configuration, space.Id, project.Name, "latest", [environment1.Name], undefined, false, {
+        await deployRelease(space, project, "latest", [environment1.Name], undefined, false, {
             waitForDeployment: true,
         });
 
-        await promoteRelease(configuration, space.Id, project.Name, environment1.Name, [environment2.Name], true, true, { waitForDeployment: true });
+        await promoteRelease(space, project, environment1, [environment2.Name], true, true, { waitForDeployment: true });
     });
 
     afterEach(async () => {

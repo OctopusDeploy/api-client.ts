@@ -1,19 +1,16 @@
-import {Config, starWars, uniqueNamesGenerator} from "unique-names-generator";
-import {Client} from "../../client";
-import {OctopusSpaceRepository, Repository} from "../../repository";
-import {SpaceResource} from "@octopusdeploy/message-contracts";
-import {ClientConfiguration} from "../../clientConfiguration";
-import {mkdtemp, rm} from "fs/promises";
-import {PackageIdentity} from "../createRelease/package-identity";
-import path from "path";
-import {tmpdir} from "os";
+import { SpaceResource } from "@octopusdeploy/message-contracts";
 import AdmZip from "adm-zip";
-import {pushPackage} from "./push-package";
-import {OverwriteMode} from "../../repositories/packageRepository";
+import { mkdtemp, rm } from "fs/promises";
+import { tmpdir } from "os";
+import path from "path";
+import { Config, starWars, uniqueNamesGenerator } from "unique-names-generator";
+import { Client } from "../../client";
+import { OverwriteMode } from "../../repositories/packageRepository";
+import { OctopusSpaceRepository, Repository } from "../../repository";
+import { PackageIdentity } from "../createRelease/package-identity";
+import { pushPackage } from "./push-package";
 
 describe("push package", () => {
-    let configuration: ClientConfiguration;
-    let serverEndpoint: string;
     let space: SpaceResource;
     let systemRepository: Repository;
     let repository: OctopusSpaceRepository;
@@ -41,15 +38,7 @@ describe("push package", () => {
     });
 
     beforeEach(async () => {
-        serverEndpoint = process.env.OCTOPUS_SERVER as string;
-
-        configuration = {
-            autoConnect: true,
-            apiUri: serverEndpoint,
-            apiKey: process.env.OCTOPUS_API_KEY as string,
-        };
-
-        const client = await Client.create(configuration);
+        const client = await Client.create();
         systemRepository = new Repository(client);
         const user = await systemRepository.users.getCurrent();
 
@@ -62,34 +51,34 @@ describe("push package", () => {
             SpaceManagersTeams: [],
             TaskQueueStopped: false,
         });
-        repository = await systemRepository.forSpace(space.Id);
+        repository = await systemRepository.forSpace(space);
     });
 
-    test('single package', async () => {
-        await pushPackage(configuration, space.Id, [path.join(tempOutDir, `Hello.1.0.0.zip`)], OverwriteMode.OverwriteExisting);
+    test("single package", async () => {
+        await pushPackage(space, [path.join(tempOutDir, `Hello.1.0.0.zip`)], OverwriteMode.OverwriteExisting);
 
-        const results = await repository.packages.list({filter: 'Hello'});
+        const results = await repository.packages.list({ filter: "Hello" });
 
         const result = await repository.packages.get(results.Items[0].Id);
 
-        expect(result.PackageId).toStrictEqual('Hello');
-        expect(result.Version).toStrictEqual('1.0.0');
+        expect(result.PackageId).toStrictEqual("Hello");
+        expect(result.Version).toStrictEqual("1.0.0");
     });
 
-    test('multiple packages', async () => {
-        await pushPackage(configuration, space.Id, [path.join(tempOutDir, `Hello.1.0.0.zip`), path.join(tempOutDir, `GoodBye.2.0.0.zip`)], OverwriteMode.OverwriteExisting);
+    test("multiple packages", async () => {
+        await pushPackage(space, [path.join(tempOutDir, `Hello.1.0.0.zip`), path.join(tempOutDir, `GoodBye.2.0.0.zip`)], OverwriteMode.OverwriteExisting);
 
-        let results = await repository.packages.list({filter: 'Hello'});
+        let results = await repository.packages.list({ filter: "Hello" });
         let result = await repository.packages.get(results.Items[0].Id);
 
-        expect(result.PackageId).toStrictEqual('Hello');
-        expect(result.Version).toStrictEqual('1.0.0');
+        expect(result.PackageId).toStrictEqual("Hello");
+        expect(result.Version).toStrictEqual("1.0.0");
 
-        results = await repository.packages.list({filter: 'GoodBye'});
+        results = await repository.packages.list({ filter: "GoodBye" });
         result = await repository.packages.get(results.Items[0].Id);
 
-        expect(result.PackageId).toStrictEqual('GoodBye');
-        expect(result.Version).toStrictEqual('2.0.0');
+        expect(result.PackageId).toStrictEqual("GoodBye");
+        expect(result.Version).toStrictEqual("2.0.0");
     });
 
     afterAll(async () => {

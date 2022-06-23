@@ -1,18 +1,15 @@
+import { SpaceResource } from "@octopusdeploy/message-contracts";
+import AdmZip from "adm-zip";
+import { mkdtemp, readFile, rm } from "fs/promises";
+import { tmpdir } from "os";
+import path from "path";
 import { Config, starWars, uniqueNamesGenerator } from "unique-names-generator";
 import { Client } from "../../client";
 import { OctopusSpaceRepository, Repository } from "../../repository";
-import { SpaceResource } from "@octopusdeploy/message-contracts";
-import { ClientConfiguration } from "../../clientConfiguration";
-import {mkdtemp, readFile, rm} from "fs/promises";
 import { PackageIdentity } from "../createRelease/package-identity";
-import path from "path";
-import { tmpdir } from "os";
-import AdmZip from "adm-zip";
 import { pushBuildInformation } from "./push-build-information";
 
 describe("push build information", () => {
-    let configuration: ClientConfiguration;
-    let serverEndpoint: string;
     let space: SpaceResource;
     let systemRepository: Repository;
     let repository: OctopusSpaceRepository;
@@ -40,15 +37,7 @@ describe("push build information", () => {
     });
 
     beforeEach(async () => {
-        serverEndpoint = process.env.OCTOPUS_SERVER as string;
-
-        configuration = {
-            autoConnect: true,
-            apiUri: serverEndpoint,
-            apiKey: process.env.OCTOPUS_API_KEY as string,
-        };
-
-        const client = await Client.create(configuration);
+        const client = await Client.create();
         systemRepository = new Repository(client);
         const user = await systemRepository.users.getCurrent();
 
@@ -61,7 +50,7 @@ describe("push build information", () => {
             SpaceManagersTeams: [],
             TaskQueueStopped: false,
         });
-        repository = await systemRepository.forSpace(space.Id);
+        repository = await systemRepository.forSpace(space);
     });
 
     test("to single package", async () => {
@@ -75,7 +64,7 @@ describe("push build information", () => {
             await repository.packages.upload(new File([buffer], fileName));
         }
 
-        await pushBuildInformation(configuration, space.Id, [{ id: "Hello", version: "1.0.0" }], {
+        await pushBuildInformation(space, [{ id: "Hello", version: "1.0.0" }], {
             buildEnvironment: "BitBucket",
             branch: "main",
             buildNumber: "288",

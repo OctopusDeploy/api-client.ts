@@ -1,29 +1,32 @@
-import {ClientConfiguration} from "../../clientConfiguration";
 import {
     CommunicationStyle,
     DeploymentTargetResource,
-    EnvironmentResource, NewDeploymentTargetResource,
-    ProjectResource, RunCondition,
-    SpaceResource, StartTrigger, TenantedDeploymentMode
+    EnvironmentResource,
+    NewDeploymentTargetResource,
+    ProjectResource,
+    RunCondition,
+    SpaceResource,
+    StartTrigger,
+    TenantedDeploymentMode,
 } from "@octopusdeploy/message-contracts";
-import {OctopusSpaceRepository, Repository} from "../../repository";
-import {Config, starWars, uniqueNamesGenerator} from "unique-names-generator";
-import {Client} from "../../client";
-import {PackageRequirement} from "@octopusdeploy/message-contracts/dist/deploymentStepResource";
-import {RunConditionForAction} from "@octopusdeploy/message-contracts/dist/runConditionForAction";
-import {createRelease} from "../createRelease/create-release";
-import {deployRelease} from "./deploy-release";
+import { PackageRequirement } from "@octopusdeploy/message-contracts/dist/deploymentStepResource";
+import { RunConditionForAction } from "@octopusdeploy/message-contracts/dist/runConditionForAction";
+import { Config, starWars, uniqueNamesGenerator } from "unique-names-generator";
+import { Client } from "../../client";
+import { ClientConfiguration } from "../../clientConfiguration";
+import { OctopusSpaceRepository, Repository } from "../../repository";
+import { createRelease } from "../createRelease/create-release";
+import { deployRelease } from "./deploy-release";
 
 describe("deploy a release", () => {
     let configuration: ClientConfiguration;
-    let serverEndpoint: string;
     let space: SpaceResource;
     let project: ProjectResource;
     let environment: EnvironmentResource;
     let systemRepository: Repository;
     let repository: OctopusSpaceRepository;
     let machine: DeploymentTargetResource;
-    const randomConfig: Config = {dictionaries: [starWars]};
+    const randomConfig: Config = { dictionaries: [starWars] };
 
     jest.setTimeout(100000);
 
@@ -32,15 +35,7 @@ describe("deploy a release", () => {
     }
 
     beforeEach(async () => {
-        serverEndpoint = process.env.OCTOPUS_SERVER as string;
-
-        configuration = {
-            autoConnect: true,
-            apiUri: serverEndpoint,
-            apiKey: process.env.OCTOPUS_API_KEY as string,
-        };
-
-        const client = await Client.create(configuration);
+        const client = await Client.create();
         systemRepository = new Repository(client);
         const user = await systemRepository.users.getCurrent();
 
@@ -53,10 +48,10 @@ describe("deploy a release", () => {
             SpaceManagersTeams: [],
             TaskQueueStopped: false,
         });
-        repository = await systemRepository.forSpace(space.Id);
+        repository = await systemRepository.forSpace(space);
 
-        const groupId = (await repository.projectGroups.list({take: 1})).Items[0].Id;
-        const lifecycleId = (await repository.lifecycles.list({take: 1})).Items[0].Id;
+        const groupId = (await repository.projectGroups.list({ take: 1 })).Items[0].Id;
+        const lifecycleId = (await repository.lifecycles.list({ take: 1 })).Items[0].Id;
         const projectName = uniqueName();
         console.log(`Creating ${projectName} project`);
         project = await repository.projects.create({
@@ -75,7 +70,7 @@ describe("deploy a release", () => {
                 StartTrigger: StartTrigger.StartAfterPrevious,
                 Id: "",
                 Name: uniqueName(),
-                Properties: {"Octopus.Action.TargetRoles": "deploy"},
+                Properties: { "Octopus.Action.TargetRoles": "deploy" },
                 Actions: [
                     {
                         Id: "",
@@ -100,8 +95,8 @@ describe("deploy a release", () => {
                         Properties: {
                             "Octopus.Action.RunOnServer": "false",
                             "Octopus.Action.Script.ScriptSource": "Inline",
-                            "Octopus.Action.Script.Syntax": "Bash",
-                            "Octopus.Action.Script.ScriptBody": "echo 'hello'",
+                            "Octopus.Action.Script.Syntax": "CSharp",
+                            "Octopus.Action.Script.ScriptBody": 'Console.WriteLine("Hello");',
                         },
                         Links: {},
                     },
@@ -112,7 +107,7 @@ describe("deploy a release", () => {
         await repository.deploymentProcesses.saveToProject(project, dp);
 
         console.log("Creating environment");
-        environment = await repository.environments.create({Name: uniqueName()});
+        environment = await repository.environments.create({ Name: uniqueName() });
 
         console.log("Creating machine");
 
@@ -128,10 +123,10 @@ describe("deploy a release", () => {
     });
 
     test("deploy to single environment", async () => {
-        await createRelease(configuration, space.Id, project.Name);
+        await createRelease(space, project);
 
-        await deployRelease(configuration, space.Id, project.Name, "latest", [environment.Name], undefined, false, {
-            waitForDeployment: true
+        await deployRelease(space, project, "latest", [environment.Name], undefined, false, {
+            waitForDeployment: true,
         });
     });
 
