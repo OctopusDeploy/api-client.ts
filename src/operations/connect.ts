@@ -5,7 +5,7 @@ import { OctopusSpaceRepository, Repository } from "../repository";
 export async function connect(space: SpaceResource): Promise<[repository: OctopusSpaceRepository, client: Client]> {
     const client = await Client.create();
     if (client === undefined) {
-        throw new Error("client could not be constructed");
+        throw new Error("The API client failed initialize");
     }
 
     const repository = await new Repository(client).forSpace(space);
