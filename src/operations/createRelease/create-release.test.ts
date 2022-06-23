@@ -97,8 +97,8 @@ describe("create a release", () => {
                         Properties: {
                             "Octopus.Action.RunOnServer": "false",
                             "Octopus.Action.Script.ScriptSource": "Inline",
-                            "Octopus.Action.Script.Syntax": "CSharp",
-                            "Octopus.Action.Script.ScriptBody": 'Console.WriteLine("Hello");',
+                            "Octopus.Action.Script.Syntax": "Bash",
+                            "Octopus.Action.Script.ScriptBody": "echo 'hello'",
                         },
                         Links: {},
                     },
@@ -369,8 +369,8 @@ describe("create a release", () => {
                             Properties: {
                                 "Octopus.Action.RunOnServer": "false",
                                 "Octopus.Action.Script.ScriptSource": "Inline",
-                                "Octopus.Action.Script.Syntax": "CSharp",
-                                "Octopus.Action.Script.ScriptBody": 'Console.WriteLine("Hello");',
+                                "Octopus.Action.Script.Syntax": "Bash",
+                                "Octopus.Action.Script.ScriptBody": "echo 'hello'",
                             },
                             Links: {},
                         },
