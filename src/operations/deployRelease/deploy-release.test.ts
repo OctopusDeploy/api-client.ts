@@ -4,6 +4,7 @@ import {
     EnvironmentResource,
     NewDeploymentTarget,
     NewEndpoint,
+    NewProject,
     NewSpace,
     ProjectResource,
     RunCondition,
