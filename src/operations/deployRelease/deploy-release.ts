@@ -1,25 +1,21 @@
-import { ChannelResource, ProjectResource, ReleaseResource, ResourceCollection, SpaceResource } from "@octopusdeploy/message-contracts";
+import { ChannelResource, EnvironmentResource, ProjectResource, ReleaseResource, ResourceCollection } from "@octopusdeploy/message-contracts";
 import { SemVer } from "semver";
-import { Client } from "../../client";
 import { processConfiguration } from "../../clientConfiguration";
 import { OctopusSpaceRepository } from "../../repository";
-import { connect } from "../connect";
 import { CouldNotFindError } from "../could-not-find-error";
 import { throwIfUndefined } from "../throw-if-undefined";
 import { DeploymentBase } from "./deployment-base";
 import { DeploymentOptions } from "./deployment-options";
 
 export async function deployRelease(
-    space: SpaceResource,
+    repository: OctopusSpaceRepository,
     project: ProjectResource,
     version: string | "latest",
-    deployTo: string[],
-    channel?: string | undefined,
+    deployTo: EnvironmentResource[],
+    channel?: ChannelResource,
     updateVariables?: boolean | undefined,
     deploymentOptions?: Partial<DeploymentOptions>
 ): Promise<void> {
-    const [repository, client] = await connect(space);
-
     const proj = await throwIfUndefined<ProjectResource>(
         async (nameOrId) => await repository.projects.find(nameOrId),
         async (id) => repository.projects.get(id),
@@ -29,25 +25,24 @@ export async function deployRelease(
     );
 
     const configuration = processConfiguration();
-    await new DeployRelease(client, repository, configuration.apiUri, proj, deployTo, deploymentOptions).execute(version, channel, updateVariables);
+    await new DeployRelease(repository, configuration.apiUri, proj, deployTo, deploymentOptions).execute(version, channel, updateVariables);
 }
 
 class DeployRelease extends DeploymentBase {
     constructor(
-        client: Client,
         repository: OctopusSpaceRepository,
         serverUrl: string,
         private readonly project: ProjectResource,
-        deployTo: string[],
+        deployTo: EnvironmentResource[],
         deploymentOptions?: Partial<DeploymentOptions>
     ) {
-        super(client, repository, serverUrl, {
+        super(repository, serverUrl, {
             ...deploymentOptions,
             ...{ deployTo: deployTo },
         });
     }
 
-    async execute(version: string, channel: string | undefined, updateVariables: boolean | undefined = false) {
+    async execute(version: string, channel?: ChannelResource, updateVariables: boolean | undefined = false) {
         let channelResource: ChannelResource | undefined = undefined;
         if (channel) {
             channelResource = await throwIfUndefined<ChannelResource>(
@@ -55,14 +50,14 @@ class DeployRelease extends DeploymentBase {
                 async (id) => this.repository.channels.get(id),
                 "Channels",
                 "channel",
-                channel
+                channel.Name
             );
         }
 
         const releaseToPromote = await this.getReleaseByVersion(version, this.project, channelResource);
 
         if (updateVariables) {
-            this.client.debug("Updating the release variable snapshot with variables from the project");
+            console.debug("Updating the release variable snapshot with variables from the project");
             await this.repository.releases.snapshotVariables(releaseToPromote);
         }
         await this.deployRelease(this.project, releaseToPromote);
@@ -74,7 +69,7 @@ class DeployRelease extends DeploymentBase {
         if (versionNumber === "latest") {
             const message = channel === null ? "latest release for project" : `latest release in channel '${channel?.Name}'`;
 
-            this.client.debug(`Finding ${message}`);
+            console.debug(`Finding ${message}`);
 
             const releases = await this.repository.projects.getReleases(project);
             const compareFn = (r1: ReleaseResource, r2: ReleaseResource) => {
@@ -96,7 +91,7 @@ class DeployRelease extends DeploymentBase {
                     });
                 }
             } else {
-                this.client.debug(`Finding release ${versionNumber}`);
+                console.debug(`Finding release ${versionNumber}`);
                 releaseToPromote = await this.repository.projects.getReleaseByVersion(project, versionNumber);
             }
         }
