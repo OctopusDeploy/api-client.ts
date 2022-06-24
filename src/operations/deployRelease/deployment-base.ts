@@ -9,7 +9,6 @@ import {
 } from "@octopusdeploy/message-contracts";
 import { ControlType, VariableValue } from "@octopusdeploy/message-contracts/dist/form";
 import moment from "moment";
-import { Client } from "../../client";
 import { OctopusSpaceRepository } from "../../repository";
 import { CouldNotFindError } from "../could-not-find-error";
 import { throwIfUndefined } from "../throw-if-undefined";
@@ -42,7 +41,6 @@ export abstract class DeploymentBase {
     protected readonly deploymentOptions: DeploymentOptions;
 
     protected constructor(
-        protected readonly client: Client,
         protected readonly repository: OctopusSpaceRepository,
         private readonly serverUrl: string,
         deploymentConfiguration?: Partial<DeploymentOptions>
@@ -80,7 +78,7 @@ export abstract class DeploymentBase {
 
         const deployableTenants: TenantResource[] = [];
 
-        if (this.deploymentOptions.tenants.some((t) => t === "*")) {
+        if (this.deploymentOptions.tenants.some((t) => t.Id === "*")) {
             const tenantPromotions = releaseTemplate.TenantPromotions.filter((tp) =>
                 tp.PromoteTo.some(
                     (promo) =>
@@ -94,10 +92,10 @@ export abstract class DeploymentBase {
             });
             deployableTenants.push(...tenants);
 
-            this.client.info(`Found ${deployableTenants.length} Tenants who can deploy ${project.Name} ${release.Version} to ${environmentName}`);
+            console.info(`Found ${deployableTenants.length} tenant(s) who can deploy ${project.Name} ${release.Version} to ${environmentName}`);
         } else {
             if (this.deploymentOptions.tenants.length > 0) {
-                const tenantsByNameOrId = await this.repository.tenants.find(this.deploymentOptions.tenants);
+                const tenantsByNameOrId = await this.repository.tenants.find(this.deploymentOptions.tenants.map((t) => t.Id));
                 deployableTenants.push(...tenantsByNameOrId);
 
                 let unDeployableTenants = deployableTenants.filter((dt) => !dt.ProjectEnvironments.hasOwnProperty(project.Id)).map((dt) => dt.Name);
@@ -201,7 +199,7 @@ export abstract class DeploymentBase {
 
     private logScheduledDeployment() {
         if (this.deploymentOptions.deployAt) {
-            this.client.info(`Deployment will be scheduled to start at ${this.deploymentOptions.deployAt.toLocaleString()}`);
+            console.info(`Deployment will be scheduled to start at ${this.deploymentOptions.deployAt.toLocaleString()}`);
         }
     }
 
@@ -220,11 +218,11 @@ export abstract class DeploymentBase {
         for (const step of this.deploymentOptions.skipStepNames) {
             const stepToExecute = preview.StepsToExecute.find((s) => s.ActionName === step);
             if (stepToExecute === undefined) {
-                this.client.warn(
+                console.warn(
                     `No step/action named '${step}' could be found when deploying to environment '${promotionTarget.Name}', so the step cannot be skipped.`
                 );
             } else {
-                this.client.debug(`Skipping step: ${stepToExecute.ActionName}`);
+                console.debug(`Skipping step: ${stepToExecute.ActionName}`);
                 skip.push(stepToExecute.ActionId);
             }
         }
@@ -260,7 +258,7 @@ export abstract class DeploymentBase {
 
         // Log step with no machines
         for (const previewStep of preview.StepsToExecute) {
-            if (previewStep.HasNoApplicableMachines) this.client.warn(`Warning: there are no applicable machines roles used by step ${previewStep.ActionName}`);
+            if (previewStep.HasNoApplicableMachines) console.warn(`Warning: there are no applicable machines roles used by step ${previewStep.ActionName}`);
         }
 
         const deployment = await this.repository.deployments.create({
@@ -279,7 +277,7 @@ export abstract class DeploymentBase {
             QueueTimeExpiry: this.deploymentOptions.noDeployAfter ? moment(this.deploymentOptions.noDeployAfter) : undefined,
         } as CreateDeploymentResource);
 
-        this.client.info(
+        console.info(
             `Deploying ${project.Name} ${release.Version} to: ${promotionTarget.Name} ${tenant === undefined ? "" : `for ${tenant.Name} `}(Guided Failure: ${
                 deployment.UseGuidedFailure ? "Enabled" : "Not Enabled"
             })`
@@ -296,7 +294,7 @@ export abstract class DeploymentBase {
             async (id) => this.repository.environments.get(id),
             "Environments",
             "Environment",
-            this.deploymentOptions.deployTo[0]
+            this.deploymentOptions.deployTo[0].Name
         );
 
         const releaseTemplate = await this.repository.releases.getDeploymentTemplate(release);
@@ -328,7 +326,7 @@ export abstract class DeploymentBase {
 
         const releaseTemplate = await this.repository.releases.getDeploymentTemplate(release);
 
-        const deployToEnvironments = await this.repository.environments.find(this.deploymentOptions.deployTo);
+        const deployToEnvironments = await this.repository.environments.find(this.deploymentOptions.deployTo.map((e) => e.Name));
 
         const promotingEnvironments = deployToEnvironments.map((environment) => ({
             name: environment.Name,
