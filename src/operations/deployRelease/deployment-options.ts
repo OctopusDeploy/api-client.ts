@@ -1,7 +1,9 @@
+import { EnvironmentResource, TenantResource } from "@octopusdeploy/message-contracts";
+
 export interface DeploymentOptions {
     cancelOnTimeout: boolean;
     deployAt?: Date | undefined;
-    deployTo: string[];
+    deployTo: EnvironmentResource[];
     deploymentCheckSleepCycle: number;
     deploymentTimeout: number;
     excludeMachines: string[];
@@ -14,7 +16,7 @@ export interface DeploymentOptions {
     rawLogFile?: string | undefined;
     skipStepNames: string[];
     specificMachines: string[];
-    tenants: string[];
+    tenants: TenantResource[];
     tenantTags: string[];
     variable: Variable[];
     waitForDeployment: boolean;
