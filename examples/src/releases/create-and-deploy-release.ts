@@ -1,11 +1,21 @@
-import { Client, ClientConfiguration, Repository } from '@octopusdeploy/api-client';
-import { ChannelResource, DeploymentProcessResource, DeploymentResource, EnvironmentResource, NewDeploymentResource, NewReleaseResource, ProjectResource, ReleaseResource, ReleaseTemplateResource } from '@octopusdeploy/message-contracts';
+import { Client, ClientConfiguration, Repository } from "@octopusdeploy/api-client";
+import {
+    ChannelResource,
+    DeploymentProcessResource,
+    DeploymentResource,
+    EnvironmentResource,
+    NewDeploymentResource,
+    NewReleaseResource,
+    ProjectResource,
+    ReleaseResource,
+    ReleaseTemplateResource,
+} from "@octopusdeploy/message-contracts";
 
 const main = async () => {
     const configuration: ClientConfiguration = {
-        apiKey: 'api-key', // required
-        apiUri: 'api-uri', // required
-        autoConnect: true
+        apiKey: "api-key", // required
+        apiUri: "api-uri", // required
+        autoConnect: true,
     };
 
     let client: Client | undefined;
@@ -13,7 +23,7 @@ const main = async () => {
     try {
         client = await Client.create(configuration);
     } catch (error) {
-        console.error('The TypeScript API client could not be constructed.');
+        console.error("The TypeScript API client could not be constructed.");
         return;
     }
 
@@ -22,9 +32,9 @@ const main = async () => {
     }
 
     const repository = new Repository(client);
-    const projectNameOrId = 'project-name-or-id';
-    const channelNameOrId = 'channel-name-or-id';
-    const environmentNameOrId = 'environment-name-or-id';
+    const projectNameOrId = "project-name-or-id";
+    const channelNameOrId = "channel-name-or-id";
+    const environmentNameOrId = "environment-name-or-id";
 
     let project: ProjectResource | undefined;
 
@@ -108,8 +118,8 @@ const main = async () => {
     let newRelease: NewReleaseResource = {
         ChannelId: channel.Id,
         ProjectId: project.Id,
-        Version: releaseTemplate.NextVersionIncrement
-    }
+        Version: releaseTemplate.NextVersionIncrement,
+    };
 
     console.log(`Creating release with version, "${newRelease.Version}"...`);
 
@@ -126,8 +136,8 @@ const main = async () => {
 
     let newDeployment: NewDeploymentResource = {
         EnvironmentId: environment.Id,
-        ReleaseId: release.Id
-    }
+        ReleaseId: release.Id,
+    };
 
     console.log(`Creating deployment for release ${release.Version} of project ${project.Name} to environment ${environment.Name}...`);
 
@@ -141,6 +151,6 @@ const main = async () => {
     }
 
     console.log(`Deployment created, "${deployment.Id}"`);
-}
+};
 
 main();
