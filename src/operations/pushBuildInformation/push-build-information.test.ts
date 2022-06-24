@@ -10,6 +10,7 @@ import { PackageIdentity } from "../createRelease/package-identity";
 import { pushBuildInformation } from "./push-build-information";
 
 describe("push build information", () => {
+    let client: Client;
     let space: SpaceResource;
     let systemRepository: Repository;
     let repository: OctopusSpaceRepository;
@@ -34,16 +35,17 @@ describe("push build information", () => {
             const packagePath = path.join(tempOutDir, `${p.id}.${p.version}.zip`);
             zip.writeZip(packagePath);
         }
+
+        client = await Client.create();
+        console.log(`Client connected to API endpoint successfully.`);
+        systemRepository = new Repository(client);
     });
 
     beforeEach(async () => {
-        const client = await Client.create();
-        systemRepository = new Repository(client);
         const user = await systemRepository.users.getCurrent();
 
         const spaceName = uniqueName();
-        console.log(`Creating ${spaceName} space...`);
-
+        console.log(`Creating space, "${spaceName}"...`);
         space = await systemRepository.spaces.create(NewSpace(spaceName, undefined, [user]));
         repository = await systemRepository.forSpace(space);
     });
@@ -89,7 +91,7 @@ describe("push build information", () => {
     afterEach(async () => {
         if (space === undefined || space === null) return;
 
-        console.log(`Deleting ${space.Name} space...`);
+        console.log(`Deleting space, ${space.Name}...`);
         space.TaskQueueStopped = true;
         await systemRepository.spaces.modify(space);
         await systemRepository.spaces.del(space);

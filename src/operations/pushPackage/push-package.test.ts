@@ -1,4 +1,4 @@
-import { SpaceResource } from "@octopusdeploy/message-contracts";
+import { NewSpace, SpaceResource } from "@octopusdeploy/message-contracts";
 import AdmZip from "adm-zip";
 import { mkdtemp, rm } from "fs/promises";
 import { tmpdir } from "os";
@@ -11,6 +11,7 @@ import { PackageIdentity } from "../createRelease/package-identity";
 import { pushPackage } from "./push-package";
 
 describe("push package", () => {
+    let client: Client;
     let space: SpaceResource;
     let systemRepository: Repository;
     let repository: OctopusSpaceRepository;
@@ -35,22 +36,18 @@ describe("push package", () => {
             const packagePath = path.join(tempOutDir, `${p.id}.${p.version}.zip`);
             zip.writeZip(packagePath);
         }
+
+        client = await Client.create();
+        console.log(`Client connected to API endpoint successfully.`);
+        systemRepository = new Repository(client);
     });
 
     beforeEach(async () => {
-        const client = await Client.create();
-        systemRepository = new Repository(client);
         const user = await systemRepository.users.getCurrent();
 
         const spaceName = uniqueName();
-        console.log(`Creating ${spaceName} space`);
-        space = await systemRepository.spaces.create({
-            IsDefault: false,
-            Name: spaceName,
-            SpaceManagersTeamMembers: [user.Id],
-            SpaceManagersTeams: [],
-            TaskQueueStopped: false,
-        });
+        console.log(`Creating space, "${spaceName}"...`);
+        space = await systemRepository.spaces.create(NewSpace(spaceName, undefined, [user]));
         repository = await systemRepository.forSpace(space);
     });
 
@@ -58,7 +55,6 @@ describe("push package", () => {
         await pushPackage(space, [path.join(tempOutDir, `Hello.1.0.0.zip`)], OverwriteMode.OverwriteExisting);
 
         const results = await repository.packages.list({ filter: "Hello" });
-
         const result = await repository.packages.get(results.Items[0].Id);
 
         expect(result.PackageId).toStrictEqual("Hello");
@@ -88,7 +84,7 @@ describe("push package", () => {
     afterEach(async () => {
         if (space === undefined || space === null) return;
 
-        console.log(`Deleting ${space.Name} space...`);
+        console.log(`Deleting space, ${space.Name}...`);
         space.TaskQueueStopped = true;
         await systemRepository.spaces.modify(space);
         await systemRepository.spaces.del(space);

@@ -7,7 +7,6 @@ import {
     NewEndpoint,
     NewProject,
     NewSpace,
-    NewTenantResource,
     ProjectResource,
     RunCondition,
     SpaceResource,
@@ -24,19 +23,18 @@ import { tmpdir } from "os";
 import path from "path";
 import { Config, starWars, uniqueNamesGenerator } from "unique-names-generator";
 import { Client } from "../../client";
-import { ClientConfiguration, processConfiguration } from "../../clientConfiguration";
 import { OctopusSpaceRepository, Repository } from "../../repository";
 import { createRelease } from "./create-release";
 import { PackageIdentity } from "./package-identity";
 
 describe("create a release", () => {
-    const configuration: ClientConfiguration = processConfiguration();
-    let space: SpaceResource;
-    let project: ProjectResource;
+    let client: Client;
     let environment: EnvironmentResource;
-    let systemRepository: Repository;
-    let repository: OctopusSpaceRepository;
     let machine: DeploymentTargetResource;
+    let project: ProjectResource;
+    let repository: OctopusSpaceRepository;
+    let space: SpaceResource;
+    let systemRepository: Repository;
     const randomConfig: Config = { dictionaries: [starWars] };
 
     jest.setTimeout(100000);
@@ -45,23 +43,29 @@ describe("create a release", () => {
         return uniqueNamesGenerator(randomConfig).substring(0, 20);
     }
 
-    beforeEach(async () => {
-        const client = await Client.create();
+    beforeAll(async () => {
+        client = await Client.create();
+        console.log(`Client connected to API endpoint successfully.`);
         systemRepository = new Repository(client);
+    });
+
+    beforeEach(async () => {
         const user = await systemRepository.users.getCurrent();
 
         const spaceName = uniqueName();
-        console.log(`Creating ${spaceName} space...`);
-
+        console.log(`Creating space, "${spaceName}"...`);
         space = await systemRepository.spaces.create(NewSpace(spaceName, undefined, [user]));
+        console.log(`Space "${spaceName}" created successfully.`);
+
         repository = await systemRepository.forSpace(space);
 
         const projectGroup = (await repository.projectGroups.list({ take: 1 })).Items[0];
         const lifecycle = (await repository.lifecycles.list({ take: 1 })).Items[0];
-        const projectName = uniqueName();
 
-        console.log(`Creating ${projectName} project...`);
+        const projectName = uniqueName();
+        console.log(`Creating project, "${projectName}"...`);
         project = await repository.projects.create(NewProject(projectName, projectGroup, lifecycle));
+        console.log(`Project "${projectName}" created successfully.`);
 
         const deploymentProcess = await repository.deploymentProcesses.get(project.DeploymentProcessId, undefined);
         deploymentProcess.Steps = [
@@ -106,16 +110,17 @@ describe("create a release", () => {
             },
         ];
 
-        console.log("Updating deployment process...");
+        console.log(`Updating deployment process, "${deploymentProcess.Id}"...`);
         await repository.deploymentProcesses.saveToProject(project, deploymentProcess);
+        console.log(`Deployment process, "${deploymentProcess.Id}" updated successfully.`);
 
-        console.log("Creating environment...");
-        environment = await repository.environments.create({ Name: uniqueName() });
-
-        console.log("Creating machine...");
+        const environmentName = uniqueName();
+        console.log(`Creating environment, "${environmentName}"...`);
+        environment = await repository.environments.create({ Name: environmentName });
+        console.log(`Environment "${environment.Name}" created successfully.`);
 
         const machineName = uniqueName();
-
+        console.log(`Creating machine, "${machineName}"...`);
         machine = await repository.machines.create(
             NewDeploymentTarget(
                 machineName,
@@ -125,29 +130,31 @@ describe("create a release", () => {
                 TenantedDeploymentMode.TenantedOrUntenanted
             )
         );
+        console.log(`Machine "${machine.Name}" created successfully.`);
     });
 
     test("deploy to single environment", async () => {
-        await createRelease(space, project, undefined, {
-            deployTo: [environment.Name],
+        await createRelease(repository, project, undefined, {
+            deployTo: [environment],
             waitForDeployment: true,
         });
     });
 
     test("deploy to multiple environments", async () => {
-        console.log("Creating environment");
-        const environment2 = await repository.environments.create({ Name: uniqueName() });
+        const environment2Name = uniqueName();
+        console.log(`Creating environment, "${environment2Name}"...`);
+        const environment2 = await repository.environments.create({ Name: environment2Name });
 
-        console.log("Creating machine");
-
+        console.log(`Adding environment, ${environment2Name} to machine, ${machine}...`);
         machine.EnvironmentIds = [environment2.Id, ...machine.EnvironmentIds];
         await repository.machines.modify(machine);
 
+        const lifecycleName = "Development";
         const lifecycle = (await repository.lifecycles.list({ take: 1 })).Items[0];
         lifecycle.Phases = [
             {
                 Id: "",
-                Name: "Development",
+                Name: lifecycleName,
                 OptionalDeploymentTargets: [environment2.Id, environment.Id],
                 AutomaticDeploymentTargets: [],
                 IsOptionalPhase: false,
@@ -156,10 +163,11 @@ describe("create a release", () => {
                 TentacleRetentionPolicy: undefined,
             },
         ];
+        console.log(`Updating lifecycle, ${lifecycleName}...`);
         await repository.lifecycles.modify(lifecycle);
 
-        await createRelease(space, project, undefined, {
-            deployTo: [environment.Name, environment2.Name],
+        await createRelease(repository, project, undefined, {
+            deployTo: [environment, environment2],
             waitForDeployment: true,
         });
     });
@@ -168,20 +176,29 @@ describe("create a release", () => {
         project.TenantedDeploymentMode = TenantedDeploymentMode.Tenanted;
         await repository.projects.modify(project);
 
-        let newTenantResource: NewTenantResource = { ProjectEnvironments: {}, TenantTags: [], Name: uniqueName() };
-        newTenantResource.ProjectEnvironments[project.Id] = [environment.Id];
-        const tenant1 = await repository.tenants.create(newTenantResource);
+        const tenant1Name = uniqueName();
+        console.log(`Creating tenant, "${tenant1Name}"...`);
+        const tenant1 = await repository.tenants.create({
+            Name: tenant1Name,
+            ProjectEnvironments: { [project.Id]: [environment.Id] },
+            TenantTags: [],
+        });
 
-        newTenantResource = { ProjectEnvironments: {}, TenantTags: [], Name: uniqueName() };
-        newTenantResource.ProjectEnvironments[project.Id] = [environment.Id];
-        const tenant2 = await repository.tenants.create(newTenantResource);
+        const tenant2Name = uniqueName();
+        console.log(`Creating tenant, "${tenant2Name}"...`);
+        const tenant2 = await repository.tenants.create({
+            Name: tenant2Name,
+            ProjectEnvironments: { [project.Id]: [environment.Id] },
+            TenantTags: [],
+        });
 
+        console.log(`Associating tenants to machine, ${machine.Name}...`);
         machine.TenantIds = [tenant1.Id, tenant2.Id];
         await repository.machines.modify(machine);
 
-        await createRelease(space, project, undefined, {
-            tenants: [tenant1.Id, tenant2.Id],
-            deployTo: [environment.Name],
+        await createRelease(repository, project, undefined, {
+            tenants: [tenant1, tenant2],
+            deployTo: [environment],
             waitForDeployment: true,
         });
     });
@@ -201,14 +218,18 @@ describe("create a release", () => {
             Tags: [{ CanonicalTagName: `tags/${tag}`, Color: "#333333", Description: "", Id: "", Name: tag, SortOrder: 0 }],
         });
 
+        const tenant1Name = uniqueName();
+        console.log(`Creating tenant, "${tenant1Name}"...`);
         const tenant1 = await repository.tenants.create({
-            Name: uniqueName(),
+            Name: tenant1Name,
             ProjectEnvironments: { [project.Id]: [environment.Id] },
             TenantTags: [tagSet.Tags[0].CanonicalTagName],
         });
 
+        const tenant2Name = uniqueName();
+        console.log(`Creating tenant, "${tenant2Name}"...`);
         const tenant2 = await repository.tenants.create({
-            Name: uniqueName(),
+            Name: tenant2Name,
             ProjectEnvironments: { [project.Id]: [environment.Id] },
             TenantTags: [tagSet.Tags[0].CanonicalTagName],
         });
@@ -216,9 +237,9 @@ describe("create a release", () => {
         machine.TenantIds = [tenant1.Id, tenant2.Id];
         await repository.machines.modify(machine);
 
-        await createRelease(space, project, undefined, {
+        await createRelease(repository, project, undefined, {
             tenantTags: [tagSet.Tags[0].CanonicalTagName],
-            deployTo: [environment.Name],
+            deployTo: [environment],
             waitForDeployment: true,
         });
     });
@@ -228,8 +249,8 @@ describe("create a release", () => {
         const deployAt = moment(new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 0, 0, 0, 0)).add(10, "days").toDate();
         const noDeployAfter = moment(new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 0, 0, 0, 0)).add(11, "days").toDate();
 
-        await createRelease(space, project, undefined, {
-            deployTo: [environment.Name],
+        await createRelease(repository, project, undefined, {
+            deployTo: [environment],
             deployAt,
             noDeployAfter,
             waitForDeployment: false,
@@ -267,8 +288,8 @@ describe("create a release", () => {
         ];
         await repository.variables.modify(variableSet);
 
-        await createRelease(space, project, undefined, {
-            deployTo: [environment.Name],
+        await createRelease(repository, project, undefined, {
+            deployTo: [environment],
             variable: [{ name: "Name", value: "John" }],
             waitForDeployment: true,
         });
@@ -288,11 +309,11 @@ describe("create a release", () => {
         );
 
         await createRelease(
-            space,
+            repository,
             project,
-            { channel: channel.Name },
+            { channel: channel },
             {
-                deployTo: [environment.Name],
+                deployTo: [environment],
                 waitForDeployment: true,
             }
         );
@@ -300,11 +321,11 @@ describe("create a release", () => {
 
     test("deploy to single environment with a specified release number", async () => {
         await createRelease(
-            space,
+            repository,
             project,
             { releaseNumber: "1.2.3" },
             {
-                deployTo: [environment.Name],
+                deployTo: [environment],
                 waitForDeployment: true,
             }
         );
@@ -329,8 +350,8 @@ describe("create a release", () => {
         beforeEach(async () => {
             const feedId = (await repository.feeds.list({ take: 1 })).Items[0].Id;
 
-            const dp = await repository.deploymentProcesses.get(project.DeploymentProcessId, undefined);
-            dp.Steps = [
+            const deploymentProcess = await repository.deploymentProcesses.get(project.DeploymentProcessId, undefined);
+            deploymentProcess.Steps = [
                 {
                     Condition: RunCondition.Success,
                     Links: {},
@@ -378,8 +399,9 @@ describe("create a release", () => {
                     ],
                 },
             ];
-            console.log("Updating process...");
-            await repository.deploymentProcesses.saveToProject(project, dp);
+            console.log(`Updating deployment process, "${deploymentProcess.Id}"...`);
+            await repository.deploymentProcesses.saveToProject(project, deploymentProcess);
+            console.log(`Deployment process, "${deploymentProcess.Id}" updated successfully.`);
 
             for (const file of await readdir(tempOutDir)) {
                 await uploadPackage(path.join(tempOutDir, file));
@@ -389,8 +411,9 @@ describe("create a release", () => {
                 const buffer = await readFile(filePath);
                 const fileName = path.basename(filePath);
 
-                console.log(`Uploading ${fileName} package...`);
+                console.log(`Uploading package, "${fileName}"...`);
                 await repository.packages.upload(new File([buffer], fileName));
+                console.log(`Package, ${fileName} uploaded sucessfully.`);
             }
         });
 
@@ -400,11 +423,11 @@ describe("create a release", () => {
 
         test("using packagesFolder", async () => {
             await createRelease(
-                space,
+                repository,
                 project,
                 { packagesFolder: tempOutDir },
                 {
-                    deployTo: [environment.Name],
+                    deployTo: [environment],
                     waitForDeployment: true,
                 }
             );
@@ -412,13 +435,13 @@ describe("create a release", () => {
 
         test("using packages", async () => {
             await createRelease(
-                space,
+                repository,
                 project,
                 {
                     packages,
                 },
                 {
-                    deployTo: [environment.Name],
+                    deployTo: [environment],
                     waitForDeployment: true,
                 }
             );
@@ -428,9 +451,10 @@ describe("create a release", () => {
     afterEach(async () => {
         if (space === undefined || space === null) return;
 
-        console.log(`Deleting ${space.Name} space...`);
+        console.log(`Deleting space, ${space.Name}...`);
         space.TaskQueueStopped = true;
         await systemRepository.spaces.modify(space);
         await systemRepository.spaces.del(space);
+        console.log(`Space '${space.Name}' deleted successfully.`);
     });
 });
