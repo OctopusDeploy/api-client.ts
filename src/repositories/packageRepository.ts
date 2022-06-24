@@ -1,7 +1,7 @@
-import type { AllArgs } from "./basicRepository";
-import { BasicRepository } from "./basicRepository";
 import type { PackageResource } from "@octopusdeploy/message-contracts";
 import type { Client } from "../client";
+import type { AllArgs } from "./basicRepository";
+import { BasicRepository } from "./basicRepository";
 
 export type PackageListArgs = {
     take?: number;
@@ -53,7 +53,17 @@ export class PackageRepository extends BasicRepository<PackageResource, PackageR
         return this.client.post<PackageResource>(this.client.getLink("PackageUpload"), fd, { overwriteMode });
     }
     getNotes(packages: PackageNote[]) {
-        const packageIds = packages.reduce((result, item) => result + (result.length === 0 ? "" : ",") + encodeURIComponent(item.FeedId) + ":" + encodeURIComponent(item.PackageId) + ":" + encodeURIComponent(item.Version), "");
+        const packageIds = packages.reduce(
+            (result, item) =>
+                result +
+                (result.length === 0 ? "" : ",") +
+                encodeURIComponent(item.FeedId) +
+                ":" +
+                encodeURIComponent(item.PackageId) +
+                ":" +
+                encodeURIComponent(item.Version),
+            ""
+        );
         return this.client.get<PackageNotesList>(this.client.getLink("PackageNotesList"), { packageIds });
     }
 }
