@@ -1,7 +1,6 @@
 import glob from "glob";
 import path from "path";
 import { SemVer, valid } from "semver";
-import { Client } from "../../client";
 import { PackageIdentity } from "./package-identity";
 
 const WildCard = "*";
@@ -26,8 +25,6 @@ export class PackageVersionResolver implements IPackageVersionResolver {
     readonly stepNameToVersion = new Map<string, string>();
     defaultVersion: string | undefined;
 
-    constructor(private readonly client: Client) {}
-
     async addFolder(folderPath: string) {
         const retrievePackages = async (pattern: string): Promise<string[]> => {
             return new Promise((resolve, reject) => {
@@ -40,10 +37,10 @@ export class PackageVersionResolver implements IPackageVersionResolver {
                 });
             });
         };
-        this.client.debug(`Using package versions from '${folderPath}' folder`);
+        console.debug(`Using package versions from '${folderPath}' folder`);
         const files = await retrievePackages(`*(${PackageVersionResolver.SupportedZipFilePatterns.map((v) => v).join("|")})`);
         for (const file of files) {
-            this.client.debug(`Package file: ${file}`);
+            console.debug(`Package file: ${file}`);
             const packageIdentity = this.tryParseIdAndVersion(file);
             if (packageIdentity) {
                 this.add(packageIdentity.id, undefined, packageIdentity.version);
