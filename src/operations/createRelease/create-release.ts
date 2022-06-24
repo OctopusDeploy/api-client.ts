@@ -4,11 +4,9 @@ import {
     PersistenceSettingsType,
     ProjectResource,
     ReleaseResource,
-    SpaceResource,
 } from "@octopusdeploy/message-contracts";
-import { Client, OctopusSpaceRepository } from "../../";
 import { processConfiguration } from "../../clientConfiguration";
-import { connect } from "../connect";
+import { OctopusSpaceRepository } from "../../repository";
 import { DeploymentBase } from "../deployRelease/deployment-base";
 import { DeploymentOptions } from "../deployRelease/deployment-options";
 import { throwIfUndefined } from "../throw-if-undefined";
@@ -17,7 +15,6 @@ import { PackageVersionResolver } from "./package-version-resolver";
 import { ReleaseOptions } from "./release-options";
 import { ReleasePlan } from "./release-plan";
 import { ReleasePlanBuilder } from "./release-plan-builder";
-
 function releaseOptionsDefaults(): ReleaseOptions {
     return {
         ignoreChannelRules: false,
@@ -28,13 +25,11 @@ function releaseOptionsDefaults(): ReleaseOptions {
 }
 
 export async function createRelease(
-    space: SpaceResource,
+    repository: OctopusSpaceRepository,
     project: ProjectResource,
     releaseOptions?: Partial<ReleaseOptions>,
     deploymentOptions?: Partial<DeploymentOptions>
 ): Promise<void> {
-    const [repository, client] = await connect(space);
-
     const proj = await throwIfUndefined<ProjectResource>(
         async (nameOrId) => await repository.projects.find(nameOrId),
         async (id) => repository.projects.get(id),
@@ -44,7 +39,10 @@ export async function createRelease(
     );
 
     const configuration = processConfiguration();
-    await new CreateRelease(client, repository, configuration.apiUri, proj, releaseOptions, deploymentOptions).execute();
+
+    console.log(`Creating a release...`);
+    await new CreateRelease(repository, configuration.apiUri, proj, releaseOptions, deploymentOptions).execute();
+    console.log(`Release created successfully.`);
 }
 
 class CreateRelease extends DeploymentBase {
@@ -56,22 +54,21 @@ class CreateRelease extends DeploymentBase {
     private readonly releaseOptions: ReleaseOptions;
 
     constructor(
-        client: Client,
         repository: OctopusSpaceRepository,
         serverUrl: string,
         private readonly project: ProjectResource,
         releaseOptions?: Partial<ReleaseOptions>,
         deploymentOptions?: Partial<DeploymentOptions>
     ) {
-        super(client, repository, serverUrl, deploymentOptions);
+        super(repository, serverUrl, deploymentOptions);
 
         this.releaseOptions = {
             ...releaseOptionsDefaults(),
             ...releaseOptions,
         };
 
-        this.packageVersionResolver = new PackageVersionResolver(client);
-        this.releasePlanBuilder = new ReleasePlanBuilder(client, this.packageVersionResolver, new ChannelVersionRuleTester(client));
+        this.packageVersionResolver = new PackageVersionResolver();
+        this.releasePlanBuilder = new ReleasePlanBuilder(repository.client, this.packageVersionResolver, new ChannelVersionRuleTester(repository.client));
     }
 
     private async releaseNotesFallBackToDeploymentSettings() {
@@ -98,24 +95,24 @@ class CreateRelease extends DeploymentBase {
 
         if (this.releaseOptions.releaseNumber) {
             this.versionNumber = this.releaseOptions.releaseNumber;
-            this.client.debug(`Using version number provided on command-line: ${this.versionNumber}`);
+            console.debug(`Using version number provided on command-line: ${this.versionNumber}`);
         } else if (plan.releaseTemplate.NextVersionIncrement) {
             this.versionNumber = plan.releaseTemplate.NextVersionIncrement;
-            this.client.debug(`Using version number from release template: ${this.versionNumber}`);
+            console.debug(`Using version number from release template: ${this.versionNumber}`);
         } else if (plan.releaseTemplate.VersioningPackageStepName) {
             this.versionNumber = plan.getActionVersionNumber(
                 plan.releaseTemplate.VersioningPackageStepName,
                 plan.releaseTemplate.VersioningPackageReferenceName
             );
-            this.client.debug(`Using version number from package step: ${this.versionNumber}`);
+            console.debug(`Using version number from package step: ${this.versionNumber}`);
         } else {
             throw new Error("A version number was not specified and could not be automatically selected.");
         }
 
         if (plan.isViableReleasePlan()) {
-            this.client.info(`Release plan for ${this.project.Name} ${this.versionNumber}`);
+            console.info(`Release plan for ${this.project.Name} ${this.versionNumber}`);
         } else {
-            this.client.warn(`Release plan for ${this.project.Name} ${this.versionNumber}`);
+            console.warn(`Release plan for ${this.project.Name} ${this.versionNumber}`);
         }
 
         if (plan.hasUnresolvedSteps())
@@ -128,7 +125,7 @@ class CreateRelease extends DeploymentBase {
 
         if (plan.hasStepsViolatingChannelVersionRules()) {
             if (this.releaseOptions.ignoreChannelRules)
-                this.client.warn(
+                console.warn(
                     `At least one step violates the package version rules for the Channel '${plan.channel?.Name}'. Forcing the release to be created ignoring these rules...`
                 );
             else
@@ -138,29 +135,29 @@ class CreateRelease extends DeploymentBase {
         }
 
         if (this.releaseOptions.ignoreExisting) {
-            this.client.debug(`Checking for existing release for ${this.project.Name} ${this.versionNumber} because you specified --ignoreExisting...`);
+            console.debug(`Checking for existing release for ${this.project.Name} ${this.versionNumber} because you specified --ignoreExisting...`);
             try {
                 const found = await this.repository.projects.getReleaseByVersion(this.project, this.versionNumber);
                 if (found !== undefined) {
-                    this.client.info(
+                    console.info(
                         `A release of ${this.project.Name} with the number ${this.versionNumber} already exists, and you specified --ignoreExisting, so we won't even attempt to create the release.`
                     );
                     return;
                 }
             } catch {
                 // Expected
-                this.client.debug("No release exists - the coast is clear!");
+                console.debug("No release exists - the coast is clear!");
             }
         }
 
         if (this.releaseOptions.whatIf) {
             // We were just doing a dry run - bail out here
             if (this.deploymentOptions.deployTo.length > 0)
-                this.client.info(`[WhatIf] This release would have been created using the release plan and deployed to ${this.deploymentOptions.deployTo}`);
-            else this.client.info("[WhatIf] This release would have been created using the release plan");
+                console.info(`[WhatIf] This release would have been created using the release plan and deployed to ${this.deploymentOptions.deployTo}`);
+            else console.info("[WhatIf] This release would have been created using the release plan");
         } else {
             // Actually create the release!
-            this.client.debug("Creating release...");
+            console.debug("Creating release...");
 
             await this.releaseNotesFallBackToDeploymentSettings();
 
@@ -181,9 +178,9 @@ class CreateRelease extends DeploymentBase {
 
             const release = await this.repository.releases.create(releaseResource as ReleaseResource, this.releaseOptions.ignoreChannelRules);
 
-            this.client.info(`Release ${release.Version} created successfully!`);
+            console.info(`Release ${release.Version} created successfully.`);
             if (release.VersionControlReference?.GitCommit)
-                this.client.info(
+                console.info(
                     `Release created from commit ${release.VersionControlReference.GitCommit} of git reference ${release.VersionControlReference.GitRef}.`
                 );
 
@@ -193,9 +190,9 @@ class CreateRelease extends DeploymentBase {
 
     private async buildReleasePlan() {
         if (this.releaseOptions.channel) {
-            this.client.info(`Building release plan for channel '${this.releaseOptions.channel}'...`);
+            console.info(`Building release plan for channel '${this.releaseOptions.channel.Name}'...`);
 
-            const matchingChannel = await this.getMatchingChannel(this.releaseOptions.channel);
+            const matchingChannel = await this.getMatchingChannel(this.releaseOptions.channel.Name);
 
             return await this.releasePlanBuilder.build(
                 this.repository,
@@ -207,7 +204,7 @@ class CreateRelease extends DeploymentBase {
             );
         }
 
-        this.client.debug("Automatically selecting the best channel for this release...");
+        console.debug("Automatically selecting the best channel for this release...");
         return await this.autoSelectBestReleasePlanOrThrow();
     }
 
@@ -226,7 +223,7 @@ class CreateRelease extends DeploymentBase {
         const candidateChannels = channels.Items;
         const releasePlans: ReleasePlan[] = [];
         for (const channel of candidateChannels) {
-            this.client.info(`Building a release plan for Channel '${channel.Name}'...`);
+            console.info(`Building a release plan for channel, "${channel.Name}"...`);
 
             this.plan = await this.releasePlanBuilder.build(
                 this.repository,
@@ -238,7 +235,7 @@ class CreateRelease extends DeploymentBase {
             );
 
             releasePlans.push(this.plan);
-            if (!this.plan.channelHasAnyEnabledSteps()) this.client.warn(`Channel ${channel.Name} does not contain any packageSteps`);
+            if (!this.plan.channelHasAnyEnabledSteps()) console.warn(`Channel, "${channel.Name}" does not have any enabled package steps.`);
         }
 
         const viablePlans = releasePlans.filter((p) => p.isViableReleasePlan());
@@ -250,14 +247,14 @@ class CreateRelease extends DeploymentBase {
 
         if (viablePlans.length === 1) {
             const selectedPlan = viablePlans[0];
-            this.client.info(`Selected the release plan for Channel '${selectedPlan.channel?.Name}' - it is a perfect match`);
+            console.info(`Selected the release plan for channel, "${selectedPlan.channel?.Name}".`);
             return selectedPlan;
         }
 
         if (viablePlans.length > 1 && viablePlans.some((p) => p.channel?.IsDefault)) {
             const selectedPlan = viablePlans.find((p) => p.channel?.IsDefault);
-            this.client.info(
-                `Selected the release plan for Channel '${selectedPlan?.channel?.Name}' - there were multiple matching Channels (${viablePlans
+            console.info(
+                `Selected the release plan for channel "${selectedPlan?.channel?.Name}" - there were multiple matching Channels (${viablePlans
                     .map((p) => p.channel?.Name)
                     .reduce((previousValue, currentValue) => `${previousValue},${currentValue}`, "")}) so we selected the default channel.`
             );
@@ -286,7 +283,7 @@ class CreateRelease extends DeploymentBase {
         const wasGitRefProvided = this.releaseOptions.gitRef;
         if (!wasGitRefProvided && this.project.PersistenceSettings.Type === PersistenceSettingsType.VersionControlled) {
             this.gitReference = this.project.PersistenceSettings.DefaultBranch;
-            this.client.info(`No gitRef parameter provided. Using Project Default Branch: ${this.project.PersistenceSettings.DefaultBranch}`);
+            console.info(`No gitRef parameter provided. Using Project Default Branch: ${this.project.PersistenceSettings.DefaultBranch}`);
         }
 
         if (!this.project.IsVersionControlled && wasGitRefProvided)
