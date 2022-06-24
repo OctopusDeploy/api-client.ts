@@ -1,7 +1,8 @@
+import { ChannelResource } from "@octopusdeploy/message-contracts";
 import { PackageIdentity } from "./package-identity";
 
 export interface ReleaseOptions {
-    channel?: string | undefined;
+    channel?: ChannelResource;
     gitRef?: string | undefined;
     gitCommit?: string | undefined;
     ignoreChannelRules: boolean;
