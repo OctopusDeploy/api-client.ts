@@ -64,33 +64,33 @@ export class ReleasePlanBuilder {
     async build(
         repository: OctopusSpaceRepository,
         project: ProjectResource,
-        channel: ChannelResource | undefined,
+        channel: ChannelResource,
         versionPreReleaseTag: string | undefined,
         gitReference: string | undefined,
         gitCommit: string | undefined
     ) {
         return !gitReference
             ? await this.buildReleaseFromDatabase(repository, project, channel, versionPreReleaseTag)
-            : await this.buildReleaseFromVersionControl(repository, project, channel as ChannelResource, versionPreReleaseTag, gitReference, gitCommit);
+            : await this.buildReleaseFromVersionControl(repository, project, channel, versionPreReleaseTag, gitReference, gitCommit);
     }
 
     async buildReleaseFromDatabase(
         repository: OctopusSpaceRepository,
         project: ProjectResource,
-        channel: ChannelResource | undefined,
+        channel: ChannelResource,
         versionPreReleaseTag: string | undefined
     ) {
         if (project.IsVersionControlled) throw new Error(GitReferenceMissingForVersionControlledProjectErrorMessage);
 
         console.debug("Finding deployment process...");
         const deploymentProcess = await repository.deploymentProcesses.get(project.DeploymentProcessId, undefined);
-        if (deploymentProcess === undefined) throw new CouldNotFindError(`a deployment process for project ${project.Name}`);
+        if (deploymentProcess === undefined) throw new CouldNotFindError(`a deployment process for project "${project.Name}"`);
 
         console.debug("Finding release template...");
         const releaseTemplate = await repository.deploymentProcesses.getTemplate(deploymentProcess, channel);
         if (releaseTemplate === undefined)
             throw new CouldNotFindError(
-                channel ? `a release template for project ${project.Name} and channel ${channel.Name}` : `a release template for project ${project.Name}`
+                channel ? `a release template for project "${project.Name}" and channel "${channel.Name}"` : `A release template for project "${project.Name}"`
             );
 
         return await this.buildInternal(repository, project, channel, versionPreReleaseTag, releaseTemplate, deploymentProcess);
@@ -111,12 +111,12 @@ export class ReleasePlanBuilder {
 
         console.debug(`Finding deployment process at git ${gitObjectName}...`);
         const deploymentProcess = await repository.deploymentProcesses.get(project.DeploymentProcessId, gitObject);
-        if (deploymentProcess === undefined) throw new CouldNotFindError(`a deployment process for project ${project.Name} and git ${gitObjectName}`);
+        if (deploymentProcess === undefined) throw new CouldNotFindError(`a deployment process for project "${project.Name}" and git ${gitObjectName}.`);
 
         console.debug(`Finding release template at git ${gitObjectName}...`);
         const releaseTemplate = await repository.deploymentProcesses.getTemplate(deploymentProcess, channel);
         if (releaseTemplate === undefined)
-            throw new CouldNotFindError(`a release template for project ${project.Name}, channel ${channel.Name} and git ${gitObjectName}`);
+            throw new CouldNotFindError(`a release template for project "${project.Name}", channel "${channel.Name}" and git ${gitObjectName}.`);
 
         return await this.buildInternal(repository, project, channel, versionPreReleaseTag, releaseTemplate, deploymentProcess);
     }
@@ -139,17 +139,17 @@ export class ReleasePlanBuilder {
             for (const unresolved of plan.unresolvedSteps) {
                 if (!unresolved.isResolvable) {
                     console.error(
-                        `The version number for step, '${unresolved.actionName}' cannot be automatically resolved because the feed or package ID is dynamic.`
+                        `The version number for step, "${unresolved.actionName}" cannot be automatically resolved because the feed or package ID is dynamic.`
                     );
                     continue;
                 }
 
                 if (versionPreReleaseTag)
-                    console.debug(`Finding latest package with pre-release '${versionPreReleaseTag}' for step, ${unresolved.actionName}...`);
-                else console.debug(`Finding latest package for step, ${unresolved.actionName}...`);
+                    console.debug(`Finding latest package with pre-release "${versionPreReleaseTag}" for step, "${unresolved.actionName}"...`);
+                else console.debug(`Finding latest package for step, "${unresolved.actionName}"...`);
 
                 if (!allRelevantFeeds.has(unresolved.packageFeedId as string)) {
-                    throw new Error(`Could not find a feed with ID ${unresolved.packageFeedId}, which is used by step: ${unresolved.actionName}`);
+                    throw new Error(`Could not find a feed with ID "${unresolved.packageFeedId}", which is used by step: "${unresolved.actionName}".`);
                 }
                 const feed = allRelevantFeeds.get(unresolved.packageFeedId as string) as FeedResource;
                 const filters = this.buildChannelVersionFilters(unresolved.actionName, unresolved.packageReferenceName as string, channel);
@@ -160,9 +160,9 @@ export class ReleasePlanBuilder {
                 const latestPackage = packages[0];
 
                 if (packages.length === 0) {
-                    console.info(`Could not find any packages with ID '${unresolved.packageId}' that match the channel filter, in the feed '${feed.Name}'`);
+                    console.info(`Could not find any packages with ID "${unresolved.packageId}" that match the channel filter, in the feed, "${feed.Name}".`);
                 } else {
-                    console.debug(`Selected '${latestPackage.PackageId}' version '${latestPackage.Version}' for '${unresolved.actionName}'`);
+                    console.debug(`Selected "${latestPackage.PackageId}" version "${latestPackage.Version}" for "${unresolved.actionName}".`);
                     unresolved.setVersionFromLatest(latestPackage.Version);
                 }
             }
