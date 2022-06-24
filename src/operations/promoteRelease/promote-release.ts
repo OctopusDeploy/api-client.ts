@@ -1,26 +1,22 @@
-import { DashboardItemResource, EnvironmentResource, ProjectResource, SpaceResource, TaskState } from "@octopusdeploy/message-contracts";
+import { DashboardItemResource, EnvironmentResource, ProjectResource, TaskState } from "@octopusdeploy/message-contracts";
 import { SemVer } from "semver";
-import { Client } from "../../client";
 import { processConfiguration } from "../../clientConfiguration";
 import { DashboardItemsOptions } from "../../repositories/dashboardRepository";
 import { OctopusSpaceRepository } from "../../repository";
-import { connect } from "../connect";
 import { CouldNotFindError } from "../could-not-find-error";
 import { DeploymentBase } from "../deployRelease/deployment-base";
 import { DeploymentOptions } from "../deployRelease/deployment-options";
 import { throwIfUndefined } from "../throw-if-undefined";
 
 export async function promoteRelease(
-    space: SpaceResource,
+    repository: OctopusSpaceRepository,
     project: ProjectResource,
     from: EnvironmentResource,
-    deployTo: string[],
+    deployTo: EnvironmentResource[],
     lastSuccessful?: boolean | undefined,
     updateVariables?: boolean | undefined,
     deploymentOptions?: Partial<DeploymentOptions>
 ): Promise<void> {
-    const [repository, client] = await connect(space);
-
     const proj = await throwIfUndefined<ProjectResource>(
         async (nameOrId) => repository.projects.find(nameOrId),
         async (id) => repository.projects.get(id),
@@ -30,19 +26,18 @@ export async function promoteRelease(
     );
 
     const configuration = processConfiguration();
-    await new PromoteRelease(client, repository, configuration.apiUri, proj, deployTo, deploymentOptions).execute(from.Name, lastSuccessful, updateVariables);
+    await new PromoteRelease(repository, configuration.apiUri, proj, deployTo, deploymentOptions).execute(from.Name, lastSuccessful, updateVariables);
 }
 
 class PromoteRelease extends DeploymentBase {
     constructor(
-        client: Client,
         repository: OctopusSpaceRepository,
         serverUrl: string,
         private readonly project: ProjectResource,
-        deployTo: string[],
+        deployTo: EnvironmentResource[],
         deploymentOptions?: Partial<DeploymentOptions>
     ) {
-        super(client, repository, serverUrl, {
+        super(repository, serverUrl, {
             ...deploymentOptions,
             ...{ deployTo: deployTo },
         });
@@ -83,12 +78,12 @@ class PromoteRelease extends DeploymentBase {
             );
         }
 
-        this.client.debug(`Finding release details for release ${dashboardItem.ReleaseVersion}`);
+        console.debug(`Finding release details for release ${dashboardItem.ReleaseVersion}`);
 
         const release = await this.repository.projects.getReleaseByVersion(this.project, dashboardItem.ReleaseVersion);
 
         if (updateVariables) {
-            this.client.debug("Updating the release variable snapshot with variables from the project");
+            console.debug("Updating the release variable snapshot with variables from the project");
             await this.repository.releases.snapshotVariables(release);
         }
         await this.deployRelease(this.project, release);
