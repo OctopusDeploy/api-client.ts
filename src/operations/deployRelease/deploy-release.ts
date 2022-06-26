@@ -69,7 +69,7 @@ class DeployRelease extends DeploymentBase {
         if (versionNumber === "latest") {
             const message = channel === null ? "latest release for project" : `latest release in channel '${channel?.Name}'`;
 
-            console.debug(`Finding ${message}`);
+            console.debug(`Finding ${message}...`);
 
             const releases = await this.repository.projects.getReleases(project);
             const compareFn = (r1: ReleaseResource, r2: ReleaseResource) => {

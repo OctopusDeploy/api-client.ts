@@ -11,10 +11,11 @@ import {
     SpaceResource,
     StartTrigger,
     TenantedDeploymentMode,
+    UserResource,
 } from "@octopusdeploy/message-contracts";
 import { PackageRequirement } from "@octopusdeploy/message-contracts/dist/deploymentStepResource";
 import { RunConditionForAction } from "@octopusdeploy/message-contracts/dist/runConditionForAction";
-import { Config, starWars, uniqueNamesGenerator } from "unique-names-generator";
+import { randomUUID } from "crypto";
 import { Client } from "../../client";
 import { OctopusSpaceRepository, Repository } from "../../repository";
 import { createRelease } from "../createRelease/create-release";
@@ -30,24 +31,19 @@ describe("promote a release", () => {
     let repository: OctopusSpaceRepository;
     let space: SpaceResource;
     let systemRepository: Repository;
-    const randomConfig: Config = { dictionaries: [starWars] };
+    let user: UserResource;
 
     jest.setTimeout(100000);
-
-    function uniqueName() {
-        return uniqueNamesGenerator(randomConfig).substring(0, 20);
-    }
 
     beforeAll(async () => {
         client = await Client.create();
         console.log(`Client connected to API endpoint successfully.`);
         systemRepository = new Repository(client);
+        user = await systemRepository.users.getCurrent();
     });
 
     beforeEach(async () => {
-        const user = await systemRepository.users.getCurrent();
-
-        const spaceName = uniqueName();
+        const spaceName = randomUUID().substring(0, 20);
         console.log(`Creating space, "${spaceName}"...`);
         space = await systemRepository.spaces.create(NewSpace(spaceName, undefined, [user]));
         console.log(`Space "${spaceName}" created successfully.`);
@@ -57,7 +53,7 @@ describe("promote a release", () => {
         const projectGroup = (await repository.projectGroups.list({ take: 1 })).Items[0];
         const lifecycle = (await repository.lifecycles.list({ take: 1 })).Items[0];
 
-        const projectName = uniqueName();
+        const projectName = randomUUID();
         console.log(`Creating project, "${projectName}"...`);
         project = await repository.projects.create(NewProject(projectName, projectGroup, lifecycle));
         console.log(`Project "${projectName}" created successfully.`);
@@ -70,7 +66,7 @@ describe("promote a release", () => {
                 PackageRequirement: PackageRequirement.LetOctopusDecide,
                 StartTrigger: StartTrigger.StartAfterPrevious,
                 Id: "",
-                Name: uniqueName(),
+                Name: randomUUID(),
                 Properties: { "Octopus.Action.TargetRoles": "deploy" },
                 Actions: [
                     {
@@ -109,17 +105,17 @@ describe("promote a release", () => {
         await repository.deploymentProcesses.saveToProject(project, deploymentProcess);
         console.log(`Deployment process, "${deploymentProcess.Id}" updated successfully.`);
 
-        const environment1Name = uniqueName();
+        const environment1Name = randomUUID();
         console.log(`Creating environment, "${environment1Name}"...`);
         environment1 = await repository.environments.create({ Name: environment1Name });
         console.log(`Environment "${environment1.Name}" created successfully.`);
 
-        const environment2Name = uniqueName();
+        const environment2Name = randomUUID();
         console.log(`Creating environment, "${environment2Name}"...`);
         environment2 = await repository.environments.create({ Name: environment2Name });
         console.log(`Environment "${environment2.Name}" created successfully.`);
 
-        const machineName = uniqueName();
+        const machineName = randomUUID();
         console.log(`Creating machine, "${machineName}"...`);
         machine = await repository.machines.create(
             NewDeploymentTarget(

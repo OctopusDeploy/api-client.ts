@@ -1,9 +1,9 @@
-import { NewSpace, SpaceResource } from "@octopusdeploy/message-contracts";
+import { NewSpace, SpaceResource, UserResource } from "@octopusdeploy/message-contracts";
 import AdmZip from "adm-zip";
+import { randomUUID } from "crypto";
 import { mkdtemp, rm } from "fs/promises";
 import { tmpdir } from "os";
 import path from "path";
-import { Config, starWars, uniqueNamesGenerator } from "unique-names-generator";
 import { Client } from "../../client";
 import { OverwriteMode } from "../../repositories/packageRepository";
 import { OctopusSpaceRepository, Repository } from "../../repository";
@@ -12,16 +12,12 @@ import { pushPackage } from "./push-package";
 
 describe("push package", () => {
     let client: Client;
+    let repository: OctopusSpaceRepository;
     let space: SpaceResource;
     let systemRepository: Repository;
-    let repository: OctopusSpaceRepository;
-    const randomConfig: Config = { dictionaries: [starWars] };
+    let user: UserResource;
 
     jest.setTimeout(100000);
-
-    function uniqueName() {
-        return uniqueNamesGenerator(randomConfig).substring(0, 20);
-    }
 
     let tempOutDir: string;
     const packages: PackageIdentity[] = [new PackageIdentity("Hello", "1.0.0"), new PackageIdentity("GoodBye", "2.0.0")];
@@ -40,12 +36,11 @@ describe("push package", () => {
         client = await Client.create();
         console.log(`Client connected to API endpoint successfully.`);
         systemRepository = new Repository(client);
+        user = await systemRepository.users.getCurrent();
     });
 
     beforeEach(async () => {
-        const user = await systemRepository.users.getCurrent();
-
-        const spaceName = uniqueName();
+        const spaceName = randomUUID();
         console.log(`Creating space, "${spaceName}"...`);
         space = await systemRepository.spaces.create(NewSpace(spaceName, undefined, [user]));
         repository = await systemRepository.forSpace(space);
@@ -88,5 +83,6 @@ describe("push package", () => {
         space.TaskQueueStopped = true;
         await systemRepository.spaces.modify(space);
         await systemRepository.spaces.del(space);
+        console.log(`Space '${space.Name}' deleted successfully.`);
     });
 });
