@@ -21,7 +21,7 @@ export async function pushPackage(space: SpaceResource, packages: string[], over
         const buffer = await readFile(filePath);
         const fileName = path.basename(filePath);
 
-        console.log(`Uploading ${fileName} package`);
+        console.log(`Uploading package, ${fileName}...`);
         await repository.packages.upload(new File([buffer], fileName), overwriteMode);
     }
 }

@@ -1,9 +1,9 @@
-import { SpaceResource } from "@octopusdeploy/message-contracts";
+import { NewSpace, SpaceResource, UserResource } from "@octopusdeploy/message-contracts";
 import AdmZip from "adm-zip";
+import { randomUUID } from "crypto";
 import { mkdtemp, rm } from "fs/promises";
 import { tmpdir } from "os";
 import path from "path";
-import { Config, starWars, uniqueNamesGenerator } from "unique-names-generator";
 import { Client } from "../../client";
 import { OverwriteMode } from "../../repositories/packageRepository";
 import { OctopusSpaceRepository, Repository } from "../../repository";
@@ -11,16 +11,13 @@ import { PackageIdentity } from "../createRelease/package-identity";
 import { pushPackage } from "./push-package";
 
 describe("push package", () => {
+    let client: Client;
+    let repository: OctopusSpaceRepository;
     let space: SpaceResource;
     let systemRepository: Repository;
-    let repository: OctopusSpaceRepository;
-    const randomConfig: Config = { dictionaries: [starWars] };
+    let user: UserResource;
 
     jest.setTimeout(100000);
-
-    function uniqueName() {
-        return uniqueNamesGenerator(randomConfig).substring(0, 20);
-    }
 
     let tempOutDir: string;
     const packages: PackageIdentity[] = [new PackageIdentity("Hello", "1.0.0"), new PackageIdentity("GoodBye", "2.0.0")];
@@ -35,22 +32,17 @@ describe("push package", () => {
             const packagePath = path.join(tempOutDir, `${p.id}.${p.version}.zip`);
             zip.writeZip(packagePath);
         }
+
+        client = await Client.create();
+        console.log(`Client connected to API endpoint successfully.`);
+        systemRepository = new Repository(client);
+        user = await systemRepository.users.getCurrent();
     });
 
     beforeEach(async () => {
-        const client = await Client.create();
-        systemRepository = new Repository(client);
-        const user = await systemRepository.users.getCurrent();
-
-        const spaceName = uniqueName();
-        console.log(`Creating ${spaceName} space`);
-        space = await systemRepository.spaces.create({
-            IsDefault: false,
-            Name: spaceName,
-            SpaceManagersTeamMembers: [user.Id],
-            SpaceManagersTeams: [],
-            TaskQueueStopped: false,
-        });
+        const spaceName = randomUUID().substring(0, 20);
+        console.log(`Creating space, "${spaceName}"...`);
+        space = await systemRepository.spaces.create(NewSpace(spaceName, undefined, [user]));
         repository = await systemRepository.forSpace(space);
     });
 
@@ -58,7 +50,6 @@ describe("push package", () => {
         await pushPackage(space, [path.join(tempOutDir, `Hello.1.0.0.zip`)], OverwriteMode.OverwriteExisting);
 
         const results = await repository.packages.list({ filter: "Hello" });
-
         const result = await repository.packages.get(results.Items[0].Id);
 
         expect(result.PackageId).toStrictEqual("Hello");
@@ -88,9 +79,10 @@ describe("push package", () => {
     afterEach(async () => {
         if (space === undefined || space === null) return;
 
-        console.log(`Deleting ${space.Name} space...`);
+        console.log(`Deleting space, ${space.Name}...`);
         space.TaskQueueStopped = true;
         await systemRepository.spaces.modify(space);
         await systemRepository.spaces.del(space);
+        console.log(`Space '${space.Name}' deleted successfully.`);
     });
 });

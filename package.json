@@ -39,16 +39,15 @@
     "jest-environment-jsdom": "^28.1.1",
     "jest-expect-message": "^1.0.2",
     "jest-extended": "^2.0.0",
-    "jest-junit": "^13.2.0",
+    "jest-junit": "^14.0.0",
     "jest-runner-eslint": "^1.0.1",
     "prettier": "^2.7.1",
     "process": "^0.11.10",
     "prop-types": "^15.8.1",
     "ts-jest": "^28.0.5",
     "ts-node": "^10.8.1",
-    "typedoc": "^0.22.17",
-    "typescript": "^4.7.4",
-    "unique-names-generator": "^4.7.1"
+    "typedoc": "^0.22.18",
+    "typescript": "^4.7.4"
   },
   "files": [
     "dist/**/*"

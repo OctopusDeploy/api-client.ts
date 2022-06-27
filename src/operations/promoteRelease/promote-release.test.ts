@@ -11,10 +11,11 @@ import {
     SpaceResource,
     StartTrigger,
     TenantedDeploymentMode,
+    UserResource,
 } from "@octopusdeploy/message-contracts";
 import { PackageRequirement } from "@octopusdeploy/message-contracts/dist/deploymentStepResource";
 import { RunConditionForAction } from "@octopusdeploy/message-contracts/dist/runConditionForAction";
-import { Config, starWars, uniqueNamesGenerator } from "unique-names-generator";
+import { randomUUID } from "crypto";
 import { Client } from "../../client";
 import { OctopusSpaceRepository, Repository } from "../../repository";
 import { createRelease } from "../createRelease/create-release";
@@ -22,38 +23,40 @@ import { deployRelease } from "../deployRelease/deploy-release";
 import { promoteRelease } from "./promote-release";
 
 describe("promote a release", () => {
-    let space: SpaceResource;
-    let project: ProjectResource;
+    let client: Client;
     let environment1: EnvironmentResource;
     let environment2: EnvironmentResource;
-    let systemRepository: Repository;
-    let repository: OctopusSpaceRepository;
     let machine: DeploymentTargetResource;
-    const randomConfig: Config = { dictionaries: [starWars] };
+    let project: ProjectResource;
+    let repository: OctopusSpaceRepository;
+    let space: SpaceResource;
+    let systemRepository: Repository;
+    let user: UserResource;
 
     jest.setTimeout(100000);
 
-    function uniqueName() {
-        return uniqueNamesGenerator(randomConfig).substring(0, 20);
-    }
+    beforeAll(async () => {
+        client = await Client.create();
+        console.log(`Client connected to API endpoint successfully.`);
+        systemRepository = new Repository(client);
+        user = await systemRepository.users.getCurrent();
+    });
 
     beforeEach(async () => {
-        const client = await Client.create();
-        systemRepository = new Repository(client);
-        const user = await systemRepository.users.getCurrent();
-
-        const spaceName = uniqueName();
-        console.log(`Creating ${spaceName} space...`);
-
+        const spaceName = randomUUID().substring(0, 20);
+        console.log(`Creating space, "${spaceName}"...`);
         space = await systemRepository.spaces.create(NewSpace(spaceName, undefined, [user]));
+        console.log(`Space "${spaceName}" created successfully.`);
+
         repository = await systemRepository.forSpace(space);
 
         const projectGroup = (await repository.projectGroups.list({ take: 1 })).Items[0];
         const lifecycle = (await repository.lifecycles.list({ take: 1 })).Items[0];
-        const projectName = uniqueName();
 
-        console.log(`Creating ${projectName} project...`);
+        const projectName = randomUUID();
+        console.log(`Creating project, "${projectName}"...`);
         project = await repository.projects.create(NewProject(projectName, projectGroup, lifecycle));
+        console.log(`Project "${projectName}" created successfully.`);
 
         const deploymentProcess = await repository.deploymentProcesses.get(project.DeploymentProcessId, undefined);
         deploymentProcess.Steps = [
@@ -63,7 +66,7 @@ describe("promote a release", () => {
                 PackageRequirement: PackageRequirement.LetOctopusDecide,
                 StartTrigger: StartTrigger.StartAfterPrevious,
                 Id: "",
-                Name: uniqueName(),
+                Name: randomUUID(),
                 Properties: { "Octopus.Action.TargetRoles": "deploy" },
                 Actions: [
                     {
@@ -98,17 +101,22 @@ describe("promote a release", () => {
             },
         ];
 
-        console.log("Updating deployment process...");
+        console.log(`Updating deployment process, "${deploymentProcess.Id}"...`);
         await repository.deploymentProcesses.saveToProject(project, deploymentProcess);
+        console.log(`Deployment process, "${deploymentProcess.Id}" updated successfully.`);
 
-        console.log("Creating environments...");
-        environment1 = await repository.environments.create({ Name: uniqueName() });
-        environment2 = await repository.environments.create({ Name: uniqueName() });
+        const environment1Name = randomUUID();
+        console.log(`Creating environment, "${environment1Name}"...`);
+        environment1 = await repository.environments.create({ Name: environment1Name });
+        console.log(`Environment "${environment1.Name}" created successfully.`);
 
-        console.log("Creating machine...");
+        const environment2Name = randomUUID();
+        console.log(`Creating environment, "${environment2Name}"...`);
+        environment2 = await repository.environments.create({ Name: environment2Name });
+        console.log(`Environment "${environment2.Name}" created successfully.`);
 
-        const machineName = uniqueName();
-
+        const machineName = randomUUID();
+        console.log(`Creating machine, "${machineName}"...`);
         machine = await repository.machines.create(
             NewDeploymentTarget(
                 machineName,
@@ -118,20 +126,22 @@ describe("promote a release", () => {
                 TenantedDeploymentMode.TenantedOrUntenanted
             )
         );
+        console.log(`Machine "${machine.Name}" created successfully.`);
     });
 
     test("promote to single environment", async () => {
-        await createRelease(space, project);
-        await deployRelease(space, project, "latest", [environment1.Name], undefined, false, { waitForDeployment: true });
-        await promoteRelease(space, project, environment1, [environment2.Name], true, true, { waitForDeployment: true });
+        await createRelease(repository, project);
+        await deployRelease(repository, project, "latest", [environment1], undefined, false, { waitForDeployment: true });
+        await promoteRelease(repository, project, environment1, [environment2], true, true, { waitForDeployment: true });
     });
 
     afterEach(async () => {
         if (space === undefined || space === null) return;
 
-        console.log(`Deleting ${space.Name} space...`);
+        console.log(`Deleting space, ${space.Name}...`);
         space.TaskQueueStopped = true;
         await systemRepository.spaces.modify(space);
         await systemRepository.spaces.del(space);
+        console.log(`Space '${space.Name}' deleted successfully.`);
     });
 });

@@ -1,25 +1,22 @@
-import { NewSpace, SpaceResource } from "@octopusdeploy/message-contracts";
+import { NewSpace, SpaceResource, UserResource } from "@octopusdeploy/message-contracts";
 import AdmZip from "adm-zip";
+import { randomUUID } from "crypto";
 import { mkdtemp, readFile, rm } from "fs/promises";
 import { tmpdir } from "os";
 import path from "path";
-import { Config, starWars, uniqueNamesGenerator } from "unique-names-generator";
 import { Client } from "../../client";
 import { OctopusSpaceRepository, Repository } from "../../repository";
 import { PackageIdentity } from "../createRelease/package-identity";
 import { pushBuildInformation } from "./push-build-information";
 
 describe("push build information", () => {
+    let client: Client;
     let space: SpaceResource;
     let systemRepository: Repository;
     let repository: OctopusSpaceRepository;
-    const randomConfig: Config = { dictionaries: [starWars] };
+    let user: UserResource;
 
     jest.setTimeout(100000);
-
-    function uniqueName() {
-        return uniqueNamesGenerator(randomConfig).substring(0, 20);
-    }
 
     let tempOutDir: string;
     const packages: PackageIdentity[] = [new PackageIdentity("Hello", "1.0.0")];
@@ -34,16 +31,16 @@ describe("push build information", () => {
             const packagePath = path.join(tempOutDir, `${p.id}.${p.version}.zip`);
             zip.writeZip(packagePath);
         }
+
+        client = await Client.create();
+        console.log(`Client connected to API endpoint successfully.`);
+        systemRepository = new Repository(client);
+        user = await systemRepository.users.getCurrent();
     });
 
     beforeEach(async () => {
-        const client = await Client.create();
-        systemRepository = new Repository(client);
-        const user = await systemRepository.users.getCurrent();
-
-        const spaceName = uniqueName();
-        console.log(`Creating ${spaceName} space...`);
-
+        const spaceName = randomUUID().substring(0, 20);
+        console.log(`Creating space, "${spaceName}"...`);
         space = await systemRepository.spaces.create(NewSpace(spaceName, undefined, [user]));
         repository = await systemRepository.forSpace(space);
     });
@@ -89,7 +86,7 @@ describe("push build information", () => {
     afterEach(async () => {
         if (space === undefined || space === null) return;
 
-        console.log(`Deleting ${space.Name} space...`);
+        console.log(`Deleting space, ${space.Name}...`);
         space.TaskQueueStopped = true;
         await systemRepository.spaces.modify(space);
         await systemRepository.spaces.del(space);
