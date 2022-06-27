@@ -1,5 +1,35 @@
 # Changelog
 
+## [1.2.1](https://github.com/OctopusDeploy/api-client.ts/compare/v1.1.7...v1.2.1) (2022-06-27)
+
+
+### Features
+
+* added configuration processor, moved code ([aa5d971](https://github.com/OctopusDeploy/api-client.ts/commit/aa5d97195a9c88830ec2c68aed9cc93a4666f363))
+* added environment variables constants ([44cc7b2](https://github.com/OctopusDeploy/api-client.ts/commit/44cc7b2748111f529605010303dd0e4beb23fb61))
+* reflected changes to message contracts ([1c72122](https://github.com/OctopusDeploy/api-client.ts/commit/1c72122ec3002d2a2a90fd4e65dd587dcc60d74c))
+* replaced random name with UUIDs for uniqueness ([ff154a8](https://github.com/OctopusDeploy/api-client.ts/commit/ff154a88c33a4d80150f0aae11988e9d4cc771c3))
+* updated client ([1800da9](https://github.com/OctopusDeploy/api-client.ts/commit/1800da9dc39ab24006ec7d04e0368217fbc7a1ca))
+* updated DeploymentOptions with stronger typing ([c16e070](https://github.com/OctopusDeploy/api-client.ts/commit/c16e0701a1c184520f21e91143d6857b577f755a))
+* updated stronger typing ([986880e](https://github.com/OctopusDeploy/api-client.ts/commit/986880ecf0d678f6914c29f3a6722d160467e558))
+* updated to strong typing enforcement ([7f902bd](https://github.com/OctopusDeploy/api-client.ts/commit/7f902bdf61f16445963f8033d85a4a0e977ce42f))
+* updated to stronger typing ([eb83e52](https://github.com/OctopusDeploy/api-client.ts/commit/eb83e5285955dacac371837d8aa04638ecfa9d74))
+* updated to stronger typing enforcement ([2c57b5c](https://github.com/OctopusDeploy/api-client.ts/commit/2c57b5cfbeb2c1dbf4eaee189a17f2ae977b9712))
+* updated typing for deploy release ([ce857a9](https://github.com/OctopusDeploy/api-client.ts/commit/ce857a9ed2241196fff701b0f56ac53b61f7f249))
+
+
+### Bug Fixes
+
+* updated error handling ([375a0e2](https://github.com/OctopusDeploy/api-client.ts/commit/375a0e296328caf563d1491e0ab1f45dc7c90f41))
+* updated publish workflow ([274521a](https://github.com/OctopusDeploy/api-client.ts/commit/274521a4ef2fb9582327a0ce7ee026248c6c386a))
+* updated space name ([545fe58](https://github.com/OctopusDeploy/api-client.ts/commit/545fe58b89390701e90fc90f404be3c980b505e8))
+
+
+### Miscellaneous Chores
+
+* release 1.2.0 ([813c372](https://github.com/OctopusDeploy/api-client.ts/commit/813c3726e2dc846533b73d9731cfcf0782fc9773))
+* release 1.2.1 ([332017b](https://github.com/OctopusDeploy/api-client.ts/commit/332017bc73798669562b4faafcee388269784666))
+
 ### [1.1.7](https://www.github.com/OctopusDeploy/api-client.ts/compare/v1.1.6...v1.1.7) (2021-12-02)
 
 
