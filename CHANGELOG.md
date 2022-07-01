@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/OctopusDeploy/api-client.ts/compare/v1.2.1...v1.3.0) (2022-07-01)
+
+
+### Features
+
+* added index files for typescript type exports ([#71](https://github.com/OctopusDeploy/api-client.ts/issues/71)) ([b86d262](https://github.com/OctopusDeploy/api-client.ts/commit/b86d262510e74701a7eb130a660f353252eb4938))
+
 ## [1.2.1](https://github.com/OctopusDeploy/api-client.ts/compare/v1.1.7...v1.2.1) (2022-06-27)
 
 
