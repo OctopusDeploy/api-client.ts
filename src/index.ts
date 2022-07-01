@@ -11,6 +11,7 @@ export * from "./environment";
 export * from "./environmentVariables";
 export * from "./errorResponseDetails";
 export * from "./logger";
+export * from "./operations";
 export * from "./repositories/accountRepository";
 export * from "./repositories/actionTemplateRepository";
 export * from "./repositories/artifactRepository";
