@@ -1,6 +1,7 @@
 # :octopus: TypeScript API Client for Octopus Deploy
 
-This repository contains the source code for the TypeScript API Client for Octopus Deploy.
+[![npm](https://img.shields.io/npm/v/@octopusdeploy/api-client?logo=npm&style=flat-square)](https://www.npmjs.com/package/@octopusdeploy/api-client)
+[![CI](https://img.shields.io/github/workflow/status/OctopusDeploy/api-client.ts/Run%20Tests?logo=github&style=flat-square)](https://github.com/OctopusDeploy/api-client.ts/actions/workflows/test.yml)
 
 ## 🚀 Getting Started
 
@@ -13,37 +14,47 @@ The reference documentation for this library is auto-generated via [Typedoc](htt
 ## 🏎 Usage
 
 ```typescript
-import { Client, ClientConfiguration, Repository } from '@octopusdeploy/api-client';
-import type { ProjectResource } from '@octopusdeploy/message-contracts';
+import { Client, ClientConfiguration, Repository } from "@octopusdeploy/api-client";
+import type { ProjectResource } from "@octopusdeploy/message-contracts";
 
-const configuration: ClientConfiguration = {
-  // agent: new Agent({ proxy: { hostname: '127.0.0.1', port: 8866 } }), // proxy agent if required
-  apiKey: 'api-key',
-  apiUri: 'api-uri',
-  space: 'space-id',
-};
+// explicit configuration
+//
+// const configuration: ClientConfiguration = {
+//     agent: new Agent({ proxy: { hostname: '127.0.0.1', port: 8866 } }), // proxy agent if required
+//     apiKey: "api-key",
+//     apiUri: "api-uri",
+//     space: "space-id",
+// };
+//
+// const client = await Client.create(configuration);
 
-const client = await Client.create(configuration);
+// environment variables
+//
+// OCTOPUS_API_KEY: the API key used to connect to an instance of Octopus Deploy
+// OCTOPUS_HOST: the host instance of Octopus Deploy
+// OCTOPUS_SPACE: the space to target API commands in Octopus Deploy
+
+// assume conventional configuration via environment variables
+const client = await Client.create();
 if (client === undefined) {
-  throw new Error('client could not be constructed');
+    throw new Error("client could not be constructed");
 }
 
 const repository = new Repository(client);
-const projectNameOrId: string = 'project-name-or-ID';
+const projectNameOrId: string = "project-name-or-ID";
 
 console.log(`Getting project, "${projectNameOrId}"...`);
 
 let project: ProjectResource | undefined;
-
 try {
-  project = await repository.projects.find(projectNameOrId);
+    project = await repository.projects.find(projectNameOrId);
 } catch (error) {
-  console.error(error);
+    console.error(error);
 }
 
 if (project !== null && project !== undefined) {
-  console.log(`Project found: "${project?.Name}" (${project?.Id})`);
+    console.log(`Project found: "${project?.Name}" (${project?.Id})`);
 } else {
-  console.error(`Project, "${projectNameOrId}" not found`);
+    console.error(`Project, "${projectNameOrId}" not found`);
 }
 ```
