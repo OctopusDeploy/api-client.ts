@@ -1,5 +1,16 @@
 # :octopus: TypeScript API Client for Octopus Deploy
 
+<div align="center">
+  <!-- npm -->
+  <a href="https://www.npmjs.com/package/@octopusdeploy/api-client">
+    <img alt="npm" src="https://img.shields.io/npm/dw/@octopusdeploy/api-client?logo=npm&style=flat-square" />
+  </a>
+  <!-- build status -->
+  <a href="https://github.com/OctopusDeploy/api-client.ts/actions/workflows/test.yml">
+    <img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/OctopusDeploy/api-client.ts/Run%20Tests?logo=github&style=flat-square" />
+  </a>
+</div>
+
 This repository contains the source code for the TypeScript API Client for Octopus Deploy.
 
 ## 🚀 Getting Started
