@@ -11,7 +11,7 @@
   </a>
 </div>
 
-This repository contains the source code for the TypeScript API Client for Octopus Deploy.
+<p>This repository contains the source code for the TypeScript API Client for Octopus Deploy.</p>
 
 ## 🚀 Getting Started
 
