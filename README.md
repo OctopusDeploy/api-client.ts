@@ -1,7 +1,7 @@
 # :octopus: TypeScript API Client for Octopus Deploy
 
 [![npm](https://img.shields.io/npm/dw/@octopusdeploy/api-client?logo=npm&style=flat-square)](https://www.npmjs.com/package/@octopusdeploy/api-client)
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/OctopusDeploy/api-client.ts/Run%20Tests?logo=github&style=flat-square)](https://github.com/OctopusDeploy/api-client.ts/actions/workflows/test.yml)
+[![CI](https://img.shields.io/github/workflow/status/OctopusDeploy/api-client.ts/Run%20Tests?logo=github&style=flat-square)](https://github.com/OctopusDeploy/api-client.ts/actions/workflows/test.yml)
 
 ## 🚀 Getting Started
 
