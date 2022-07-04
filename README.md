@@ -11,8 +11,6 @@
   </a>
 </div>
 
-<p>This repository contains the source code for the TypeScript API Client for Octopus Deploy.</p>
-
 ## 🚀 Getting Started
 
 The TypeScript API Client for Octopus Deploy is easy to use after it's been initialized. Refer to [Getting Started](getting-started.md) for step-by-step set of instructions on setup, initialization, and usage of its functionality.
@@ -24,37 +22,37 @@ The reference documentation for this library is auto-generated via [Typedoc](htt
 ## 🏎 Usage
 
 ```typescript
-import { Client, ClientConfiguration, Repository } from '@octopusdeploy/api-client';
-import type { ProjectResource } from '@octopusdeploy/message-contracts';
+import { Client, ClientConfiguration, Repository } from "@octopusdeploy/api-client";
+import type { ProjectResource } from "@octopusdeploy/message-contracts";
 
 const configuration: ClientConfiguration = {
-  // agent: new Agent({ proxy: { hostname: '127.0.0.1', port: 8866 } }), // proxy agent if required
-  apiKey: 'api-key',
-  apiUri: 'api-uri',
-  space: 'space-id',
+    // agent: new Agent({ proxy: { hostname: '127.0.0.1', port: 8866 } }), // proxy agent if required
+    apiKey: "api-key",
+    apiUri: "api-uri",
+    space: "space-id",
 };
 
 const client = await Client.create(configuration);
 if (client === undefined) {
-  throw new Error('client could not be constructed');
+    throw new Error("client could not be constructed");
 }
 
 const repository = new Repository(client);
-const projectNameOrId: string = 'project-name-or-ID';
+const projectNameOrId: string = "project-name-or-ID";
 
 console.log(`Getting project, "${projectNameOrId}"...`);
 
 let project: ProjectResource | undefined;
 
 try {
-  project = await repository.projects.find(projectNameOrId);
+    project = await repository.projects.find(projectNameOrId);
 } catch (error) {
-  console.error(error);
+    console.error(error);
 }
 
 if (project !== null && project !== undefined) {
-  console.log(`Project found: "${project?.Name}" (${project?.Id})`);
+    console.log(`Project found: "${project?.Name}" (${project?.Id})`);
 } else {
-  console.error(`Project, "${projectNameOrId}" not found`);
+    console.error(`Project, "${projectNameOrId}" not found`);
 }
 ```
