@@ -17,14 +17,19 @@ The reference documentation for this library is auto-generated via [Typedoc](htt
 import { Client, ClientConfiguration, Repository } from "@octopusdeploy/api-client";
 import type { ProjectResource } from "@octopusdeploy/message-contracts";
 
-const configuration: ClientConfiguration = {
-    // agent: new Agent({ proxy: { hostname: '127.0.0.1', port: 8866 } }), // proxy agent if required
-    apiKey: "api-key",
-    apiUri: "api-uri",
-    space: "space-id",
-};
+// explicit configuration
+//
+// const configuration: ClientConfiguration = {
+//     agent: new Agent({ proxy: { hostname: '127.0.0.1', port: 8866 } }), // proxy agent if required
+//     apiKey: "api-key",
+//     apiUri: "api-uri",
+//     space: "space-id",
+// };
+//
+// const client = await Client.create(configuration);
 
-const client = await Client.create(configuration);
+// assume conventional configuration via environment variables
+const client = await Client.create();
 if (client === undefined) {
     throw new Error("client could not be constructed");
 }
@@ -35,7 +40,6 @@ const projectNameOrId: string = "project-name-or-ID";
 console.log(`Getting project, "${projectNameOrId}"...`);
 
 let project: ProjectResource | undefined;
-
 try {
     project = await repository.projects.find(projectNameOrId);
 } catch (error) {
