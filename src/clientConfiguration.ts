@@ -28,7 +28,7 @@ export function processConfiguration(configuration?: ClientConfiguration): Clien
     return {
         apiKey: !configuration.apiKey || configuration.apiKey.length === 0 ? apiKey : configuration.apiKey,
         apiUri: !configuration.apiUri || configuration.apiUri.length === 0 ? host : configuration.apiUri,
-        autoConnect: !configuration.autoConnect ? true : configuration.autoConnect,
+        autoConnect: configuration.autoConnect === undefined ? true : configuration.autoConnect,
         space: !configuration.space || configuration.space.length === 0 ? space : configuration.space,
     };
 }
