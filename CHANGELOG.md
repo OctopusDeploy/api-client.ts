@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://github.com/OctopusDeploy/api-client.ts/compare/v1.3.0...v1.3.1) (2022-07-17)
+
+
+### Bug Fixes
+
+* updated client auto-connect ([1b72b0e](https://github.com/OctopusDeploy/api-client.ts/commit/1b72b0e57cebf92b24b72ecc03f59d077482ff8c))
+
 ## [1.3.0](https://github.com/OctopusDeploy/api-client.ts/compare/v1.2.1...v1.3.0) (2022-07-01)
 
 
