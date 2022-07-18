@@ -47,7 +47,7 @@ export class Client {
                 if (error instanceof Error) client.error("Could not connect", error);
                 throw error;
             }
-            if (configuration.space !== null && configuration.space !== undefined) {
+            if (configuration.space !== undefined && configuration.space !== "") {
                 try {
                     await client.switchToSpace(configuration.space);
                 } catch (error: unknown) {
