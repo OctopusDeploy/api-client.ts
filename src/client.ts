@@ -1,4 +1,5 @@
-import type { GlobalRootLinks, OctopusError, RootResource, SpaceRootLinks, SpaceRootResource } from "@octopusdeploy/message-contracts";
+import type { GlobalRootLinks, OctopusError, RootResource, SpaceRootLinks, SpaceResource, SpaceRootResource } from "@octopusdeploy/message-contracts";
+import { PagingCollection } from "@octopusdeploy/message-contracts";
 import ApiClient from "./apiClient";
 import { ClientConfiguration, processConfiguration } from "./clientConfiguration";
 import type { ClientErrorResponseDetails } from "./clientErrorResponseDetails";
@@ -170,15 +171,26 @@ export class Client {
         return new Client(this.session, this.resolver, this.rootDocument, null, null, this.configuration);
     }
 
-    async switchToSpace(spaceId: string): Promise<void> {
+    async switchToSpace(spaceIdOrName: string): Promise<void> {
         if (this.rootDocument === null) {
             throw new Error(
                 "Root document is null; this document is required for the API client. Please ensure that the API endpoint is accessible along with its root document."
             );
         }
 
-        this.spaceId = spaceId;
-        this.spaceRootDocument = await this.get<SpaceRootResource>(this.rootDocument.Links["SpaceHome"], { spaceId: this.spaceId });
+        if (spaceIdOrName.startsWith("Spaces-")) {
+            this.spaceId = spaceIdOrName;
+            this.spaceRootDocument = await this.get<SpaceRootResource>(this.rootDocument.Links["SpaceHome"], { spaceId: this.spaceId });
+        }
+
+        const spaceList = await this.get<PagingCollection<SpaceResource>>(this.rootDocument.Links["Spaces"], { partialName: spaceIdOrName });
+        if (spaceList.Items.length != 1) {
+            throw new Error(`Unable to uniquely identify a space using the partial name of '${spaceIdOrName}'.`);
+        }
+
+        const spaceResource = spaceList.Items[0];
+        this.spaceId = spaceResource.Id;
+        this.spaceRootDocument = await this.get<SpaceRootResource>(spaceResource.Links["SpaceHome"]);
     }
 
     switchToSystem(): void {
