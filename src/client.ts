@@ -1,5 +1,12 @@
-import type { GlobalRootLinks, OctopusError, RootResource, SpaceRootLinks, SpaceResource, SpaceRootResource } from "@octopusdeploy/message-contracts";
-import { PagingCollection } from "@octopusdeploy/message-contracts";
+import type {
+    GlobalRootLinks,
+    PagingCollection,
+    OctopusError,
+    RootResource,
+    SpaceRootLinks,
+    SpaceResource,
+    SpaceRootResource,
+} from "@octopusdeploy/message-contracts";
 import ApiClient from "./apiClient";
 import { ClientConfiguration, processConfiguration } from "./clientConfiguration";
 import type { ClientErrorResponseDetails } from "./clientErrorResponseDetails";
