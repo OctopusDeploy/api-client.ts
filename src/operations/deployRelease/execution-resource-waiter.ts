@@ -1,7 +1,7 @@
 import { DeploymentResource, EnvironmentResource, ProjectResource, ReleaseResource, TaskResource } from "@octopusdeploy/message-contracts";
 import { IExecutionResource } from "@octopusdeploy/message-contracts/dist/deploymentResource";
-import fs from "fs/promises";
 import { OctopusSpaceRepository } from "../../index";
+import { writeFile } from "fs";
 
 export class ExecutionResourceWaiter {
     constructor(private readonly repository: OctopusSpaceRepository, private readonly serverBaseUrl: string) {}
@@ -92,8 +92,15 @@ export class ExecutionResourceWaiter {
 
                     try {
                         const raw = await this.repository.tasks.getRaw(updated);
-                        if (rawLogFile) await fs.writeFile(rawLogFile, raw);
-                        else console.error(raw);
+                        if (rawLogFile) {
+                            await new Promise<void>((resolve) => {
+                                writeFile(rawLogFile, raw, () => {
+                                    resolve();
+                                });
+                            });
+                        } else {
+                            console.error(raw);
+                        }
                     } catch (er: unknown) {
                         if (er instanceof Error) {
                             console.error("Could not retrieve raw log", er);
