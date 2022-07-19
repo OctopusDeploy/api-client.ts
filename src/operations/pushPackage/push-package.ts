@@ -1,5 +1,6 @@
 import { SpaceResource } from "@octopusdeploy/message-contracts";
-import { readFile } from "fs/promises";
+import { promises as fs } from "fs";
+const { readFile } = fs;
 import path from "path";
 import { OverwriteMode } from "../../repositories/packageRepository";
 import { connect } from "../connect";
