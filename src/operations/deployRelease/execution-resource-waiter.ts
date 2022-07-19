@@ -1,6 +1,6 @@
 import { DeploymentResource, EnvironmentResource, ProjectResource, ReleaseResource, TaskResource } from "@octopusdeploy/message-contracts";
 import { IExecutionResource } from "@octopusdeploy/message-contracts/dist/deploymentResource";
-import fs from "fs/promises";
+import { promises as fs} from "fs";
 import { OctopusSpaceRepository } from "../../index";
 
 export class ExecutionResourceWaiter {
