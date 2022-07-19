@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.2](https://github.com/OctopusDeploy/api-client.ts/compare/v1.3.1...v1.3.2) (2022-07-19)
+
+
+### Bug Fixes
+
+* update how we import fs.promises ([9eaf40e](https://github.com/OctopusDeploy/api-client.ts/commit/9eaf40ed8e0ce1fb67904c750ee07d6588ea7c66))
+
 ## [1.3.1](https://github.com/OctopusDeploy/api-client.ts/compare/v1.3.0...v1.3.1) (2022-07-17)
 
 
