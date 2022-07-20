@@ -203,6 +203,7 @@ export class Client {
             const spaceResource = spaceResources[0];
             this.spaceId = spaceIdOrName;
             this.spaceRootDocument = await this.get<SpaceRootResource>(spaceResource.Links["SpaceHome"]);
+            return;
         }
 
         throw new Error(`Unable to uniquely identify a space using '${spaceIdOrName}'.`);
