@@ -7,6 +7,8 @@ import type {
     SpaceResource,
     SpaceRootResource,
 } from "@octopusdeploy/message-contracts";
+import { toUpper } from "lodash";
+import { stringify } from "querystring";
 import ApiClient from "./apiClient";
 import { ClientConfiguration, processConfiguration } from "./clientConfiguration";
 import type { ClientErrorResponseDetails } from "./clientErrorResponseDetails";
@@ -186,14 +188,15 @@ export class Client {
         }
 
         const spaceList = await this.get<PagingCollection<SpaceResource>>(this.rootDocument.Links["Spaces"]);
-        var spaceResources = spaceList.Items.filter((s: SpaceResource) => s.Name == spaceIdOrName);
+        const uppercaseSpaceIdOrName = toUpper(spaceIdOrName);
+        var spaceResources = spaceList.Items.filter((s: SpaceResource) => toUpper(s.Name) == uppercaseSpaceIdOrName);
 
         if (spaceResources.Items.length > 1) {
             throw new Error(`Multiple spaces matched '${spaceIdOrName}', the provided name must match uniquely.`);
         }
 
         if (spaceResources.Items.length == 0) {
-            spaceResources = spaceList.Items.filter((s: SpaceResource) => s.Id == spaceIdOrName);
+            spaceResources = spaceList.Items.filter((s: SpaceResource) => toUpper(s.Id) == uppercaseSpaceIdOrName);
         }
 
         if (spaceResources.Items.length == 1) {
