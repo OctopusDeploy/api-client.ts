@@ -185,19 +185,24 @@ export class Client {
             );
         }
 
-        if (spaceIdOrName.startsWith("Spaces-")) {
+        const spaceList = await this.get<PagingCollection<SpaceResource>>(this.rootDocument.Links["Spaces"]);
+        var spaceResources = spaceList.Items.filter((s: SpaceResource) => s.Name == spaceIdOrName);
+
+        if (spaceResources.Items.length > 1) {
+            throw new Error(`Multiple spaces matched '${spaceIdOrName}', the provided name must match uniquely.`);
+        }
+
+        if (spaceResources.Items.length == 0) {
+            spaceResources = spaceList.Items.filter((s: SpaceResource) => s.Id == spaceIdOrName);
+        }
+
+        if (spaceResources.Items.length == 1) {
+            const spaceResource = spaceResources.Items[0];
             this.spaceId = spaceIdOrName;
-            this.spaceRootDocument = await this.get<SpaceRootResource>(this.rootDocument.Links["SpaceHome"], { spaceId: this.spaceId });
+            this.spaceRootDocument = await this.get<SpaceRootResource>(spaceResource.Links["SpaceHome"]);
         }
 
-        const spaceList = await this.get<PagingCollection<SpaceResource>>(this.rootDocument.Links["Spaces"], { partialName: spaceIdOrName });
-        if (spaceList.Items.length != 1) {
-            throw new Error(`Unable to uniquely identify a space using the partial name of '${spaceIdOrName}'.`);
-        }
-
-        const spaceResource = spaceList.Items[0];
-        this.spaceId = spaceResource.Id;
-        this.spaceRootDocument = await this.get<SpaceRootResource>(spaceResource.Links["SpaceHome"]);
+        throw new Error(`Unable to uniquely identify a space using '${spaceIdOrName}'.`);
     }
 
     switchToSystem(): void {
