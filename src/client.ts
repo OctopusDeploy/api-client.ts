@@ -191,16 +191,16 @@ export class Client {
         const uppercaseSpaceIdOrName = toUpper(spaceIdOrName);
         var spaceResources = spaceList.Items.filter((s: SpaceResource) => toUpper(s.Name) == uppercaseSpaceIdOrName);
 
-        if (spaceResources.Items.length > 1) {
+        if (spaceResources.length > 1) {
             throw new Error(`Multiple spaces matched '${spaceIdOrName}', the provided name must match uniquely.`);
         }
 
-        if (spaceResources.Items.length == 0) {
+        if (spaceResources.length == 0) {
             spaceResources = spaceList.Items.filter((s: SpaceResource) => toUpper(s.Id) == uppercaseSpaceIdOrName);
         }
 
-        if (spaceResources.Items.length == 1) {
-            const spaceResource = spaceResources.Items[0];
+        if (spaceResources.length == 1) {
+            const spaceResource = spaceResources[0];
             this.spaceId = spaceIdOrName;
             this.spaceRootDocument = await this.get<SpaceRootResource>(spaceResource.Links["SpaceHome"]);
         }
