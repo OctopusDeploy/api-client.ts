@@ -7,8 +7,6 @@ import type {
     SpaceResource,
     SpaceRootResource,
 } from "@octopusdeploy/message-contracts";
-import { toUpper } from "lodash";
-import { stringify } from "querystring";
 import ApiClient from "./apiClient";
 import { ClientConfiguration, processConfiguration } from "./clientConfiguration";
 import type { ClientErrorResponseDetails } from "./clientErrorResponseDetails";
