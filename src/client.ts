@@ -187,19 +187,13 @@ export class Client {
 
         const spaceList = await this.get<PagingCollection<SpaceResource>>(this.rootDocument.Links["Spaces"]);
         const uppercaseSpaceIdOrName = spaceIdOrName.toUpperCase();
-        var spaceResources = spaceList.Items.filter((s: SpaceResource) => s.Name.toUpperCase() === uppercaseSpaceIdOrName);
-
-        if (spaceResources.length > 1) {
-            throw new Error(`Multiple spaces matched '${spaceIdOrName}', the provided name must match uniquely.`);
-        }
-
-        if (spaceResources.length == 0) {
-            spaceResources = spaceList.Items.filter((s: SpaceResource) => s.Id.toUpperCase() === uppercaseSpaceIdOrName);
-        }
+        var spaceResources = spaceList.Items.filter(
+            (s: SpaceResource) => s.Name.toUpperCase() === uppercaseSpaceIdOrName || s.Id.toUpperCase() === uppercaseSpaceIdOrName
+        );
 
         if (spaceResources.length == 1) {
             const spaceResource = spaceResources[0];
-            this.spaceId = spaceIdOrName;
+            this.spaceId = spaceResource.Id;
             this.spaceRootDocument = await this.get<SpaceRootResource>(spaceResource.Links["SpaceHome"]);
             return;
         }
