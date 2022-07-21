@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/OctopusDeploy/api-client.ts/compare/v1.3.2...v1.4.0) (2022-07-21)
+
+
+### Features
+
+* Allow the environment variable for space to be an Id or a Name ([#102](https://github.com/OctopusDeploy/api-client.ts/issues/102)) ([aa67ae5](https://github.com/OctopusDeploy/api-client.ts/commit/aa67ae5eb52de611e8f7e4b5d5e2707ee11ef407))
+
 ## [1.3.2](https://github.com/OctopusDeploy/api-client.ts/compare/v1.3.1...v1.3.2) (2022-07-19)
 
 
