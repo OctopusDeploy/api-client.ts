@@ -1,4 +1,12 @@
-import type { GlobalRootLinks, OctopusError, RootResource, SpaceRootLinks, SpaceRootResource } from "@octopusdeploy/message-contracts";
+import type {
+    GlobalRootLinks,
+    PagingCollection,
+    OctopusError,
+    RootResource,
+    SpaceRootLinks,
+    SpaceResource,
+    SpaceRootResource,
+} from "@octopusdeploy/message-contracts";
 import ApiClient from "./apiClient";
 import { ClientConfiguration, processConfiguration } from "./clientConfiguration";
 import type { ClientErrorResponseDetails } from "./clientErrorResponseDetails";
@@ -39,7 +47,7 @@ export class Client {
                 if (error instanceof Error) client.error("Could not connect", error);
                 throw error;
             }
-            if (configuration.space !== null && configuration.space !== undefined) {
+            if (configuration.space !== undefined && configuration.space !== "") {
                 try {
                     await client.switchToSpace(configuration.space);
                 } catch (error: unknown) {
@@ -170,15 +178,27 @@ export class Client {
         return new Client(this.session, this.resolver, this.rootDocument, null, null, this.configuration);
     }
 
-    async switchToSpace(spaceId: string): Promise<void> {
+    async switchToSpace(spaceIdOrName: string): Promise<void> {
         if (this.rootDocument === null) {
             throw new Error(
                 "Root document is null; this document is required for the API client. Please ensure that the API endpoint is accessible along with its root document."
             );
         }
 
-        this.spaceId = spaceId;
-        this.spaceRootDocument = await this.get<SpaceRootResource>(this.rootDocument.Links["SpaceHome"], { spaceId: this.spaceId });
+        const spaceList = await this.get<PagingCollection<SpaceResource>>(this.rootDocument.Links["Spaces"]);
+        const uppercaseSpaceIdOrName = spaceIdOrName.toUpperCase();
+        var spaceResources = spaceList.Items.filter(
+            (s: SpaceResource) => s.Name.toUpperCase() === uppercaseSpaceIdOrName || s.Id.toUpperCase() === uppercaseSpaceIdOrName
+        );
+
+        if (spaceResources.length == 1) {
+            const spaceResource = spaceResources[0];
+            this.spaceId = spaceResource.Id;
+            this.spaceRootDocument = await this.get<SpaceRootResource>(spaceResource.Links["SpaceHome"]);
+            return;
+        }
+
+        throw new Error(`Unable to uniquely identify a space using '${spaceIdOrName}'.`);
     }
 
     switchToSystem(): void {

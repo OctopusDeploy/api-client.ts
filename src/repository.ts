@@ -339,8 +339,8 @@ export class Repository implements OctopusSpaceRepository, OctopusSystemReposito
         return new Repository(this.client.forSystem());
     }
 
-    switchToSpace(spaceId: string): Promise<void> {
-        return this.client.switchToSpace(spaceId);
+    switchToSpace(spaceIdOrName: string): Promise<void> {
+        return this.client.switchToSpace(spaceIdOrName);
     }
 
     switchToSystem(): void {
