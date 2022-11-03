@@ -1,4 +1,5 @@
 export interface CreateExecutionBaseV1 {
+    spaceId: string;
     projectName: string;
     forcePackageDownload?: boolean;
     specificMachineNames?: string[];

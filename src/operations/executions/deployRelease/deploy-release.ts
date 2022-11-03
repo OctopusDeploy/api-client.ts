@@ -8,7 +8,7 @@ export async function deployReleaseUntenanted(
 ): Promise<CreateDeploymentUntenantedResponseV1> {
     console.log(`Deploying a release...`);
 
-    var response = await repository.client.do<CreateDeploymentUntenantedResponseV1>("~/api/{spaceId}/deployments/create/untenanted/v1", command);
+    var response = await repository.client.do<CreateDeploymentUntenantedResponseV1>(`~/api/${command.spaceId}/deployments/create/untenanted/v1`, command);
 
     console.log(`Deployment created successfully.`);
 
@@ -21,7 +21,7 @@ export async function deployReleaseTenanted(
 ): Promise<CreateDeploymentTenantedResponseV1> {
     console.log(`Deploying a tenanted release...`);
 
-    var response = await repository.client.do<CreateDeploymentTenantedResponseV1>("~/api/{spaceId}/deployments/create/tenanted/v1", command);
+    var response = await repository.client.do<CreateDeploymentTenantedResponseV1>(`~/api/${command.spaceId}/deployments/create/tenanted/v1`, command);
 
     console.log(`Tenanted Deployment(s) created successfully.`);
 

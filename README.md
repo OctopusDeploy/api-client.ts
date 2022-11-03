@@ -31,7 +31,7 @@ import type { ProjectResource } from "@octopusdeploy/message-contracts";
 // environment variables
 //
 // OCTOPUS_API_KEY: the API key used to connect to an instance of Octopus Deploy
-// OCTOPUS_HOST: the host instance of Octopus Deploy
+// OCTOPUS_URL: the host instance of Octopus Deploy
 // OCTOPUS_SPACE: the space to target API commands in Octopus Deploy
 
 // assume conventional configuration via environment variables
