@@ -15,10 +15,11 @@ import {
 import { PackageRequirement } from "@octopusdeploy/message-contracts/dist/deploymentStepResource";
 import { RunConditionForAction } from "@octopusdeploy/message-contracts/dist/runConditionForAction";
 import { randomUUID } from "crypto";
-import { Client } from "../../client";
-import { OctopusSpaceRepository, Repository } from "../../repository";
-import { createRelease } from "../createRelease/create-release";
-import { deployRelease } from "./deploy-release";
+import { Client } from "../../../client";
+import { OctopusSpaceRepository, Repository } from "../../../repository";
+import { createRelease, CreateReleaseCommandV1 } from "../../createRelease/create-release";
+import { CreateDeploymentUntenantedCommandV1 } from "./createDeploymentUntenantedCommandV1";
+import { deployReleaseUntenanted } from "./deploy-release";
 
 describe("deploy a release", () => {
     let client: Client;
@@ -121,8 +122,19 @@ describe("deploy a release", () => {
     });
 
     test("deploy to single environment", async () => {
-        await createRelease(repository, project);
-        await deployRelease(repository, project, "latest", [environment], undefined, false, { waitForDeployment: true });
+        var releaseCommand = {
+            spaceId: space.Id,
+            projectName: project.Name,
+        } as CreateReleaseCommandV1;
+        var releaseResponse = await createRelease(repository, releaseCommand);
+
+        var deployCommand = {
+            spaceId: space.Id,
+            projectName: project.Name,
+            releaseVersion: releaseResponse.releaseVersion,
+            environmentNames: [environment.Name],
+        } as CreateDeploymentUntenantedCommandV1;
+        await deployReleaseUntenanted(repository, deployCommand);
     });
 
     afterEach(async () => {

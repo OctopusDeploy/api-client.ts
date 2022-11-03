@@ -6,7 +6,7 @@ import { tmpdir } from "os";
 import path from "path";
 import { Client } from "../../client";
 import { OctopusSpaceRepository, Repository } from "../../repository";
-import { PackageIdentity } from "../createRelease/package-identity";
+import { PackageIdentity } from "./package-identity";
 import { pushBuildInformation } from "./push-build-information";
 
 describe("push build information", () => {

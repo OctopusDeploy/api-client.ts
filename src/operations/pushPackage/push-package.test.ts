@@ -7,7 +7,6 @@ import path from "path";
 import { Client } from "../../client";
 import { OverwriteMode } from "../../repositories/packageRepository";
 import { OctopusSpaceRepository, Repository } from "../../repository";
-import { PackageIdentity } from "../createRelease/package-identity";
 import { pushPackage } from "./push-package";
 
 describe("push package", () => {
@@ -20,7 +19,7 @@ describe("push package", () => {
     jest.setTimeout(100000);
 
     let tempOutDir: string;
-    const packages: PackageIdentity[] = [new PackageIdentity("Hello", "1.0.0"), new PackageIdentity("GoodBye", "2.0.0")];
+    const packages: string[] = ["Hello:1.0.0", "GoodBye:2.0.0"];
 
     beforeAll(async () => {
         tempOutDir = await mkdtemp(path.join(tmpdir(), "octopus_"));
@@ -29,7 +28,7 @@ describe("push package", () => {
         zip.addFile("test.txt", Buffer.from("inner content of the file", "utf8"));
 
         for (const p of packages) {
-            const packagePath = path.join(tempOutDir, `${p.id}.${p.version}.zip`);
+            const packagePath = path.join(tempOutDir, `${p.replace(":", ".")}.zip`);
             zip.writeZip(packagePath);
         }
 

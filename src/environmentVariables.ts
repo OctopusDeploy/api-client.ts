@@ -1,6 +1,6 @@
 export const EnvironmentVariables = {
     ApiKey: "OCTOPUS_API_KEY",
-    Host: "OCTOPUS_HOST",
+    URL: "OCTOPUS_URL",
     Proxy: "OCTOPUS_PROXY",
     ProxyPassword: "OCTOPUS_PROXY_PASSWORD",
     ProxyUsername: "OCTOPUS_PROXY_USERNAME",

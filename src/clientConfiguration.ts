@@ -13,7 +13,7 @@ export interface ClientConfiguration {
 
 export function processConfiguration(configuration?: ClientConfiguration): ClientConfiguration {
     const apiKey = process.env[EnvironmentVariables.ApiKey] || "";
-    const host = process.env[EnvironmentVariables.Host] || "";
+    const host = process.env[EnvironmentVariables.URL] || "";
     const space = process.env[EnvironmentVariables.Space] || "";
 
     if (!configuration) {
