@@ -41,7 +41,7 @@ describe("push package", () => {
     beforeEach(async () => {
         const spaceName = randomUUID().substring(0, 20);
         console.log(`Creating space, "${spaceName}"...`);
-        space = await systemRepository.spaces.create(NewSpace(spaceName, undefined, [user]));
+        space = await systemRepository.spaces.create(NewSpace(spaceName, [], [user]));
         repository = await systemRepository.forSpace(space);
     });
 

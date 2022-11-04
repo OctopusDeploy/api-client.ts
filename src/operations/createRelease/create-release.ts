@@ -23,7 +23,12 @@ export interface CreateReleaseResponseV1 {
 export async function createRelease(repository: OctopusSpaceRepository, command: CreateReleaseCommandV1): Promise<CreateReleaseResponseV1> {
     console.log(`Creating a release...`);
 
-    var response = await repository.client.do<CreateReleaseResponseV1>(`~/api/${command.spaceId}/releases/create/v1`, command);
+    // WARNING: server's API currently expects there to be a SpaceIdOrName value, which was intended to allow use of names/slugs, but doesn't
+    // work properly due to limitations in the middleware. For now, we'll just set it to the SpaceId
+    var response = await repository.client.do<CreateReleaseResponseV1>(`~/api/${command.spaceId}/releases/create/v1`, {
+        SpaceIdOrName: command.spaceId,
+        ...command,
+    });
 
     console.log(`Release created successfully.`);
 
