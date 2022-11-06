@@ -48,7 +48,7 @@ export default class ApiClient<TResource> {
             responseText = JSON.stringify(response.data);
             if (responseText && responseText.length > 0) {
                 responseText = JSON.parse(responseText, (_, val) => {
-                    if (Array.isArray(val) || typeof val !== "object" || !useCamelCase) {
+                    if (val === null || val === undefined || Array.isArray(val) || typeof val !== "object" || !useCamelCase) {
                         return val;
                     }
                     return Object.entries(val).reduce((a, [key, val]) => {
