@@ -128,7 +128,7 @@ describe("deploy a release", () => {
             spaceId: space.Id,
             projectName: project.Name,
         } as CreateReleaseCommandV1;
-        var releaseResponse = await createRelease(repository, releaseCommand);
+        var releaseResponse = await createRelease(repository.client, releaseCommand);
 
         var deployCommand = {
             spaceId: space.Id,
@@ -136,7 +136,7 @@ describe("deploy a release", () => {
             releaseVersion: releaseResponse.releaseVersion,
             environmentNames: [environment.Name],
         } as CreateDeploymentUntenantedCommandV1;
-        var response = await deployReleaseUntenanted(repository, deployCommand);
+        var response = await deployReleaseUntenanted(repository.client, deployCommand);
         var taskIds = response.deploymentServerTasks.map((x) => x.serverTaskId);
         var e = new ExecutionWaiter(repository);
 

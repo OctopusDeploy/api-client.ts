@@ -131,7 +131,7 @@ describe("create a release", () => {
             spaceId: space.Id,
             projectName: project.Name,
         } as CreateReleaseCommandV1;
-        var response = await createRelease(repository, command);
+        var response = await createRelease(repository.client, command);
         expect(response.releaseId).toBeTruthy();
         expect(response.releaseVersion).toBeTruthy();
     });
@@ -232,7 +232,7 @@ describe("create a release", () => {
                 projectName: project.Name,
                 packages: packages,
             } as CreateReleaseCommandV1;
-            var response = await createRelease(repository, command);
+            var response = await createRelease(repository.client, command);
             expect(response.releaseId).toBeTruthy();
             expect(response.releaseVersion).toBeTruthy();
         });
