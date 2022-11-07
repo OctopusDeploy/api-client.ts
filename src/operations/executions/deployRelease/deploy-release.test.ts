@@ -125,13 +125,13 @@ describe("deploy a release", () => {
 
     test("deploy to single environment", async () => {
         var releaseCommand = {
-            spaceId: space.Id,
+            spaceName: space.Name,
             projectName: project.Name,
         } as CreateReleaseCommandV1;
         var releaseResponse = await createRelease(repository.client, releaseCommand);
 
         var deployCommand = {
-            spaceId: space.Id,
+            spaceName: space.Name,
             projectName: project.Name,
             releaseVersion: releaseResponse.releaseVersion,
             environmentNames: [environment.Name],

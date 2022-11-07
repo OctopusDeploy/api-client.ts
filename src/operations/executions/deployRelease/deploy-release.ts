@@ -1,4 +1,5 @@
 import { Client } from "../../../client";
+import { resolveSpaceId } from "../../spaceResolver";
 import { CreateDeploymentTenantedCommandV1, CreateDeploymentTenantedResponseV1 } from "./createDeploymentTenantedCommandV1";
 import { CreateDeploymentUntenantedCommandV1, CreateDeploymentUntenantedResponseV1 } from "./createDeploymentUntenantedCommandV1";
 
@@ -8,10 +9,13 @@ export async function deployReleaseUntenanted(
 ): Promise<CreateDeploymentUntenantedResponseV1> {
     console.log(`Deploying a release...`);
 
+    var spaceId = await resolveSpaceId(client, command.spaceName);
+
     // WARNING: server's API currently expects there to be a SpaceIdOrName value, which was intended to allow use of names/slugs, but doesn't
     // work properly due to limitations in the middleware. For now, we'll just set it to the SpaceId
     var response = await client.do<CreateDeploymentUntenantedResponseV1>(`~/api/{spaceId}/deployments/create/untenanted/v1`, {
-        spaceIdOrName: command.spaceId,
+        spaceId: spaceId,
+        spaceIdOrName: spaceId,
         ...command,
     });
 
@@ -26,10 +30,13 @@ export async function deployReleaseTenanted(
 ): Promise<CreateDeploymentTenantedResponseV1> {
     console.log(`Deploying a tenanted release...`);
 
+    var spaceId = await resolveSpaceId(client, command.spaceName);
+
     // WARNING: server's API currently expects there to be a SpaceIdOrName value, which was intended to allow use of names/slugs, but doesn't
     // work properly due to limitations in the middleware. For now, we'll just set it to the SpaceId
     var response = await client.do<CreateDeploymentTenantedResponseV1>(`~/api/{spaceId}/deployments/create/tenanted/v1`, {
-        spaceIdOrName: command.spaceId,
+        spaceId: spaceId,
+        spaceIdOrName: spaceId,
         ...command,
     });
 

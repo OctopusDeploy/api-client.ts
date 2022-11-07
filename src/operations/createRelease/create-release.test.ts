@@ -128,10 +128,10 @@ describe("create a release", () => {
 
     test("can create a release", async () => {
         var command = {
-            spaceId: space.Id,
+            spaceName: space.Name,
             projectName: project.Name,
         } as CreateReleaseCommandV1;
-        var response = await createRelease(repository.client, command);
+        var response = await createRelease(client, command);
         expect(response.releaseId).toBeTruthy();
         expect(response.releaseVersion).toBeTruthy();
     });
@@ -228,7 +228,7 @@ describe("create a release", () => {
 
         test("using packages", async () => {
             var command = {
-                spaceId: space.Id,
+                spaceName: space.Name,
                 projectName: project.Name,
                 packages: packages,
             } as CreateReleaseCommandV1;
