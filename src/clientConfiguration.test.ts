@@ -1,5 +1,9 @@
 import { ClientConfiguration } from "./clientConfiguration";
-import { EnvironmentVariables } from "./environmentVariables.test";
+
+export const EnvironmentVariables = {
+    ApiKey: "OCTOPUS_TEST_API_KEY",
+    URL: "OCTOPUS_TEST_URI",
+} as const;
 
 export function processConfiguration(configuration?: ClientConfiguration): ClientConfiguration {
     const apiKey = process.env[EnvironmentVariables.ApiKey] || "";
