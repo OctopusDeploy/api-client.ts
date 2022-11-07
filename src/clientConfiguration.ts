@@ -4,7 +4,7 @@ import { Logger } from "./logger";
 export interface ClientConfiguration {
     agent?: Agent;
     apiKey: string;
-    apiUri: string;
+    instanceUri: string;
     autoConnect?: boolean;
     space?: string;
     logging?: Logger;

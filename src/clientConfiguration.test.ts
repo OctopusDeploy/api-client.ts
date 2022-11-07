@@ -8,14 +8,14 @@ export function processConfiguration(configuration?: ClientConfiguration): Clien
     if (!configuration) {
         return {
             apiKey: apiKey,
-            apiUri: host,
+            instanceUri: host,
             autoConnect: true,
         };
     }
 
     return {
         apiKey: !configuration.apiKey || configuration.apiKey.length === 0 ? apiKey : configuration.apiKey,
-        apiUri: !configuration.apiUri || configuration.apiUri.length === 0 ? host : configuration.apiUri,
+        instanceUri: !configuration.instanceUri || configuration.instanceUri.length === 0 ? host : configuration.instanceUri,
         autoConnect: configuration.autoConnect === undefined ? true : configuration.autoConnect,
     };
 }
@@ -26,23 +26,23 @@ describe("configuration", () => {
     test("undefined", async () => {
         let configuration = processConfiguration();
         expect(configuration.apiKey).not.toBeNull();
-        expect(configuration.apiUri).not.toBeNull();
+        expect(configuration.instanceUri).not.toBeNull();
         expect(configuration.space).not.toBeNull();
 
         configuration = processConfiguration(undefined);
         expect(configuration.apiKey).not.toBeNull();
-        expect(configuration.apiUri).not.toBeNull();
+        expect(configuration.instanceUri).not.toBeNull();
         expect(configuration.space).not.toBeNull();
     });
 
     test("blank", async () => {
         const configuration: ClientConfiguration = {
             apiKey: "",
-            apiUri: "",
+            instanceUri: "",
             space: "",
         };
         expect(configuration.apiKey).not.toBeNull();
-        expect(configuration.apiUri).not.toBeNull();
+        expect(configuration.instanceUri).not.toBeNull();
         expect(configuration.space).not.toBeNull();
     });
 });

@@ -30,11 +30,11 @@ export class Client {
     private readonly logger: Logger;
 
     public static async create(configuration: ClientConfiguration): Promise<Client> {
-        if (!configuration.apiUri) {
+        if (!configuration.instanceUri) {
             throw new Error("The host is not specified");
         }
 
-        const resolver = new Resolver(configuration.apiUri);
+        const resolver = new Resolver(configuration.instanceUri);
         const client = new Client(null, resolver, null, null, null, configuration);
         if (configuration.autoConnect) {
             try {
