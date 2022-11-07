@@ -1,5 +1,5 @@
 import { Client } from "../../client";
-import { SpaceScopedOperation } from "../spaceScopedCommand";
+import { SpaceScopedOperation } from "../spaceScopedOperation";
 
 export interface CreateReleaseCommandV1 extends SpaceScopedOperation {
     projectName: string;

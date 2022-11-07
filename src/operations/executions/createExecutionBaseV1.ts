@@ -1,5 +1,6 @@
-export interface CreateExecutionBaseV1 {
-    spaceName: string;
+import { SpaceScopedOperation } from "../..";
+
+export interface CreateExecutionBaseV1 extends SpaceScopedOperation {
     projectName: string;
     forcePackageDownload?: boolean;
     specificMachineNames?: string[];
