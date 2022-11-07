@@ -3,7 +3,7 @@ import { promises as fs } from "fs";
 import { OctopusSpaceRepository } from "../../index";
 
 export class ExecutionWaiter {
-    constructor(private readonly repository: OctopusSpaceRepository, private readonly serverBaseUrl: string) {}
+    constructor(private readonly repository: OctopusSpaceRepository) {}
 
     async waitForExecutionToComplete(
         serverTaskIds: string[],

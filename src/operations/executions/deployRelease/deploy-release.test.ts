@@ -18,6 +18,7 @@ import { randomUUID } from "crypto";
 import { Client } from "../../../client";
 import { OctopusSpaceRepository, Repository } from "../../../repository";
 import { createRelease, CreateReleaseCommandV1 } from "../../createRelease/create-release";
+import { ExecutionWaiter } from "../execution-waiter";
 import { CreateDeploymentUntenantedCommandV1 } from "./createDeploymentUntenantedCommandV1";
 import { deployReleaseUntenanted } from "./deploy-release";
 
@@ -87,7 +88,7 @@ describe("deploy a release", () => {
                         Packages: [],
                         Condition: RunConditionForAction.Success,
                         Properties: {
-                            "Octopus.Action.RunOnServer": "false",
+                            "Octopus.Action.RunOnServer": "true",
                             "Octopus.Action.Script.ScriptSource": "Inline",
                             "Octopus.Action.Script.Syntax": "Bash",
                             "Octopus.Action.Script.ScriptBody": "echo 'hello'",
@@ -134,7 +135,11 @@ describe("deploy a release", () => {
             releaseVersion: releaseResponse.releaseVersion,
             environmentNames: [environment.Name],
         } as CreateDeploymentUntenantedCommandV1;
-        await deployReleaseUntenanted(repository, deployCommand);
+        var response = await deployReleaseUntenanted(repository, deployCommand);
+        var taskIds = response.deploymentServerTasks.map((x) => x.serverTaskId);
+        var e = new ExecutionWaiter(repository);
+
+        await e.waitForExecutionToComplete(taskIds, false, true, undefined, 1000, 600000, "task");
     });
 
     afterEach(async () => {
