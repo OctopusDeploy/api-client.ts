@@ -1,4 +1,24 @@
-import { ClientConfiguration, processConfiguration } from "./clientConfiguration";
+import { ClientConfiguration } from "./clientConfiguration";
+import { EnvironmentVariables } from "./environmentVariables.test";
+
+export function processConfiguration(configuration?: ClientConfiguration): ClientConfiguration {
+    const apiKey = process.env[EnvironmentVariables.ApiKey] || "";
+    const host = process.env[EnvironmentVariables.URL] || "";
+
+    if (!configuration) {
+        return {
+            apiKey: apiKey,
+            apiUri: host,
+            autoConnect: true,
+        };
+    }
+
+    return {
+        apiKey: !configuration.apiKey || configuration.apiKey.length === 0 ? apiKey : configuration.apiKey,
+        apiUri: !configuration.apiUri || configuration.apiUri.length === 0 ? host : configuration.apiUri,
+        autoConnect: configuration.autoConnect === undefined ? true : configuration.autoConnect,
+    };
+}
 
 describe("configuration", () => {
     jest.setTimeout(10000);

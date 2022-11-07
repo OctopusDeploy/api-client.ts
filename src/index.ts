@@ -8,7 +8,6 @@ export * from "./clientRequestDetails";
 export * from "./clientResponseDetails";
 export * from "./clientSession";
 export * from "./environment";
-export * from "./environmentVariables";
 export * from "./errorResponseDetails";
 export * from "./logger";
 export * from "./operations";

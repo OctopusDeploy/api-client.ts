@@ -5,6 +5,7 @@ import { mkdtemp, readFile, rm } from "fs/promises";
 import { tmpdir } from "os";
 import path from "path";
 import { Client } from "../../client";
+import { processConfiguration } from "../../clientConfiguration.test";
 import { OctopusSpaceRepository, Repository } from "../../repository";
 import { PackageIdentity } from "./package-identity";
 import { pushBuildInformation } from "./push-build-information";
@@ -32,7 +33,7 @@ describe("push build information", () => {
             zip.writeZip(packagePath);
         }
 
-        client = await Client.create();
+        client = await Client.create(processConfiguration());
         console.log(`Client connected to API endpoint successfully.`);
         systemRepository = new Repository(client);
         user = await systemRepository.users.getCurrent();

@@ -21,6 +21,7 @@ import { mkdtemp, readdir, readFile, rm } from "fs/promises";
 import { tmpdir } from "os";
 import path from "path";
 import { Client } from "../../client";
+import { processConfiguration } from "../../clientConfiguration.test";
 import { OctopusSpaceRepository, Repository } from "../../repository";
 import { createRelease, CreateReleaseCommandV1 } from "./create-release";
 
@@ -37,7 +38,7 @@ describe("create a release", () => {
     jest.setTimeout(100000);
 
     beforeAll(async () => {
-        client = await Client.create();
+        client = await Client.create(processConfiguration());
         console.log(`Client connected to API endpoint successfully.`);
         systemRepository = new Repository(client);
         user = await systemRepository.users.getCurrent();

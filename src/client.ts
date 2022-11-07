@@ -8,7 +8,7 @@ import type {
     SpaceRootResource,
 } from "@octopusdeploy/message-contracts";
 import ApiClient from "./apiClient";
-import { ClientConfiguration, processConfiguration } from "./clientConfiguration";
+import { ClientConfiguration } from "./clientConfiguration";
 import type { ClientErrorResponseDetails } from "./clientErrorResponseDetails";
 import type { ClientRequestDetails } from "./clientRequestDetails";
 import type { ClientResponseDetails } from "./clientResponseDetails";
