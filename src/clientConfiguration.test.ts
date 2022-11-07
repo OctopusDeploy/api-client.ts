@@ -1,13 +1,13 @@
 import { ClientConfiguration } from "./clientConfiguration";
 
 export const EnvironmentVariables = {
-    ApiKey: "OCTOPUS_TEST_API_KEY",
-    URL: "OCTOPUS_TEST_URI",
+    API_KEY: "OCTOPUS_TEST_API_KEY",
+    URI: "OCTOPUS_TEST_URI",
 } as const;
 
 export function processConfiguration(configuration?: ClientConfiguration): ClientConfiguration {
-    const apiKey = process.env[EnvironmentVariables.ApiKey] || "";
-    const host = process.env[EnvironmentVariables.URL] || "";
+    const apiKey = process.env[EnvironmentVariables.API_KEY] || "";
+    const host = process.env[EnvironmentVariables.URI] || "";
 
     if (!configuration) {
         return {
