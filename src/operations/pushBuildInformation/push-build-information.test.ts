@@ -57,7 +57,8 @@ describe("push build information", () => {
             await repository.packages.upload(new File([buffer], fileName));
         }
 
-        await pushBuildInformation(space, [{ id: "Hello", version: "1.0.0" }], {
+        await pushBuildInformation(client, {
+            spaceName: space.Name,
             buildEnvironment: "BitBucket",
             branch: "main",
             buildNumber: "288",
@@ -65,6 +66,7 @@ describe("push build information", () => {
             vcsType: "Git",
             vcsRoot: "http://bitbucket.org/octopussamples/petclinic",
             vcsCommitNumber: "314cf2c3ee916c92a384c2796a6abe332d678e4f",
+            packages: [{ id: "Hello", version: "1.0.0" }],
             commits: [
                 {
                     id: "314cf2c3ee916c92a384c2796a6abe332d678e4f",
