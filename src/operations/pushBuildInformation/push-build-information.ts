@@ -1,7 +1,7 @@
 import { OctopusPackageVersionBuildInformationMappedResource, SpaceResource } from "@octopusdeploy/message-contracts";
 import { OverwriteMode } from "../../repositories/packageRepository";
 import { connect } from "../connect";
-import { PackageIdentity } from "../createRelease/package-identity";
+import { PackageIdentity } from "./package-identity";
 
 export interface IOctopusBuildInformation {
     buildEnvironment: string;

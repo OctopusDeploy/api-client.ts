@@ -276,6 +276,11 @@ export class Client {
         this.errorSubscriptions.notifyAll(details);
     }
 
+    do<TReturn>(path: string, command?: any, args?: RouteArgs): Promise<TReturn> {
+        const url = this.resolveUrlWithSpaceId(path, args);
+        return this.dispatchRequest("POST", url, command, true) as Promise<TReturn>;
+    }
+
     post<TReturn>(path: string, resource?: any, args?: RouteArgs): Promise<TReturn> {
         const url = this.resolveUrlWithSpaceId(path, args);
         return this.dispatchRequest("POST", url, resource) as Promise<TReturn>;
@@ -404,7 +409,7 @@ export class Client {
         return link;
     }
 
-    private dispatchRequest(method: any, url: string, requestBody?: any) {
+    private dispatchRequest(method: any, url: string, requestBody?: any, useCamelCase: boolean = false) {
         return new Promise((resolve, reject) => {
             new ApiClient({
                 configuration: this.configuration,
@@ -419,7 +424,7 @@ export class Client {
                 onRequestCallback: (r) => this.onRequest(r),
                 onResponseCallback: (r) => this.onResponse(r),
                 onErrorResponseCallback: (r) => this.onErrorResponse(r),
-            }).execute();
+            }).execute(useCamelCase);
         });
     }
 

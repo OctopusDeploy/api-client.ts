@@ -1,6 +1,5 @@
 import {
     CommunicationStyle,
-    ControlType,
     DeploymentTargetResource,
     EnvironmentResource,
     NewDeploymentTarget,
@@ -13,20 +12,17 @@ import {
     StartTrigger,
     TenantedDeploymentMode,
     UserResource,
-    VariableType,
 } from "@octopusdeploy/message-contracts";
 import { PackageRequirement } from "@octopusdeploy/message-contracts/dist/deploymentStepResource";
 import { RunConditionForAction } from "@octopusdeploy/message-contracts/dist/runConditionForAction";
 import AdmZip from "adm-zip";
 import { randomUUID } from "crypto";
 import { mkdtemp, readdir, readFile, rm } from "fs/promises";
-import moment from "moment";
 import { tmpdir } from "os";
 import path from "path";
 import { Client } from "../../client";
 import { OctopusSpaceRepository, Repository } from "../../repository";
-import { createRelease } from "./create-release";
-import { PackageIdentity } from "./package-identity";
+import { createRelease, CreateReleaseCommandV1 } from "./create-release";
 
 describe("create a release", () => {
     let client: Client;
@@ -50,7 +46,7 @@ describe("create a release", () => {
     beforeEach(async () => {
         const spaceName = randomUUID().substring(0, 20);
         console.log(`Creating space, "${spaceName}"...`);
-        space = await systemRepository.spaces.create(NewSpace(spaceName, undefined, [user]));
+        space = await systemRepository.spaces.create(NewSpace(spaceName, [], [user]));
         console.log(`Space "${spaceName}" created successfully.`);
 
         repository = await systemRepository.forSpace(space);
@@ -129,211 +125,19 @@ describe("create a release", () => {
         console.log(`Machine "${machine.Name}" created successfully.`);
     });
 
-    test("deploy to single environment", async () => {
-        await createRelease(repository, project, undefined, {
-            deployTo: [environment],
-            waitForDeployment: true,
-        });
+    test("can create a release", async () => {
+        var command = {
+            spaceId: space.Id,
+            projectName: project.Name,
+        } as CreateReleaseCommandV1;
+        var response = await createRelease(repository, command);
+        expect(response.releaseId).toBeTruthy();
+        expect(response.releaseVersion).toBeTruthy();
     });
 
-    test("deploy to multiple environments", async () => {
-        const environment2Name = randomUUID();
-        console.log(`Creating environment, "${environment2Name}"...`);
-        const environment2 = await repository.environments.create({ Name: environment2Name });
-
-        console.log(`Adding environment, ${environment2Name} to machine, ${machine}...`);
-        machine.EnvironmentIds = [environment2.Id, ...machine.EnvironmentIds];
-        await repository.machines.modify(machine);
-
-        const lifecycleName = "Development";
-        const lifecycle = (await repository.lifecycles.list({ take: 1 })).Items[0];
-        lifecycle.Phases = [
-            {
-                Id: "",
-                Name: lifecycleName,
-                OptionalDeploymentTargets: [environment2.Id, environment.Id],
-                AutomaticDeploymentTargets: [],
-                IsOptionalPhase: false,
-                MinimumEnvironmentsBeforePromotion: 0,
-                ReleaseRetentionPolicy: undefined,
-                TentacleRetentionPolicy: undefined,
-            },
-        ];
-        console.log(`Updating lifecycle, ${lifecycleName}...`);
-        await repository.lifecycles.modify(lifecycle);
-        console.log(`Lifecycle, ${lifecycleName} updated successfully.`);
-
-        await createRelease(repository, project, undefined, {
-            deployTo: [environment, environment2],
-            waitForDeployment: true,
-        });
-    });
-
-    test("deploy to multiple tenants", async () => {
-        project.TenantedDeploymentMode = TenantedDeploymentMode.Tenanted;
-        await repository.projects.modify(project);
-
-        const tenant1Name = randomUUID();
-        console.log(`Creating tenant, "${tenant1Name}"...`);
-        const tenant1 = await repository.tenants.create({
-            Name: tenant1Name,
-            ProjectEnvironments: { [project.Id]: [environment.Id] },
-            TenantTags: [],
-        });
-
-        const tenant2Name = randomUUID();
-        console.log(`Creating tenant, "${tenant2Name}"...`);
-        const tenant2 = await repository.tenants.create({
-            Name: tenant2Name,
-            ProjectEnvironments: { [project.Id]: [environment.Id] },
-            TenantTags: [],
-        });
-        console.log(`Tenant, "${tenant2Name}" created successfully.`);
-
-        console.log(`Associating tenants to machine, ${machine.Name}...`);
-        machine.TenantIds = [tenant1.Id, tenant2.Id];
-        await repository.machines.modify(machine);
-
-        await createRelease(repository, project, undefined, {
-            tenants: [tenant1, tenant2],
-            deployTo: [environment],
-            waitForDeployment: true,
-        });
-    });
-
-    test("deploy to multiple tenants via tag", async () => {
-        project.TenantedDeploymentMode = TenantedDeploymentMode.Tenanted;
-        await repository.projects.modify(project);
-
-        const tag = "deploy";
-
-        const tagSet = await repository.tagSets.create({
-            Id: "",
-            Description: "",
-            Links: {},
-            Name: "tags",
-            SortOrder: 0,
-            Tags: [{ CanonicalTagName: `tags/${tag}`, Color: "#333333", Description: "", Id: "", Name: tag, SortOrder: 0 }],
-        });
-
-        const tenant1Name = randomUUID();
-        console.log(`Creating tenant, "${tenant1Name}"...`);
-        const tenant1 = await repository.tenants.create({
-            Name: tenant1Name,
-            ProjectEnvironments: { [project.Id]: [environment.Id] },
-            TenantTags: [tagSet.Tags[0].CanonicalTagName],
-        });
-        console.log(`Tenant, "${tenant1Name}" created successfully.`);
-
-        const tenant2Name = randomUUID();
-        console.log(`Creating tenant, "${tenant2Name}"...`);
-        const tenant2 = await repository.tenants.create({
-            Name: tenant2Name,
-            ProjectEnvironments: { [project.Id]: [environment.Id] },
-            TenantTags: [tagSet.Tags[0].CanonicalTagName],
-        });
-        console.log(`Tenant, "${tenant2Name}" created successfully.`);
-
-        machine.TenantIds = [tenant1.Id, tenant2.Id];
-        await repository.machines.modify(machine);
-
-        await createRelease(repository, project, undefined, {
-            tenantTags: [tagSet.Tags[0].CanonicalTagName],
-            deployTo: [environment],
-            waitForDeployment: true,
-        });
-    });
-
-    test("schedule a deployment in the future", async () => {
-        const currentDate = new Date();
-        const deployAt = moment(new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 0, 0, 0, 0)).add(10, "days").toDate();
-        const noDeployAfter = moment(new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 0, 0, 0, 0)).add(11, "days").toDate();
-
-        await createRelease(repository, project, undefined, {
-            deployTo: [environment],
-            deployAt,
-            noDeployAfter,
-            waitForDeployment: false,
-        });
-        const taskId = (await repository.deployments.list({ take: 1 })).Items[0].TaskId;
-        const task = await repository.tasks.get(taskId);
-
-        await repository.tasks.cancel(task);
-
-        expect(task.QueueTime).toBeDefined();
-        expect(task.QueueTimeExpiry).toBeDefined();
-        expect(new Date(Date.parse(task.QueueTime as string)).toISOString()).toStrictEqual(deployAt.toISOString());
-        expect(new Date(Date.parse(task.QueueTimeExpiry as string)).toISOString()).toStrictEqual(noDeployAfter.toISOString());
-    });
-
-    test("deploy to single environment with variables", async () => {
-        const variableSet = await repository.variables.get(project.VariableSetId);
-        variableSet.Variables = [
-            {
-                Id: "",
-                Name: "Name",
-                Type: VariableType.String,
-                IsEditable: true,
-                IsSensitive: false,
-                Value: "",
-                Description: "",
-                Scope: {},
-                Prompt: {
-                    Label: "Name",
-                    Required: true,
-                    Description: "",
-                    DisplaySettings: { "Octopus.ControlType": ControlType.SingleLineText },
-                },
-            },
-        ];
-        await repository.variables.modify(variableSet);
-
-        await createRelease(repository, project, undefined, {
-            deployTo: [environment],
-            variable: [{ name: "Name", value: "John" }],
-            waitForDeployment: true,
-        });
-    });
-
-    test("deploy to single environment in non default channel", async () => {
-        const channel = await repository.channels.createForProject(
-            project,
-            {
-                Name: randomUUID(),
-                LifecycleId: project.LifecycleId,
-                IsDefault: false,
-                ProjectId: project.Id,
-                SpaceId: project.SpaceId,
-            },
-            {}
-        );
-
-        await createRelease(
-            repository,
-            project,
-            { channel: channel },
-            {
-                deployTo: [environment],
-                waitForDeployment: true,
-            }
-        );
-    });
-
-    test("deploy to single environment with a specified release number", async () => {
-        await createRelease(
-            repository,
-            project,
-            { releaseNumber: "1.2.3" },
-            {
-                deployTo: [environment],
-                waitForDeployment: true,
-            }
-        );
-    });
-
-    describe("deploy to single environment with multiple packages", () => {
+    describe("create with packages", () => {
         let tempOutDir: string;
-        const packages: PackageIdentity[] = [new PackageIdentity("Hello", "1.0.0"), new PackageIdentity("GoodBye", "2.0.0")];
+        const packages: string[] = ["Hello:1.0.0", "GoodBye:2.0.0"];
 
         beforeAll(async () => {
             tempOutDir = await mkdtemp(path.join(tmpdir(), "octopus_"));
@@ -342,7 +146,7 @@ describe("create a release", () => {
             zip.addFile("test.txt", Buffer.from("inner content of the file", "utf8"));
 
             for (const p of packages) {
-                const packagePath = path.join(tempOutDir, `${p.id}.${p.version}.zip`);
+                const packagePath = path.join(tempOutDir, `${p.replace(":", ".")}.zip`);
                 zip.writeZip(packagePath);
             }
         });
@@ -380,9 +184,9 @@ describe("create a release", () => {
                             Channels: [],
                             TenantTags: [],
                             Packages: packages.map((p) => ({
-                                Name: p.id,
+                                Name: p.split(":")[0],
                                 FeedId: feedId,
-                                PackageId: p.id,
+                                PackageId: p.split(":")[0],
                                 AcquisitionLocation: "Server",
                                 Properties: { Extract: "False", SelectionMode: "immediate", Purpose: "" },
                                 Id: "",
@@ -421,30 +225,15 @@ describe("create a release", () => {
             await rm(tempOutDir, { recursive: true });
         });
 
-        test("using packagesFolder", async () => {
-            await createRelease(
-                repository,
-                project,
-                { packagesFolder: tempOutDir },
-                {
-                    deployTo: [environment],
-                    waitForDeployment: true,
-                }
-            );
-        });
-
         test("using packages", async () => {
-            await createRelease(
-                repository,
-                project,
-                {
-                    packages,
-                },
-                {
-                    deployTo: [environment],
-                    waitForDeployment: true,
-                }
-            );
+            var command = {
+                spaceId: space.Id,
+                projectName: project.Name,
+                packages: packages,
+            } as CreateReleaseCommandV1;
+            var response = await createRelease(repository, command);
+            expect(response.releaseId).toBeTruthy();
+            expect(response.releaseVersion).toBeTruthy();
         });
     });
 

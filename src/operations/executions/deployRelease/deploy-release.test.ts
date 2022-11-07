@@ -15,10 +15,12 @@ import {
 import { PackageRequirement } from "@octopusdeploy/message-contracts/dist/deploymentStepResource";
 import { RunConditionForAction } from "@octopusdeploy/message-contracts/dist/runConditionForAction";
 import { randomUUID } from "crypto";
-import { Client } from "../../client";
-import { OctopusSpaceRepository, Repository } from "../../repository";
-import { createRelease } from "../createRelease/create-release";
-import { deployRelease } from "./deploy-release";
+import { Client } from "../../../client";
+import { OctopusSpaceRepository, Repository } from "../../../repository";
+import { createRelease, CreateReleaseCommandV1 } from "../../createRelease/create-release";
+import { ExecutionWaiter } from "../execution-waiter";
+import { CreateDeploymentUntenantedCommandV1 } from "./createDeploymentUntenantedCommandV1";
+import { deployReleaseUntenanted } from "./deploy-release";
 
 describe("deploy a release", () => {
     let client: Client;
@@ -41,7 +43,7 @@ describe("deploy a release", () => {
     beforeEach(async () => {
         const spaceName = randomUUID().substring(0, 20);
         console.log(`Creating space, "${spaceName}"...`);
-        space = await systemRepository.spaces.create(NewSpace(spaceName, undefined, [user]));
+        space = await systemRepository.spaces.create(NewSpace(spaceName, [], [user]));
         console.log(`Space "${spaceName}" created successfully.`);
 
         repository = await systemRepository.forSpace(space);
@@ -86,7 +88,7 @@ describe("deploy a release", () => {
                         Packages: [],
                         Condition: RunConditionForAction.Success,
                         Properties: {
-                            "Octopus.Action.RunOnServer": "false",
+                            "Octopus.Action.RunOnServer": "true",
                             "Octopus.Action.Script.ScriptSource": "Inline",
                             "Octopus.Action.Script.Syntax": "Bash",
                             "Octopus.Action.Script.ScriptBody": "echo 'hello'",
@@ -121,8 +123,23 @@ describe("deploy a release", () => {
     });
 
     test("deploy to single environment", async () => {
-        await createRelease(repository, project);
-        await deployRelease(repository, project, "latest", [environment], undefined, false, { waitForDeployment: true });
+        var releaseCommand = {
+            spaceId: space.Id,
+            projectName: project.Name,
+        } as CreateReleaseCommandV1;
+        var releaseResponse = await createRelease(repository, releaseCommand);
+
+        var deployCommand = {
+            spaceId: space.Id,
+            projectName: project.Name,
+            releaseVersion: releaseResponse.releaseVersion,
+            environmentNames: [environment.Name],
+        } as CreateDeploymentUntenantedCommandV1;
+        var response = await deployReleaseUntenanted(repository, deployCommand);
+        var taskIds = response.deploymentServerTasks.map((x) => x.serverTaskId);
+        var e = new ExecutionWaiter(repository);
+
+        await e.waitForExecutionToComplete(taskIds, false, true, undefined, 1000, 600000, "task");
     });
 
     afterEach(async () => {
