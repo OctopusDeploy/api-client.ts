@@ -29,9 +29,7 @@ export class Client {
     errorSubscriptions = new SubscriptionRecord<ClientErrorResponseDetails>();
     private readonly logger: Logger;
 
-    public static async create(configuration?: ClientConfiguration): Promise<Client> {
-        configuration = processConfiguration(configuration);
-
+    public static async create(configuration: ClientConfiguration): Promise<Client> {
         if (!configuration.apiUri) {
             throw new Error("The host is not specified");
         }

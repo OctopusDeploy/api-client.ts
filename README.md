@@ -17,25 +17,14 @@ The reference documentation for this library is auto-generated via [Typedoc](htt
 import { Client, ClientConfiguration, Repository } from "@octopusdeploy/api-client";
 import type { ProjectResource } from "@octopusdeploy/message-contracts";
 
-// explicit configuration
-//
-// const configuration: ClientConfiguration = {
-//     agent: new Agent({ proxy: { hostname: '127.0.0.1', port: 8866 } }), // proxy agent if required
-//     apiKey: "api-key",
-//     apiUri: "api-uri",
-//     space: "space-id",
-// };
-//
-// const client = await Client.create(configuration);
+const configuration: ClientConfiguration = {
+    agent: new Agent({ proxy: { hostname: "127.0.0.1", port: 8866 } }), // proxy agent if required
+    apiKey: "api-key",
+    apiUri: "api-uri",
+    space: "space-id",
+};
 
-// environment variables
-//
-// OCTOPUS_API_KEY: the API key used to connect to an instance of Octopus Deploy
-// OCTOPUS_URL: the host instance of Octopus Deploy
-// OCTOPUS_SPACE: the space to target API commands in Octopus Deploy
-
-// assume conventional configuration via environment variables
-const client = await Client.create();
+const client = await Client.create(configuration);
 if (client === undefined) {
     throw new Error("client could not be constructed");
 }

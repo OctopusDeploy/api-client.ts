@@ -3,5 +3,6 @@
     "printWidth": 160,
     "tabWidth": 4,
     "trailingComma": "es5",
-    "endOfLine": "auto"
+    "endOfLine": "auto",
+    "overrides": [{ "excludeFiles": "**/.yml" }]
 }

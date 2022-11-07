@@ -13,8 +13,8 @@ describe("client", () => {
 
     test("connects using space id", async () => {
         const clientConfiguration: ClientConfiguration = {
-            apiKey: process.env["OCTOPUS_API_KEY"] || "",
-            apiUri: process.env["OCTOPUS_URL"] || "",
+            apiKey: process.env["OCTOPUS_TEST_API_KEY"] || "",
+            apiUri: process.env["OCTOPUS_TEST_URI"] || "",
             space: "Spaces-1",
             autoConnect: true,
         };
@@ -25,8 +25,8 @@ describe("client", () => {
 
     test("connects using space name", async () => {
         const clientConfiguration: ClientConfiguration = {
-            apiKey: process.env["OCTOPUS_API_KEY"] || "",
-            apiUri: process.env["OCTOPUS_URL"] || "",
+            apiKey: process.env["OCTOPUS_TEST_API_KEY"] || "",
+            apiUri: process.env["OCTOPUS_TEST_URI"] || "",
             space: "Default",
             autoConnect: true,
         };
@@ -37,8 +37,8 @@ describe("client", () => {
 
     test("throws with invalid space", async () => {
         const clientConfiguration: ClientConfiguration = {
-            apiKey: process.env["OCTOPUS_API_KEY"] || "",
-            apiUri: process.env["OCTOPUS_URL"] || "",
+            apiKey: process.env["OCTOPUS_TEST_API_KEY"] || "",
+            apiUri: process.env["OCTOPUS_TEST_URI"] || "",
             space: "NonExistent",
             autoConnect: true,
         };
