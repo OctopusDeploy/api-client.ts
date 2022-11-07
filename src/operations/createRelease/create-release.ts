@@ -1,8 +1,7 @@
 import { Client } from "../../client";
-import { resolveSpaceId } from "../spaceResolver";
+import { SpaceScopedOperation } from "../spaceScopedCommand";
 
-export interface CreateReleaseCommandV1 {
-    spaceName: string;
+export interface CreateReleaseCommandV1 extends SpaceScopedOperation {
     projectName: string;
     packageVersion: string;
     gitCommit?: string;
@@ -24,13 +23,10 @@ export interface CreateReleaseResponseV1 {
 export async function createRelease(client: Client, command: CreateReleaseCommandV1): Promise<CreateReleaseResponseV1> {
     console.log(`Creating a release...`);
 
-    var spaceId = await resolveSpaceId(client, command.spaceName);
-
     // WARNING: server's API currently expects there to be a SpaceIdOrName value, which was intended to allow use of names/slugs, but doesn't
     // work properly due to limitations in the middleware. For now, we'll just set it to the SpaceId
     var response = await client.do<CreateReleaseResponseV1>(`~/api/{spaceId}/releases/create/v1`, {
-        spaceId: spaceId,
-        spaceIdOrName: spaceId,
+        spaceIdOrName: command.spaceName,
         ...command,
     });
 

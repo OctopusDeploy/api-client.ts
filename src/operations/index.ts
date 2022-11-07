@@ -5,3 +5,5 @@ export * from "./executions/runRunbook";
 export * from "./pushBuildInformation";
 export * from "./pushPackage";
 export * from "./throw-if-undefined";
+export * from "./spaceResolver";
+export * from "./spaceScopedOperation";

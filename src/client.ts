@@ -15,6 +15,7 @@ import type { ClientResponseDetails } from "./clientResponseDetails";
 import { ClientSession } from "./clientSession";
 import Environment from "./environment";
 import { Logger } from "./logger";
+import { resolveSpaceId, isSpaceScopedOperation } from "./operations";
 import { Resolver, RouteArgs } from "./resolver";
 import { Callback, SubscriptionRecord } from "./subscriptionRecord";
 
@@ -274,7 +275,13 @@ export class Client {
         this.errorSubscriptions.notifyAll(details);
     }
 
-    do<TReturn>(path: string, command?: any, args?: RouteArgs): Promise<TReturn> {
+    async do<TReturn>(path: string, command?: any, args?: RouteArgs): Promise<TReturn> {
+        if (isSpaceScopedOperation(command)) {
+            var spaceId = await resolveSpaceId(this, command.spaceName);
+            args = { spaceId: spaceId, ...args};
+            command = { spaceId: spaceId, ...command };
+        }
+
         const url = this.resolveUrlWithSpaceId(path, args);
         return this.dispatchRequest("POST", url, command, true) as Promise<TReturn>;
     }
