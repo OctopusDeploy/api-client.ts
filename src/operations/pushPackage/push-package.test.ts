@@ -47,7 +47,7 @@ describe("push package", () => {
     });
 
     test("single package", async () => {
-        await pushPackage(space, [path.join(tempOutDir, `Hello.1.0.0.zip`)], OverwriteMode.OverwriteExisting);
+        await pushPackage(client, space.Name, [path.join(tempOutDir, `Hello.1.0.0.zip`)], OverwriteMode.OverwriteExisting);
 
         const results = await repository.packages.list({ filter: "Hello" });
         const result = await repository.packages.get(results.Items[0].Id);
@@ -57,7 +57,7 @@ describe("push package", () => {
     });
 
     test("multiple packages", async () => {
-        await pushPackage(space, [path.join(tempOutDir, `Hello.1.0.0.zip`), path.join(tempOutDir, `GoodBye.2.0.0.zip`)], OverwriteMode.OverwriteExisting);
+        await pushPackage(client, space.Name, [path.join(tempOutDir, `Hello.1.0.0.zip`), path.join(tempOutDir, `GoodBye.2.0.0.zip`)], OverwriteMode.OverwriteExisting);
 
         let results = await repository.packages.list({ filter: "Hello" });
         let result = await repository.packages.get(results.Items[0].Id);

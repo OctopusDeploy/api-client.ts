@@ -27,7 +27,6 @@ describe("deploy a release", () => {
     let client: Client;
     let environment: EnvironmentResource;
     let project: ProjectResource;
-    let repository: OctopusSpaceRepository;
     let space: SpaceResource;
     let systemRepository: Repository;
     let user: UserResource;
@@ -47,6 +46,7 @@ describe("deploy a release", () => {
         space = await systemRepository.spaces.create(NewSpace(spaceName, [], [user]));
         console.log(`Space "${spaceName}" created successfully.`);
 
+        let repository: OctopusSpaceRepository;
         repository = await systemRepository.forSpace(space);
 
         const projectGroup = (await repository.projectGroups.list({ take: 1 })).Items[0];
@@ -128,7 +128,7 @@ describe("deploy a release", () => {
             spaceName: space.Name,
             projectName: project.Name,
         } as CreateReleaseCommandV1;
-        var releaseResponse = await createRelease(repository.client, releaseCommand);
+        var releaseResponse = await createRelease(client, releaseCommand);
 
         var deployCommand = {
             spaceName: space.Name,
@@ -136,9 +136,9 @@ describe("deploy a release", () => {
             releaseVersion: releaseResponse.releaseVersion,
             environmentNames: [environment.Name],
         } as CreateDeploymentUntenantedCommandV1;
-        var response = await deployReleaseUntenanted(repository.client, deployCommand);
+        var response = await deployReleaseUntenanted(client, deployCommand);
         var taskIds = response.deploymentServerTasks.map((x) => x.serverTaskId);
-        var e = new ExecutionWaiter(repository);
+        var e = new ExecutionWaiter(client, space.Name);
 
         await e.waitForExecutionToComplete(taskIds, false, true, undefined, 1000, 600000, "task");
     });

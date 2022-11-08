@@ -1,9 +1,10 @@
 import { TaskResource } from "@octopusdeploy/message-contracts";
 import { promises as fs } from "fs";
-import { OctopusSpaceRepository } from "../../index";
+import { Client, getServerTaskRaw } from "../..";
+import { getServerTask } from "../serverTasks";
 
 export class ExecutionWaiter {
-    constructor(private readonly repository: OctopusSpaceRepository) {}
+    constructor(private readonly client: Client, private readonly spaceName: string) {}
 
     async waitForExecutionToComplete(
         serverTaskIds: string[],
@@ -14,32 +15,32 @@ export class ExecutionWaiter {
         timeout: number,
         alias: string
     ) {
-        const getTasks = serverTaskIds.map(async (taskId) => this.repository.tasks.get(taskId));
+        const getTasks = serverTaskIds.map(async (taskId) => getServerTask(this.client, this.spaceName, taskId));
         const executionTasks = await Promise.all(getTasks);
-        if (showProgress && serverTaskIds.length > 1) this.repository.client.info(`Only progress of the first task (${executionTasks[0].Name}) will be shown`);
+        if (showProgress && serverTaskIds.length > 1) this.client.info(`Only progress of the first task (${executionTasks[0].Name}) will be shown`);
 
         try {
-            console.info(`Waiting for ${executionTasks.length} ${alias}(s) to complete...`);
+            this.client.info(`Waiting for ${executionTasks.length} ${alias}(s) to complete...`);
             await this.waitForCompletion(executionTasks, statusCheckSleepCycle, timeout);
             let failed = false;
             for (const executionTask of executionTasks) {
-                const updated = await this.repository.tasks.get(executionTask.Id);
+                const updated = await getServerTask(this.client, this.spaceName, executionTask.Id);
                 if (updated.FinishedSuccessfully) {
-                    console.info(`${updated.Description}: ${updated.State}`);
+                    this.client.info(`${updated.Description}: ${updated.State}`);
                 } else {
-                    console.error(`${updated.Description}: ${updated.State}, ${updated.ErrorMessage}`);
+                    this.client.error(`${updated.Description}: ${updated.State}, ${updated.ErrorMessage}`);
 
                     failed = true;
 
                     if (noRawLog) continue;
 
                     try {
-                        const raw = await this.repository.tasks.getRaw(updated);
+                        const raw = await getServerTaskRaw(this.client, this.spaceName, executionTask.Id);
                         if (rawLogFile) await fs.writeFile(rawLogFile, raw);
-                        else console.error(raw);
+                        else this.client.error(raw);
                     } catch (er: unknown) {
                         if (er instanceof Error) {
-                            console.error("Could not retrieve raw log", er);
+                            this.client.error("Could not retrieve raw log", er);
                         }
                     }
                 }
@@ -47,10 +48,10 @@ export class ExecutionWaiter {
 
             if (failed) throw new Error(`One or more ${alias} tasks failed.`);
 
-            console.info("Done!");
+            this.client.info("Done!");
         } catch (er: unknown) {
             if (er instanceof Error) {
-                console.error("Failed!", er);
+                this.client.error("Failed!", er);
             }
         }
     }
@@ -65,7 +66,7 @@ export class ExecutionWaiter {
         });
         for (const deploymentTask of serverTasks) {
             while (!stop) {
-                const task = await this.repository.tasks.get(deploymentTask.Id);
+                const task = await getServerTask(this.client, this.spaceName, deploymentTask.Id);
 
                 if (task.IsCompleted) {
                     break;
