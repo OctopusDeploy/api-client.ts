@@ -16,7 +16,7 @@ export class ExecutionWaiter {
     ) {
         const getTasks = serverTaskIds.map(async (taskId) => this.repository.tasks.get(taskId));
         const executionTasks = await Promise.all(getTasks);
-        if (showProgress && serverTaskIds.length > 1) console.info(`Only progress of the first task (${executionTasks[0].Name}) will be shown`);
+        if (showProgress && serverTaskIds.length > 1) this.repository.client.info(`Only progress of the first task (${executionTasks[0].Name}) will be shown`);
 
         try {
             console.info(`Waiting for ${executionTasks.length} ${alias}(s) to complete...`);

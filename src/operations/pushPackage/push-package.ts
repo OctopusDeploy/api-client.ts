@@ -16,13 +16,13 @@ export async function pushPackage(space: SpaceResource, packages: string[], over
 
     await Promise.all(tasks);
 
-    console.log("Packages uploaded");
+    repository.client.info("Packages uploaded");
 
     async function uploadPackage(filePath: string) {
         const buffer = await readFile(filePath);
         const fileName = path.basename(filePath);
 
-        console.log(`Uploading package, ${fileName}...`);
+        repository.client.info(`Uploading package, ${fileName}...`);
         await repository.packages.upload(new File([buffer], fileName), overwriteMode);
     }
 }

@@ -8,13 +8,13 @@ export async function resolveSpaceId(client: Client, spaceName: string): Promise
         return knownSpaces[spaceName];
     }
 
-    console.log(`Resolving space from name '${spaceName}'`);
+    client.debug(`Resolving space from name '${spaceName}'`);
 
     var spaces = await client.get<PagingCollection<SpaceResource>>("~/api/spaces", { partialName: spaceName });
     var spaceId = "";
 
     if (spaces.TotalResults === 0) {
-        console.log(`No spaces exist with name '${spaceName}'`);
+        client.error(`No spaces exist with name '${spaceName}'`);
         throw new Error(`No spaces exist with name '${spaceName}'`);
     }
 
@@ -22,12 +22,12 @@ export async function resolveSpaceId(client: Client, spaceName: string): Promise
         if (space.Name == spaceName) {
             spaceId = space.Id;
             knownSpaces[spaceName] = spaceId;
-            console.log(`Resolved space name '${spaceName}' to Id ${spaceId}`);
+            client.info(`Resolved space name '${spaceName}' to Id ${spaceId}`);
         }
     });
 
     if (spaceId === "") {
-        console.log(`Unable to resolve space name '${spaceName}'`);
+        client.error(`Unable to resolve space name '${spaceName}'`);
         throw new Error(`Unable to resolve space name '${spaceName}'`);
     }
 

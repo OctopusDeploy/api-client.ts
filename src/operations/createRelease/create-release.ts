@@ -21,7 +21,7 @@ export interface CreateReleaseResponseV1 {
 }
 
 export async function createRelease(client: Client, command: CreateReleaseCommandV1): Promise<CreateReleaseResponseV1> {
-    console.log(`Creating a release...`);
+    client.info(`Creating a release...`);
 
     // WARNING: server's API currently expects there to be a SpaceIdOrName value, which was intended to allow use of names/slugs, but doesn't
     // work properly due to limitations in the middleware. For now, we'll just set it to the SpaceId
@@ -30,7 +30,7 @@ export async function createRelease(client: Client, command: CreateReleaseComman
         ...command,
     });
 
-    console.log(`Release created successfully.`);
+    client.info(`Release created successfully.`);
 
     return response;
 }

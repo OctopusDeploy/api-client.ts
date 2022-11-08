@@ -87,20 +87,11 @@ export class Client {
         private readonly configuration: ClientConfiguration
     ) {
         this.configuration = configuration;
-        this.logger = {
-            ...{
-                debug: (message) => console.debug(message),
-                info: (message) => console.info(message),
-                warn: (message) => console.warn(message),
-                error: (message, err) => {
-                    if (err !== undefined) {
-                        console.error(err.message);
-                    } else {
-                        console.error(message);
-                    }
-                },
-            },
-            ...configuration.logging,
+        this.logger = configuration.logging || {
+            debug: (message) => {},
+            info: (message) => {},
+            warn: (message) => {},
+            error: (message, err) => {},
         };
         this.resolver = resolver;
         this.rootDocument = rootDocument;

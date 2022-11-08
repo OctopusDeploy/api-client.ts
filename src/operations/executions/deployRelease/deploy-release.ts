@@ -6,7 +6,7 @@ export async function deployReleaseUntenanted(
     client: Client,
     command: CreateDeploymentUntenantedCommandV1
 ): Promise<CreateDeploymentUntenantedResponseV1> {
-    console.log(`Deploying a release...`);
+    client.info(`Deploying a release...`);
 
     // WARNING: server's API currently expects there to be a SpaceIdOrName value, which was intended to allow use of names/slugs, but doesn't
     // work properly due to limitations in the middleware. For now, we'll just set it to the SpaceId
@@ -15,7 +15,7 @@ export async function deployReleaseUntenanted(
         ...command,
     });
 
-    console.log(`Deployment created successfully.`);
+    client.info(`Deployment created successfully.`);
 
     return response;
 }
@@ -24,7 +24,7 @@ export async function deployReleaseTenanted(
     client: Client,
     command: CreateDeploymentTenantedCommandV1
 ): Promise<CreateDeploymentTenantedResponseV1> {
-    console.log(`Deploying a tenanted release...`);
+    client.info(`Deploying a tenanted release...`);
 
     // WARNING: server's API currently expects there to be a SpaceIdOrName value, which was intended to allow use of names/slugs, but doesn't
     // work properly due to limitations in the middleware. For now, we'll just set it to the SpaceId
@@ -33,7 +33,7 @@ export async function deployReleaseTenanted(
         ...command,
     });
 
-    console.log(`Tenanted Deployment(s) created successfully.`);
+    client.info(`Tenanted Deployment(s) created successfully.`);
 
     return response;
 }

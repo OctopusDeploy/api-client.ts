@@ -1,4 +1,5 @@
 import { ClientConfiguration } from "./clientConfiguration";
+import { Logger } from "./logger";
 
 export const EnvironmentVariables = {
     API_KEY: "OCTOPUS_TEST_API_KEY",
@@ -9,11 +10,25 @@ export function processConfiguration(configuration?: ClientConfiguration): Clien
     const apiKey = process.env[EnvironmentVariables.API_KEY] || "";
     const host = process.env[EnvironmentVariables.URI] || "";
 
+    const logger: Logger = {
+        debug: (message) => console.log(message),
+        info: (message) => console.log(message),
+        warn: (message) => console.warn(message),
+        error: (message, err) => {
+            if (err !== undefined) {
+                console.error(err.message);
+            } else {
+                console.error(message);
+            }
+        }
+    }
+
     if (!configuration) {
         return {
             apiKey: apiKey,
             instanceUri: host,
             autoConnect: true,
+            logging: logger
         };
     }
 
@@ -21,6 +36,7 @@ export function processConfiguration(configuration?: ClientConfiguration): Clien
         apiKey: !configuration.apiKey || configuration.apiKey.length === 0 ? apiKey : configuration.apiKey,
         instanceUri: !configuration.instanceUri || configuration.instanceUri.length === 0 ? host : configuration.instanceUri,
         autoConnect: configuration.autoConnect === undefined ? true : configuration.autoConnect,
+        logging: logger
     };
 }
 
