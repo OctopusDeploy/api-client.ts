@@ -1,4 +1,5 @@
 import type { ResourceWithId, ResourceCollection } from "@octopusdeploy/message-contracts";
+import { RouteArgs } from "../resolver";
 import type { ListArgs, AllArgs, ResourcesById } from "./basicRepository";
 import { BasicRepository } from "./basicRepository";
 
@@ -8,7 +9,13 @@ export interface SpaceQueryParameters {
 }
 
 // includeSystem is set to true by default, can be overridden by args
-export class MixedScopeBaseRepository<TExistingResource extends ResourceWithId, TNewResource, TListArgs extends ListArgs = ListArgs, TAllArgs extends AllArgs = AllArgs, TGetArgs = {}> extends BasicRepository<TExistingResource, TNewResource, TListArgs> {
+export class MixedScopeBaseRepository<
+    TExistingResource extends ResourceWithId,
+    TNewResource,
+    TListArgs extends ListArgs = ListArgs,
+    TAllArgs extends AllArgs = AllArgs,
+    TGetArgs extends RouteArgs = {}
+> extends BasicRepository<TExistingResource, TNewResource, TListArgs> {
     all(args?: TAllArgs): Promise<TExistingResource[]> {
         const combinedArgs = super.extend(this.spacePartitionParameters(), args);
         return super.all(combinedArgs);
