@@ -9,8 +9,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@octopusdeploy/api-client": "^1.1.7",
-    "@octopusdeploy/message-contracts": "^1.2.0"
+    "@octopusdeploy/api-client": "github:octopusdeploy/api-client.ts#enh-dropenvvars"
   },
   "private": true,
   "devDependencies": {

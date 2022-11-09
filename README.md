@@ -18,10 +18,10 @@ import { Client, ClientConfiguration, Repository } from "@octopusdeploy/api-clie
 import type { ProjectResource } from "@octopusdeploy/message-contracts";
 
 const configuration: ClientConfiguration = {
-    agent: new Agent({ proxy: { hostname: "127.0.0.1", port: 8866 } }), // proxy agent if required
+    instanceURL: "instance-url",
     apiKey: "api-key",
-    instanceUri: "instance-uri",
     space: "space-id",
+    agent: new Agent({ proxy: { hostname: "127.0.0.1", port: 8866 } }), // proxy agent if required
 };
 
 const client = await Client.create(configuration);

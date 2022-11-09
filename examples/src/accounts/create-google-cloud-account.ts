@@ -4,7 +4,7 @@ import { NewGoogleCloudAccount, NewSensitiveValue } from '@octopusdeploy/message
 const main = async () => {
     const configuration: ClientConfiguration = {
         apiKey: 'api-key', // required
-        instanceUri: 'instance-uri', // required
+        instanceURL: 'instance-url', // required
         autoConnect: true
     };
 

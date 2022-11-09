@@ -4,7 +4,7 @@ import { ProjectResource } from "@octopusdeploy/message-contracts";
 const main = async () => {
     const configuration: ClientConfiguration = {
         apiKey: "api-key", // required
-        instanceUri: "instance-uri", // required
+        instanceURL: "instance-url", // required
         autoConnect: true,
     };
 

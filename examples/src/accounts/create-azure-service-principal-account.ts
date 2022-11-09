@@ -4,7 +4,7 @@ import { NewAzureServicePrincipalAccount, NewSensitiveValue } from '@octopusdepl
 const main = async () => {
     const configuration: ClientConfiguration = {
         apiKey: 'api-key', // required
-        instanceUri: 'instance-uri', // required
+        instanceURL: 'instance-url', // required
         autoConnect: true
     };
 
