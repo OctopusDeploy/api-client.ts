@@ -3,7 +3,7 @@ import { Logger } from "./logger";
 
 export const EnvironmentVariables = {
     API_KEY: "OCTOPUS_TEST_API_KEY",
-    URI: "OCTOPUS_TEST_URI",
+    URI: "OCTOPUS_TEST_URL",
 } as const;
 
 export function processConfiguration(configuration?: ClientConfiguration): ClientConfiguration {

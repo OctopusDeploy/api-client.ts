@@ -55,7 +55,7 @@ jobs:
       - run: npm run test
         name: 'Run the tests'
         env:
-          OCTOPUS_TEST_URI: ${{ env.SERVER_URL }}
+          OCTOPUS_TEST_URL: ${{ env.SERVER_URL }}
           OCTOPUS_TEST_API_KEY: ${{ env.ADMIN_API_KEY }}
       - uses: dorny/test-reporter@v1
         if: success() || failure()
