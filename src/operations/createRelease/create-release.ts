@@ -3,7 +3,7 @@ import { SpaceScopedOperation } from "../spaceScopedOperation";
 
 export interface CreateReleaseCommandV1 extends SpaceScopedOperation {
     projectName: string;
-    packageVersion: string;
+    packageVersion?: string;
     gitCommit?: string;
     gitRef?: string;
     releaseVersion?: string;
