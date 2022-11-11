@@ -22,7 +22,7 @@ export async function resolveSpaceId(client: Client, spaceName: string): Promise
         if (space.Name == spaceName) {
             spaceId = space.Id;
             knownSpaces[spaceName] = spaceId;
-            client.info(`Resolved space name '${spaceName}' to Id ${spaceId}`);
+            client.debug(`Resolved space name '${spaceName}' to Id ${spaceId}`);
         }
     });
 
