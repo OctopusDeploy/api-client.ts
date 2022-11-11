@@ -14,7 +14,6 @@ module.exports = {
             moduleFileExtensions: ["ts", "js"],
             resetMocks: true,
             setupFilesAfterEnv: ["jest-expect-message", "jest-extended"],
-            testEnvironment: "jsdom",
             testRegex: ".*\\.(test|spec)\\.(ts)$",
             transform: {
                 ".(ts)": "ts-jest",
