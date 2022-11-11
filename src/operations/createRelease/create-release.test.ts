@@ -17,13 +17,14 @@ import { PackageRequirement } from "@octopusdeploy/message-contracts/dist/deploy
 import { RunConditionForAction } from "@octopusdeploy/message-contracts/dist/runConditionForAction";
 import AdmZip from "adm-zip";
 import { randomUUID } from "crypto";
-import { mkdtemp, readdir, readFile, rm } from "fs/promises";
+import { mkdtemp, readdir, rm } from "fs/promises";
 import { tmpdir } from "os";
 import path from "path";
 import { Client } from "../../client";
 import { processConfiguration } from "../../clientConfiguration.test";
 import { OctopusSpaceRepository, Repository } from "../../repository";
 import { createRelease, CreateReleaseCommandV1 } from "./create-release";
+import { pushPackage } from "../pushPackage";
 
 describe("create a release", () => {
     let client: Client;
@@ -209,16 +210,7 @@ describe("create a release", () => {
             console.log(`Deployment process, "${deploymentProcess.Id}" updated successfully.`);
 
             for (const file of await readdir(tempOutDir)) {
-                await uploadPackage(path.join(tempOutDir, file));
-            }
-
-            async function uploadPackage(filePath: string) {
-                const buffer = await readFile(filePath);
-                const fileName = path.basename(filePath);
-
-                console.log(`Uploading package, "${fileName}"...`);
-                await repository.packages.upload(new File([buffer], fileName));
-                console.log(`Package, ${fileName} uploaded sucessfully.`);
+                await pushPackage(client, space.Name, [path.join(tempOutDir, file)])
             }
         });
 
