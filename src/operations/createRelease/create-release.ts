@@ -10,8 +10,8 @@ export interface CreateReleaseCommandV1 extends SpaceScopedOperation {
     channelName?: string;
     packages?: string[];
     releaseNotes?: string;
-    ignoreIfAlreadyExists: boolean;
-    ignoreChannelRules: boolean;
+    ignoreIfAlreadyExists?: boolean;
+    ignoreChannelRules?: boolean;
     packagePrerelease?: string;
 }
 
