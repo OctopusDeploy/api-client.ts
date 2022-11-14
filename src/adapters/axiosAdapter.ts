@@ -8,7 +8,7 @@ export class AxiosAdapter<TResource> implements Adapter<TResource> {
     public async execute(options: ClientOptions): Promise<AdapterResponse<TResource>> {
         try {
             const config: AxiosRequestConfig = {
-                httpsAgent: options.configuration.agent,
+                httpsAgent: options.configuration.httpsAgent,
                 url: options.url,
                 method: options.method as Method,
                 data: options.requestBody,
@@ -19,7 +19,11 @@ export class AxiosAdapter<TResource> implements Adapter<TResource> {
             };
             if (typeof XMLHttpRequest === "undefined") {
                 if (config.headers) {
-                    config.headers["User-Agent"] = "ts-octopusdeploy";
+                    var userAgent = "ts-octopusdeploy"
+                    if (options.configuration.userAgentApp) {
+                        userAgent = `${userAgent} ${options.configuration.userAgentApp}`
+                    }
+                    config.headers["User-Agent"] = userAgent;
                 }
             }
             const response = await axios.request<TResource>(config);

@@ -4,6 +4,7 @@ import type { ClientConfiguration } from "./clientConfiguration";
 describe("client", () => {
     test("throws with invalid configuration", async () => {
         const clientConfiguration: ClientConfiguration = {
+            userAgentApp: "Test",
             apiKey: "API-XXXXXXXXXXXXXXXXXXXXXXXX",
             instanceURL: "123",
             autoConnect: true,
@@ -13,6 +14,7 @@ describe("client", () => {
 
     test("connects using space id", async () => {
         const clientConfiguration: ClientConfiguration = {
+            userAgentApp: "Test",
             apiKey: process.env["OCTOPUS_TEST_API_KEY"] || "",
             instanceURL: process.env["OCTOPUS_TEST_URL"] || "",
             space: "Spaces-1",
@@ -25,6 +27,7 @@ describe("client", () => {
 
     test("connects using space name", async () => {
         const clientConfiguration: ClientConfiguration = {
+            userAgentApp: "Test",
             apiKey: process.env["OCTOPUS_TEST_API_KEY"] || "",
             instanceURL: process.env["OCTOPUS_TEST_URL"] || "",
             space: "Default",
@@ -37,6 +40,7 @@ describe("client", () => {
 
     test("throws with invalid space", async () => {
         const clientConfiguration: ClientConfiguration = {
+            userAgentApp: "Test",
             apiKey: process.env["OCTOPUS_TEST_API_KEY"] || "",
             instanceURL: process.env["OCTOPUS_TEST_URL"] || "",
             space: "NonExistent",

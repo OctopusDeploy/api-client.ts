@@ -2,7 +2,8 @@ import { Agent } from "https";
 import { Logger } from "./logger";
 
 export interface ClientConfiguration {
-    agent?: Agent;
+    userAgentApp: string;
+    httpsAgent?: Agent;
     apiKey: string;
     instanceURL: string;
     autoConnect?: boolean;

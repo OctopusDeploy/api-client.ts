@@ -25,6 +25,7 @@ export function processConfiguration(configuration?: ClientConfiguration): Clien
 
     if (!configuration) {
         return {
+            userAgentApp: "Test",
             apiKey: apiKey,
             instanceURL: host,
             autoConnect: true,
@@ -33,6 +34,7 @@ export function processConfiguration(configuration?: ClientConfiguration): Clien
     }
 
     return {
+        userAgentApp: "Test",
         instanceURL: !configuration.instanceURL || configuration.instanceURL.length === 0 ? host : configuration.instanceURL,
         apiKey: !configuration.apiKey || configuration.apiKey.length === 0 ? apiKey : configuration.apiKey,
         autoConnect: configuration.autoConnect === undefined ? true : configuration.autoConnect,
@@ -57,10 +59,12 @@ describe("configuration", () => {
 
     test("blank", async () => {
         const configuration: ClientConfiguration = {
+            userAgentApp: "",
             apiKey: "",
             instanceURL: "",
             space: "",
         };
+        expect(configuration.userAgentApp).not.toBeNull();
         expect(configuration.apiKey).not.toBeNull();
         expect(configuration.instanceURL).not.toBeNull();
         expect(configuration.space).not.toBeNull();
