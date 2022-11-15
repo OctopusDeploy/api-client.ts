@@ -11,7 +11,7 @@ export async function runRunbook(client: Client, command: CreateRunbookRunComman
         ...command,
     });
 
-    client.debug(`Runbook executed successfully.`);
+    client.debug(`Runbook executed successfully. [${response.runbookRunServerTasks.map(t => t.serverTaskId).join(', ')}]`);
 
     return response;
 }

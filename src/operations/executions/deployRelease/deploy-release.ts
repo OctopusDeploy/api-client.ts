@@ -15,7 +15,7 @@ export async function deployReleaseUntenanted(
         ...command,
     });
 
-    client.debug(`Deployment created successfully.`);
+    client.debug(`Deployment created successfully. [${response.deploymentServerTasks.map(t => t.serverTaskId).join(', ')}]`);
 
     return response;
 }
@@ -33,7 +33,7 @@ export async function deployReleaseTenanted(
         ...command,
     });
 
-    client.debug(`Tenanted Deployment(s) created successfully.`);
+    client.debug(`Tenanted Deployment(s) created successfully. [${response.deploymentServerTasks.map(t => t.serverTaskId).join(', ')}]`);
 
     return response;
 }
