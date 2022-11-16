@@ -1,5 +1,5 @@
-import { PagingCollection, ResourceCollection, TaskResource } from "@octopusdeploy/message-contracts";
-import { Client, resolveSpaceId } from "../..";
+import { ResourceCollection, TaskResource } from "@octopusdeploy/message-contracts";
+import { Client } from "../..";
 import { chunk, flatMap } from "lodash";
 
 export async function getServerTask(client: Client, spaceName: string, serverTaskId: string): Promise<TaskResource> {
