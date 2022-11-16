@@ -1,6 +1,5 @@
 import type { ResourceCollection, ResourceWithId } from "@octopusdeploy/message-contracts";
 import type { Dictionary } from "lodash";
-import { chunk, flatten } from "lodash";
 import type { Client } from "../client";
 import type { RouteArgs } from "../resolver";
 
