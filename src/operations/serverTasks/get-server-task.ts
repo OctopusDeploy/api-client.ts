@@ -7,15 +7,11 @@ export async function getServerTask(client: Client, spaceName: string, serverTas
     return response;
 }
 
-interface StatsResourceCollection extends ResourceCollection<TaskResource<any>> {
-    TotalCounts: { [state: string]: number };
-}
-
 export async function getServerTasks(client: Client, spaceName: string, serverTaskIds: string[]): Promise<TaskResource[]> {
     const batchSize = 300;
     const idArrays = chunk(serverTaskIds, batchSize);
-    const promises: Array<Promise<StatsResourceCollection>> = idArrays.map((i, index) => {
-        return client.request<StatsResourceCollection>(`~/api/{spaceId}/tasks?ids={serverTaskIds}&skip={skip}&take={take}`, { spaceName, serverTaskIds: i, skip: index * batchSize, take: batchSize });
+    const promises: Array<Promise<ResourceCollection<TaskResource<any>>>> = idArrays.map((i, index) => {
+        return client.request<ResourceCollection<TaskResource<any>>>(`~/api/{spaceId}/tasks{?skip,take,ids,partialName}`, { spaceName, ids: i, skip: index * batchSize, take: batchSize });
     });
     return Promise.all(promises).then((result) => flatMap(result, (c) => c.Items));
 }
