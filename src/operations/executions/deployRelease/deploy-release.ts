@@ -15,7 +15,11 @@ export async function deployReleaseUntenanted(
         ...command,
     });
 
-    client.debug(`Deployment created successfully. [${response.deploymentServerTasks.map(t => t.serverTaskId).join(', ')}]`);
+    if (response.deploymentServerTasks.length == 0) {
+        throw new Error('No server task details returned')
+    }
+
+    client.debug(`Deployment(s) created successfully. [${response.deploymentServerTasks.map(t => t.serverTaskId).join(', ')}]`);
 
     return response;
 }
@@ -32,6 +36,10 @@ export async function deployReleaseTenanted(
         spaceIdOrName: command.spaceName,
         ...command,
     });
+
+    if (response.deploymentServerTasks.length == 0) {
+        throw new Error('No server task details returned')
+    }
 
     client.debug(`Tenanted Deployment(s) created successfully. [${response.deploymentServerTasks.map(t => t.serverTaskId).join(', ')}]`);
 
