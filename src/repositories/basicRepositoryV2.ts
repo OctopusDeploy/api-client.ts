@@ -96,13 +96,4 @@ export class BasicRepositoryV2<
 
         return resource;
     };
-
-    protected batchRequestsById(args: TAllArgs, batchSize: number): Promise<TExistingResource[]> {
-        const idArrays = chunk(args!.ids, batchSize);
-        const promises: Array<Promise<TExistingResource[]>> = idArrays.map((ids) => {
-            const newArgs = { ...(args as any), ids, id: "all" };
-            return this.client.get(this.baseApiTemplate, newArgs);
-        });
-        return Promise.all(promises).then((result) => flatten(result));
-    }
 }
