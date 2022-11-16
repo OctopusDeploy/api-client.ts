@@ -8,17 +8,16 @@ import type {
     VariablesScopedToEnvironmentResponse
 } from "@octopusdeploy/message-contracts";
 import type { Client } from "../client";
-import { BasicRepository, ListArgs } from "./basicRepository";
+import { BasicRepositoryV2, ListArgsV2 } from "./basicRepositoryV2";
 
 type EnvironmentRepositoryListArgs = {
     ids?: string[],
-    name?: string;
     partialName?: string;
-} & ListArgs;
+} & ListArgsV2;
 
-export class EnvironmentRepository extends BasicRepository<EnvironmentResource, NewEnvironmentResource, EnvironmentRepositoryListArgs> {
+export class EnvironmentRepository extends BasicRepositoryV2<EnvironmentResource, NewEnvironmentResource, EnvironmentRepositoryListArgs> {
     constructor(client: Client) {
-        super("Environments", client);
+        super(client, "~/api/{spaceId}/environments{?skip,take,ids,partialName}");
     }
 
     async find(namesOrIds: string[]): Promise<EnvironmentResource[]> {
@@ -37,7 +36,7 @@ export class EnvironmentRepository extends BasicRepository<EnvironmentResource, 
 
         for (const name of namesOrIds) {
             const matchingEnvironments = await this.list({
-                name: name,
+                partialName: name,
             });
             environments.push(...matchingEnvironments.Items.filter((e) => e.Name.localeCompare(name, undefined, { sensitivity: 'base' }) === 0));
         }
@@ -46,23 +45,23 @@ export class EnvironmentRepository extends BasicRepository<EnvironmentResource, 
     }
 
     getMetadata(environment: EnvironmentResource): Promise<EnvironmentSettingsMetadata[]> {
-        return this.client.get(environment.Links["Metadata"], {});
+        return this.client.get('~/api/{spaceId}/environments/{id}/metadata', { spaceId: environment.SpaceId, id: environment.Id });
     }
 
     sort(order: string[]) {
-        return this.client.put(this.client.getLink("EnvironmentSortOrder"), order);
+        return this.client.put('~/api/{spaceId}/environments/sortorder', order);
     }
 
-    summary(args?: Partial<EnvironmentSummaryArgs>) {
-        return this.client.get<EnvironmentsSummaryResource>(this.client.getLink("EnvironmentsSummary"), args);
+    summary(spaceId: string, args?: Partial<EnvironmentSummaryArgs>) {
+        return this.client.get<EnvironmentsSummaryResource>('~/api/{spaceId}/environments/summary{?ids,partialName,machinePartialName,roles,isDisabled,healthStatuses,commStyles,tenantIds,tenantTags,hideEmptyEnvironments,shellNames,deploymentTargetTypes}', { spaceId, ...args });
     }
 
     machines(environment: EnvironmentResource, args?: Partial<EnvironmentMachinesArgs>): Promise<ResourceCollection<DeploymentTargetResource>> {
-        return this.client.get<ResourceCollection<DeploymentTargetResource>>(environment.Links["Machines"], args);
+        return this.client.get<ResourceCollection<DeploymentTargetResource>>('~/api/{spaceId}/environments/{id}/machines{?skip,take,partialName,roles,isDisabled,healthStatuses,commStyles,tenantIds,tenantTags,shellNames,deploymentTargetTypes}', { spaceId: environment.SpaceId, id: environment.Id, ...args });
     }
 
     variablesScopedOnlyToThisEnvironment(environment: EnvironmentResource): Promise<VariablesScopedToEnvironmentResponse> {
-        return this.client.get<VariablesScopedToEnvironmentResponse>(environment.Links["SinglyScopedVariableDetails"]);
+        return this.client.get<VariablesScopedToEnvironmentResponse>('~/api/{spaceId}/environments/{id}/singlyScopedVariableDetails', { spaceId: environment.SpaceId, id: environment.Id });
     }
 }
 

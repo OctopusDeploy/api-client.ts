@@ -3,7 +3,6 @@ export * from "./spaceResolver";
 export * from "./spaceScopedOperation";
 export * from "./spaceScopedRequest";
 export * from "./throw-if-undefined";
-export * from "./deploymentEnvironments";
 export * from "./createRelease";
 export * from "./executions";
 export * from "./pushBuildInformation";
