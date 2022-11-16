@@ -17,7 +17,7 @@ type EnvironmentRepositoryListArgs = {
 
 export class EnvironmentRepository extends BasicRepositoryV2<EnvironmentResource, NewEnvironmentResource, EnvironmentRepositoryListArgs> {
     constructor(client: Client) {
-        super(client, "~/api/{spaceId}/environments{?skip,take,ids,partialName}");
+        super(client, "~/api/{spaceId}/environments{/id}{?skip,take,ids,partialName}");
     }
 
     async find(namesOrIds: string[]): Promise<EnvironmentResource[]> {
