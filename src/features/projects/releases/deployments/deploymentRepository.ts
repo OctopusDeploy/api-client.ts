@@ -14,6 +14,6 @@ type DeploymentListArgs = {
 
 export class DeploymentRepository extends SpaceScopedBasicRepositoryV2<Deployment, NewDeployment, DeploymentListArgs> {
     constructor(client: Client, spaceName: string) {
-        super(client, spaceName, "deployments{/id}{?skip,take,ids,projects,environments,tenants,channels,taskState}");
+        super(client, spaceName, "~/api/{spaceId}/deployments{/id}{?skip,take,ids,projects,environments,tenants,channels,taskState}");
     }
 }

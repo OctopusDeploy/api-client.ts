@@ -1,15 +1,10 @@
 import {
-    CommunicationStyle,
-    DeploymentTargetResource,
-    NewDeploymentTarget,
-    NewEndpoint,
     NewProject,
     NewSpace,
     ProjectResource,
     RunCondition,
     SpaceResource,
     StartTrigger,
-    TenantedDeploymentMode,
     UserResource,
 } from "@octopusdeploy/message-contracts";
 import { PackageRequirement } from "@octopusdeploy/message-contracts/dist/deploymentStepResource";
@@ -29,7 +24,6 @@ import { EnvironmentRepository, DeploymentEnvironment } from "../../features/dep
 describe("create a release", () => {
     let client: Client;
     let environment: DeploymentEnvironment;
-    let machine: DeploymentTargetResource;
     let project: ProjectResource;
     let repository: OctopusSpaceRepository;
     let space: SpaceResource;
@@ -70,7 +64,7 @@ describe("create a release", () => {
                 StartTrigger: StartTrigger.StartAfterPrevious,
                 Id: "",
                 Name: randomUUID(),
-                Properties: { "Octopus.Action.TargetRoles": "deploy" },
+                Properties: { },
                 Actions: [
                     {
                         Id: "",
@@ -93,7 +87,7 @@ describe("create a release", () => {
                         Packages: [],
                         Condition: RunConditionForAction.Success,
                         Properties: {
-                            "Octopus.Action.RunOnServer": "false",
+                            "Octopus.Action.RunOnServer": "true",
                             "Octopus.Action.Script.ScriptSource": "Inline",
                             "Octopus.Action.Script.Syntax": "Bash",
                             "Octopus.Action.Script.ScriptBody": "echo 'hello'",

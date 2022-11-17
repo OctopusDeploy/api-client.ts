@@ -12,6 +12,7 @@ import { RunConditionForAction } from "@octopusdeploy/message-contracts/dist/run
 import { randomUUID } from "crypto";
 import { Client } from "../../../client";
 import { processConfiguration } from "../../../clientConfiguration.test";
+import { DeploymentRepository } from "../../../features";
 import { DeploymentEnvironment, EnvironmentRepository } from "../../../features/deploymentEnvironments";
 import { OctopusSpaceRepository, Repository } from "../../../repository";
 import { createRelease, CreateReleaseCommandV1 } from "../../createRelease/create-release";
@@ -121,6 +122,11 @@ describe("deploy a release", () => {
             environmentNames: [environment.name],
         } as CreateDeploymentUntenantedCommandV1;
         var response = await deployReleaseUntenanted(client, deployCommand);
+
+        var deploymentRepository = new DeploymentRepository(client, space.Name);
+        var deployments = await deploymentRepository.list({ ids: response.deploymentServerTasks.map(t => t.deploymentId) })
+        expect(deployments.items.length).toBe(1)
+
         var taskIds = response.deploymentServerTasks.map((x) => x.serverTaskId);
         var e = new ExecutionWaiter(client, space.Name);
 
