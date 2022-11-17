@@ -1,6 +1,7 @@
-import type { DeploymentResource, NewDeploymentResource, TaskState } from "@octopusdeploy/message-contracts";
-import { BasicRepositoryV2, ListArgsV2 } from "./basicRepositoryV2";
-import type { Client } from "../client";
+import type { Client } from "../../../../client";
+import { BasicRepositoryV2, ListArgsV2 } from "../../../basicRepositoryV2";
+import { TaskState } from "../../../serverTasks";
+import { Deployment } from "./deployment";
 
 type DeploymentListArgs = {
     ids?: string[];
@@ -11,7 +12,7 @@ type DeploymentListArgs = {
     taskState?: TaskState;
 } & ListArgsV2;
 
-export class DeploymentRepository extends BasicRepositoryV2<DeploymentResource, NewDeploymentResource, DeploymentListArgs> {
+export class DeploymentRepository extends BasicRepositoryV2<Deployment, DeploymentListArgs> {
     constructor(client: Client) {
         super(client, "deployments{/id}{?skip,take,ids,projects,environments,tenants,channels,taskState}");
     }

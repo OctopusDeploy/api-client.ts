@@ -1,7 +1,8 @@
-import type { ResourceCollection, ResourceWithId } from "@octopusdeploy/message-contracts";
 import type { Dictionary } from "lodash";
 import type { Client } from "../client";
 import type { RouteArgs } from "../resolver";
+import { ResourceCollectionV2 } from "./resourceCollectionV2";
+import { ResourceV2 } from "./resourceV2";
 
 export type ListArgsV2 = {
     skip?: number;
@@ -19,10 +20,9 @@ export type ResourcesByNameOrIdV2<TResource> = { [key: string]: TResource };
 
 // Repositories provide a helpful abstraction around the Octopus Deploy API
 export class BasicRepositoryV2<
-    TExistingResource extends ResourceWithId,
+    TExistingResource extends ResourceV2,
     TNewResource,
     TListArgs extends ListArgsV2 & RouteArgs = ListArgsV2,
-    TAllArgs extends AllArgsV2 & RouteArgs = AllArgsV2,
     TGetArgs extends RouteArgs = {},
     TCreateArgs extends RouteArgs = {},
     TModifyArgs extends RouteArgs = {}
@@ -33,19 +33,19 @@ export class BasicRepositoryV2<
     protected readonly baseApiTemplate: string;
     private readonly subscribersToDataModifications: Dictionary<(data: TExistingResource) => void>;
 
-    constructor(client: Client, baseApiRoute: string) {
+    constructor(client: Client, baseApiTemplate: string) {
         this.client = client;
-        this.baseApiTemplate = baseApiRoute;
+        this.baseApiTemplate = baseApiTemplate;
         this.subscribersToDataModifications = {};
     }
 
     del(resource: TExistingResource) {
-        return this.client.del(`${this.baseApiTemplate}/${resource.Id}`).then((d) => this.notifySubscribersToDataModifications(resource));
+        return this.client.del(`${this.baseApiTemplate}/${resource.id}`).then((d) => this.notifySubscribersToDataModifications(resource));
     }
 
-    create(resource: TNewResource, args?: TCreateArgs): Promise<TExistingResource> {
+    async create(resource: TNewResource, args?: TCreateArgs): Promise<TExistingResource> {
         return this.client
-            .create<TNewResource, TExistingResource>(this.baseApiTemplate, resource, args!)
+            .doCreate<TExistingResource>(this.baseApiTemplate, resource, args)
             .then((r) => this.notifySubscribersToDataModifications(r));
     }
 
@@ -54,12 +54,12 @@ export class BasicRepositoryV2<
         return this.client.get(this.baseApiTemplate, allArgs);
     }
 
-    list(args?: TListArgs): Promise<ResourceCollection<TExistingResource>> {
+    list(args?: TListArgs): Promise<ResourceCollectionV2<TExistingResource>> {
         return this.client.get(this.baseApiTemplate, args);
     }
 
     modify(resource: TExistingResource, args?: TModifyArgs): Promise<TExistingResource> {
-        return this.client.update(this.baseApiTemplate, resource, args).then((r) => this.notifySubscribersToDataModifications(r));
+        return this.client.doUpdate<TExistingResource>(this.baseApiTemplate, resource, args).then((r) => this.notifySubscribersToDataModifications(r));
     }
 
     save(resource: TExistingResource | TNewResource): Promise<TExistingResource> {
@@ -74,7 +74,7 @@ export class BasicRepositoryV2<
         }
 
         function isNewResource(resource: TExistingResource | TNewResource): resource is TNewResource {
-            return !("Id" in resource && isTruthy(resource.Id));
+            return !("id" in resource && isTruthy(resource.id));
         }
     }
 

@@ -1,15 +1,10 @@
 import {
-    CommunicationStyle,
-    EnvironmentResource,
-    NewDeploymentTarget,
-    NewEndpoint,
     NewProject,
     NewSpace,
     ProjectResource,
     RunCondition,
     SpaceResource,
     StartTrigger,
-    TenantedDeploymentMode,
     UserResource,
 } from "@octopusdeploy/message-contracts";
 import { PackageRequirement } from "@octopusdeploy/message-contracts/dist/deploymentStepResource";
@@ -17,6 +12,7 @@ import { RunConditionForAction } from "@octopusdeploy/message-contracts/dist/run
 import { randomUUID } from "crypto";
 import { Client } from "../../../client";
 import { processConfiguration } from "../../../clientConfiguration.test";
+import { DeploymentEnvironment, EnvironmentRepository } from "../../../features/deploymentEnvironments";
 import { OctopusSpaceRepository, Repository } from "../../../repository";
 import { createRelease, CreateReleaseCommandV1 } from "../../createRelease/create-release";
 import { ExecutionWaiter } from "../execution-waiter";
@@ -25,7 +21,7 @@ import { deployReleaseUntenanted } from "./deploy-release";
 
 describe("deploy a release", () => {
     let client: Client;
-    let environment: EnvironmentResource;
+    let environment: DeploymentEnvironment;
     let project: ProjectResource;
     let space: SpaceResource;
     let systemRepository: Repository;
@@ -66,7 +62,7 @@ describe("deploy a release", () => {
                 StartTrigger: StartTrigger.StartAfterPrevious,
                 Id: "",
                 Name: randomUUID(),
-                Properties: { "Octopus.Action.TargetRoles": "deploy" },
+                Properties: { },
                 Actions: [
                     {
                         Id: "",
@@ -106,21 +102,9 @@ describe("deploy a release", () => {
 
         const environmentName = randomUUID();
         console.log(`Creating environment, "${environmentName}"...`);
-        environment = await repository.environments.create({ Name: environmentName });
-        console.log(`Environment "${environment.Name}" created successfully.`);
-
-        const machineName = randomUUID();
-        console.log(`Creating machine, "${machineName}"...`);
-        const machine = await repository.machines.create(
-            NewDeploymentTarget(
-                machineName,
-                NewEndpoint(machineName, CommunicationStyle.None),
-                [environment],
-                ["deploy"],
-                TenantedDeploymentMode.TenantedOrUntenanted
-            )
-        );
-        console.log(`Machine "${machine.Name}" created successfully.`);
+        const envRepository = new EnvironmentRepository(client, spaceName);
+        environment = await envRepository.create({ name: environmentName });
+        console.log(`Environment "${environment.name}" created successfully.`);
     });
 
     test("deploy to single environment", async () => {
@@ -134,7 +118,7 @@ describe("deploy a release", () => {
             spaceName: space.Name,
             projectName: project.Name,
             releaseVersion: releaseResponse.releaseVersion,
-            environmentNames: [environment.Name],
+            environmentNames: [environment.name],
         } as CreateDeploymentUntenantedCommandV1;
         var response = await deployReleaseUntenanted(client, deployCommand);
         var taskIds = response.deploymentServerTasks.map((x) => x.serverTaskId);

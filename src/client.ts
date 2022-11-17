@@ -14,6 +14,7 @@ import type { ClientRequestDetails } from "./clientRequestDetails";
 import type { ClientResponseDetails } from "./clientResponseDetails";
 import { ClientSession } from "./clientSession";
 import Environment from "./environment";
+import { isSpaceScopedArgs } from "./features/spaceScopedArgs";
 import { Logger } from "./logger";
 import { resolveSpaceId, isSpaceScopedOperation, isSpaceScopedRequest } from "./operations";
 import { Resolver, RouteArgs } from "./resolver";
@@ -266,7 +267,22 @@ export class Client {
         this.errorSubscriptions.notifyAll(details);
     }
 
-    async do<TReturn>(path: string, command?: any, args?: RouteArgs): Promise<TReturn> {
+    async doCreate<TReturn>(path: string, command?: any, args?: RouteArgs): Promise<TReturn> {
+        if (isSpaceScopedOperation(command)) {
+            var spaceId = await resolveSpaceId(this, command.spaceName);
+            args = { spaceId: spaceId, ...args};
+            command = { spaceId: spaceId, ...command };
+        }
+        if (args && isSpaceScopedArgs(args)) {
+            var spaceId = await resolveSpaceId(this, args.spaceName);
+            args = { spaceId: spaceId, ...args};
+        }
+
+        const url = this.resolveUrlWithSpaceId(path, args);
+        return this.dispatchRequest("POST", url, command, true) as Promise<TReturn>;
+    }
+
+    async doUpdate<TReturn>(path: string, command?: any, args?: RouteArgs): Promise<TReturn> {
         if (isSpaceScopedOperation(command)) {
             var spaceId = await resolveSpaceId(this, command.spaceName);
             args = { spaceId: spaceId, ...args};
@@ -274,7 +290,7 @@ export class Client {
         }
 
         const url = this.resolveUrlWithSpaceId(path, args);
-        return this.dispatchRequest("POST", url, command, true) as Promise<TReturn>;
+        return this.dispatchRequest("PUT", url, command, true) as Promise<TReturn>;
     }
 
     async request<TReturn>(path: string, request?: any): Promise<TReturn> {
@@ -284,7 +300,7 @@ export class Client {
         }
 
         const url = this.resolveUrlWithSpaceId(path, request);
-        return this.dispatchRequest("GET", url) as Promise<TReturn>;
+        return this.dispatchRequest("GET", url, null, true) as Promise<TReturn>;
     }
 
     post<TReturn>(path: string, resource?: any, args?: RouteArgs): Promise<TReturn> {

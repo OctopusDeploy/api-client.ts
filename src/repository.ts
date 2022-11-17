@@ -14,9 +14,7 @@ import { CommunityActionTemplateRepository } from "./repositories/communityActio
 import { DashboardConfigurationRepository } from "./repositories/dashboardConfigurationRepository";
 import { DashboardRepository } from "./repositories/dashboardRepository";
 import { DefectRepository } from "./repositories/defectRepository";
-import { DeploymentRepository } from "./repositories/deploymentRepository";
 import { DynamicExtensionRepository } from "./repositories/dynamicExtensionRepository";
-import { EnvironmentRepository } from "./repositories/environmentRepository";
 import { EventRepository } from "./repositories/eventRepository";
 import { ExternalSecurityGroupProviderRepository } from "./repositories/externalSecurityGroupProviderRepository";
 import { ExternalSecurityGroupRepository } from "./repositories/externalSecurityGroupRepository";
@@ -131,8 +129,6 @@ export interface OctopusSpaceRepository extends OctopusCommonRepository {
     dashboards: DashboardRepository;
     defects: DefectRepository;
     deploymentProcesses: DeploymentProcessRepository;
-    deployments: DeploymentRepository;
-    environments: EnvironmentRepository;
     feeds: FeedRepository;
     importExport: ImportExportActions;
     interruptions: InterruptionRepository;
@@ -182,9 +178,7 @@ export class Repository implements OctopusSpaceRepository, OctopusSystemReposito
     dashboards: DashboardRepository;
     defects: DefectRepository;
     deploymentProcesses: DeploymentProcessRepository;
-    deployments: DeploymentRepository;
     dynamicExtensions: DynamicExtensionRepository;
-    environments: EnvironmentRepository;
     events: EventRepository;
     externalSecurityGroupProviders: ExternalSecurityGroupProviderRepository;
     externalSecurityGroups: ExternalSecurityGroupRepository;
@@ -257,9 +251,7 @@ export class Repository implements OctopusSpaceRepository, OctopusSystemReposito
         this.dashboardConfiguration = new DashboardConfigurationRepository(client);
         this.dashboards = new DashboardRepository(client);
         this.defects = new DefectRepository(client);
-        this.deployments = new DeploymentRepository(client);
         this.dynamicExtensions = new DynamicExtensionRepository(client);
-        this.environments = new EnvironmentRepository(client);
         this.events = new EventRepository(client);
         this.externalSecurityGroupProviders = new ExternalSecurityGroupProviderRepository(client);
         this.externalSecurityGroups = new ExternalSecurityGroupRepository(client);

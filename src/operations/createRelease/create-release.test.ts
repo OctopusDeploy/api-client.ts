@@ -1,7 +1,6 @@
 import {
     CommunicationStyle,
     DeploymentTargetResource,
-    EnvironmentResource,
     NewDeploymentTarget,
     NewEndpoint,
     NewProject,
@@ -25,10 +24,11 @@ import { processConfiguration } from "../../clientConfiguration.test";
 import { OctopusSpaceRepository, Repository } from "../../repository";
 import { createRelease, CreateReleaseCommandV1 } from "./create-release";
 import { pushPackage } from "../pushPackage";
+import { EnvironmentRepository, DeploymentEnvironment } from "../../features/deploymentEnvironments";
 
 describe("create a release", () => {
     let client: Client;
-    let environment: EnvironmentResource;
+    let environment: DeploymentEnvironment;
     let machine: DeploymentTargetResource;
     let project: ProjectResource;
     let repository: OctopusSpaceRepository;
@@ -110,21 +110,9 @@ describe("create a release", () => {
 
         const environmentName = randomUUID();
         console.log(`Creating environment, "${environmentName}"...`);
-        environment = await repository.environments.create({ Name: environmentName });
-        console.log(`Environment "${environment.Name}" created successfully.`);
-
-        const machineName = randomUUID();
-        console.log(`Creating machine, "${machineName}"...`);
-        machine = await repository.machines.create(
-            NewDeploymentTarget(
-                machineName,
-                NewEndpoint(machineName, CommunicationStyle.None),
-                [environment],
-                ["deploy"],
-                TenantedDeploymentMode.TenantedOrUntenanted
-            )
-        );
-        console.log(`Machine "${machine.Name}" created successfully.`);
+        const envRepository = new EnvironmentRepository(client, spaceName);
+        environment = await envRepository.create({ name: environmentName });
+        console.log(`Environment "${environment.name}" created successfully.`);
     });
 
     test("can create a release", async () => {

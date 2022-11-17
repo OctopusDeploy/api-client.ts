@@ -30,7 +30,7 @@ export async function pushBuildInformation(
 
     for (const pkg of buildInformation.packages) {
         tasks.push(
-            client.do<OctopusPackageVersionBuildInformationMappedResource>(`~/api/{spaceId}/build-information`,
+            client.doCreate<OctopusPackageVersionBuildInformationMappedResource>(`~/api/{spaceId}/build-information`,
                 {
                     spaceName: buildInformation.spaceName,
                     packageId: pkg.id,
