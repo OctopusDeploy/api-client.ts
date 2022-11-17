@@ -1,7 +1,7 @@
 import type { Client } from "../../client";
 import { ListArgsV2 } from "../basicRepositoryV2";
 import { ResourceCollectionV2 } from "../resourceCollectionV2";
-import { SpaceScopedBasicRepositoryV2 } from "../SpaceScopedBasicRepositoryV2";
+import { SpaceScopedBasicRepositoryV2 } from "../spaceScopedBasicRepositoryV2";
 import { DeploymentEnvironment, NewDeploymentEnvironment } from "./deploymentEnvironment";
 
 type EnvironmentRepositoryListArgs = {
