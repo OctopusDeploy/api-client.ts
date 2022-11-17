@@ -1,7 +1,7 @@
 import type { Client } from "../../../../client";
-import { BasicRepositoryV2, ListArgsV2 } from "../../../basicRepositoryV2";
+import { SpaceScopedBasicRepositoryV2, ListArgsV2 } from "../../..";
 import { TaskState } from "../../../serverTasks";
-import { Deployment } from "./deployment";
+import { Deployment, NewDeployment } from "./deployment";
 
 type DeploymentListArgs = {
     ids?: string[];
@@ -12,8 +12,8 @@ type DeploymentListArgs = {
     taskState?: TaskState;
 } & ListArgsV2;
 
-export class DeploymentRepository extends BasicRepositoryV2<Deployment, DeploymentListArgs> {
-    constructor(client: Client) {
-        super(client, "deployments{/id}{?skip,take,ids,projects,environments,tenants,channels,taskState}");
+export class DeploymentRepository extends SpaceScopedBasicRepositoryV2<Deployment, NewDeployment, DeploymentListArgs> {
+    constructor(client: Client, spaceName: string) {
+        super(client, spaceName, "deployments{/id}{?skip,take,ids,projects,environments,tenants,channels,taskState}");
     }
 }

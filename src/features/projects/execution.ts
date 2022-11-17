@@ -1,4 +1,4 @@
-import { SpaceScopedResourceV2 } from "../spaceScopedResourceV2";
+import { SpaceScopedResourceV2, NewSpaceScopedResourceV2 } from "../spaceScopedResourceV2";
 
 export interface Execution extends SpaceScopedResourceV2 {
     name: string;
@@ -17,4 +17,19 @@ export interface Execution extends SpaceScopedResourceV2 {
     taskId: string;
     tenantId?: string;
     useGuidedFailure: boolean;
-  }
+}
+
+export interface NewExecution extends NewSpaceScopedResourceV2 {
+    projectId: string;
+    environmentId: string;
+    excludedMachineIds: string[];
+    forcePackageDownload: boolean;
+    formValues: any;
+    comments: string;
+    queueTime?: Date;
+    queueTimeExpiry?: Date;
+    skipActions: string[];
+    specificMachineIds: string[];
+    tenantId?: string;
+    useGuidedFailure: boolean;
+}
