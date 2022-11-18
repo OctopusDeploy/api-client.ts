@@ -60,7 +60,6 @@ import TagSetRepository from "./repositories/tagSetRepository";
 import { TaskRepository } from "./repositories/taskRepository";
 import TeamMembershipRepository from "./repositories/teamMembershipRepository";
 import { TeamRepository } from "./repositories/teamRepository";
-import TenantRepository from "./repositories/tenantRepository";
 import TenantVariableRepository from "./repositories/tenantVariableRepository";
 import { UpgradeConfigurationRepository } from "./repositories/upgradeConfigurationRepository";
 import { UserIdentityMetadataRepository } from "./repositories/userIdentityMetadataRepository";
@@ -151,7 +150,6 @@ export interface OctopusSpaceRepository extends OctopusCommonRepository {
     releases: ReleasesRepository;
     subscriptions: SubscriptionRepository;
     tagSets: TagSetRepository;
-    tenants: TenantRepository;
     tenantVariables: TenantVariableRepository;
     userOnboarding: UserOnBoardingRepository;
     variables: VariableRepository;
@@ -223,7 +221,6 @@ export class Repository implements OctopusSpaceRepository, OctopusSystemReposito
     tagSets: TagSetRepository;
     tasks: TaskRepository;
     teams: TeamRepository;
-    tenants: TenantRepository;
     tenantVariables: TenantVariableRepository;
     upgradeConfiguration: UpgradeConfigurationRepository;
     userIdentityMetadata: UserIdentityMetadataRepository;
@@ -298,7 +295,6 @@ export class Repository implements OctopusSpaceRepository, OctopusSystemReposito
         this.tagSets = new TagSetRepository(client);
         this.tasks = new TaskRepository(client);
         this.teams = new TeamRepository(client);
-        this.tenants = new TenantRepository(client);
         this.tenantVariables = new TenantVariableRepository(client);
         this.upgradeConfiguration = new UpgradeConfigurationRepository(client);
         this.userIdentityMetadata = new UserIdentityMetadataRepository(client);

@@ -79,7 +79,6 @@ export * from "./repositories/tagSetRepository";
 export * from "./repositories/taskRepository";
 export * from "./repositories/teamMembershipRepository";
 export * from "./repositories/teamRepository";
-export * from "./repositories/tenantRepository";
 export * from "./repositories/tenantVariableRepository";
 export * from "./repositories/upgradeConfigurationRepository";
 export * from "./repositories/userIdentityMetadataRepository";

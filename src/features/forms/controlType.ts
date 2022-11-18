@@ -1,0 +1,15 @@
+export enum ControlType {
+  AmazonWebServicesAccount = "AmazonWebServicesAccount",
+  AzureAccount = "AzureAccount",
+  Certificate = "Certificate",
+  Checkbox = "Checkbox",
+  Custom = "Custom",
+  GoogleCloudAccount = "GoogleCloudAccount",
+  MultiLineText = "MultiLineText",
+  Package = "Package",
+  Select = "Select",
+  Sensitive = "Sensitive",
+  SingleLineText = "SingleLineText",
+  StepName = "StepName",
+  WorkerPool = "WorkerPool",
+}

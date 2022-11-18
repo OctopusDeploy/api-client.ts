@@ -7,11 +7,26 @@ import { ClientOptions } from "../clientOptions";
 export class AxiosAdapter<TResource> implements Adapter<TResource> {
     public async execute(options: ClientOptions): Promise<AdapterResponse<TResource>> {
         try {
+            let jsonData = options.requestBody
+            if (options.requestBody) {
+                jsonData = JSON.stringify(options.requestBody, (_, val) => {
+                    if (val === null || val === undefined || Array.isArray(val) || typeof val !== "object") {
+                        return val;
+                    }
+                    return Object.entries(val).reduce((a, [key, val]) => {
+                        const b = a as any;
+                        const field = key[0].toUpperCase() + key.substring(1);
+                        b[field] = val;
+                        return a;
+                    }, {});
+                })
+            }
+
             const config: AxiosRequestConfig = {
                 httpsAgent: options.configuration.httpsAgent,
                 url: options.url,
                 method: options.method as Method,
-                data: options.requestBody,
+                data: jsonData,
                 headers: {
                     "X-Octopus-ApiKey": options.configuration.apiKey ?? "",
                 },
