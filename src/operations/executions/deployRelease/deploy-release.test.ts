@@ -1,12 +1,4 @@
-import {
-    NewProject,
-    NewSpace,
-    ProjectResource,
-    RunCondition,
-    SpaceResource,
-    StartTrigger,
-    UserResource,
-} from "@octopusdeploy/message-contracts";
+import { NewProject, NewSpace, ProjectResource, RunCondition, SpaceResource, StartTrigger, UserResource } from "@octopusdeploy/message-contracts";
 import { PackageRequirement } from "@octopusdeploy/message-contracts/dist/deploymentStepResource";
 import { RunConditionForAction } from "@octopusdeploy/message-contracts/dist/runConditionForAction";
 import { randomUUID } from "crypto";
@@ -14,6 +6,7 @@ import { Client } from "../../../client";
 import { processConfiguration } from "../../../clientConfiguration.test";
 import { DeploymentRepository } from "../../../features";
 import { DeploymentEnvironment, EnvironmentRepository } from "../../../features/deploymentEnvironments";
+import { ServerTaskDetails } from "../../../features/serverTasks";
 import { OctopusSpaceRepository, Repository } from "../../../repository";
 import { createRelease, CreateReleaseCommandV1 } from "../../createRelease/create-release";
 import { ExecutionWaiter } from "../execution-waiter";
@@ -63,7 +56,7 @@ describe("deploy a release", () => {
                 StartTrigger: StartTrigger.StartAfterPrevious,
                 Id: "",
                 Name: randomUUID(),
-                Properties: { },
+                Properties: {},
                 Actions: [
                     {
                         Id: "",
@@ -88,8 +81,8 @@ describe("deploy a release", () => {
                         Properties: {
                             "Octopus.Action.RunOnServer": "true",
                             "Octopus.Action.Script.ScriptSource": "Inline",
-                            "Octopus.Action.Script.Syntax": "Bash",
-                            "Octopus.Action.Script.ScriptBody": "echo 'hello'",
+                            "Octopus.Action.Script.Syntax": "PowerShell",
+                            "Octopus.Action.Script.ScriptBody": "Write-Host 'hello'",
                         },
                         Links: {},
                     },
@@ -124,13 +117,17 @@ describe("deploy a release", () => {
         var response = await deployReleaseUntenanted(client, deployCommand);
 
         var deploymentRepository = new DeploymentRepository(client, space.Name);
-        var deployments = await deploymentRepository.list({ ids: response.deploymentServerTasks.map(t => t.deploymentId) })
-        expect(deployments.items.length).toBe(1)
+        var deployments = await deploymentRepository.list({ ids: response.deploymentServerTasks.map((t) => t.deploymentId) });
+        expect(deployments.items.length).toBe(1);
 
         var taskIds = response.deploymentServerTasks.map((x) => x.serverTaskId);
         var e = new ExecutionWaiter(client, space.Name);
 
-        await e.waitForExecutionToComplete(taskIds, false, true, undefined, 1000, 600000, "task");
+        await e.waitForExecutionToComplete(taskIds, false, true, undefined, 1000, 600000, "task", (serverTaskDetails: ServerTaskDetails): void => {
+            console.log(
+                `Waiting for task ${serverTaskDetails.task.id}. Current status: ${serverTaskDetails.task.state}, completed: ${serverTaskDetails.progress.progressPercentage}%`
+            );
+        });
     });
 
     afterEach(async () => {

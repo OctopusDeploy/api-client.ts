@@ -1,7 +1,7 @@
 import { promises as fs } from "fs";
 import { Client, getServerTaskRaw } from "../..";
-import { ServerTask } from "../../features/serverTasks";
-import { getServerTask } from "../serverTasks";
+import { ServerTask, ServerTaskDetails } from "../../features/serverTasks";
+import { getServerTask, getServerTaskDetails } from "../serverTasks";
 
 export class ExecutionWaiter {
     constructor(private readonly client: Client, private readonly spaceName: string) {}
@@ -13,7 +13,8 @@ export class ExecutionWaiter {
         rawLogFile: string | undefined,
         statusCheckSleepCycle: number,
         timeout: number,
-        alias: string
+        alias: string,
+        pollingCallback?: (serverTaskDetails: ServerTaskDetails) => any
     ) {
         const getTasks = serverTaskIds.map(async (taskId) => getServerTask(this.client, this.spaceName, taskId));
         const executionTasks = await Promise.all(getTasks);
@@ -21,7 +22,7 @@ export class ExecutionWaiter {
 
         try {
             this.client.info(`Waiting for ${executionTasks.length} ${alias}(s) to complete...`);
-            await this.waitForCompletion(executionTasks, statusCheckSleepCycle, timeout);
+            await this.waitForCompletion(executionTasks, statusCheckSleepCycle, timeout, pollingCallback);
             let failed = false;
             for (const executionTask of executionTasks) {
                 const updated = await getServerTask(this.client, this.spaceName, executionTask.id);
@@ -56,7 +57,12 @@ export class ExecutionWaiter {
         }
     }
 
-    private async waitForCompletion(serverTasks: ServerTask[], statusCheckSleepCycle: number, timeout: number) {
+    private async waitForCompletion(
+        serverTasks: ServerTask[],
+        statusCheckSleepCycle: number,
+        timeout: number,
+        pollingCallback?: (serverTaskDetails: ServerTaskDetails) => any
+    ) {
         const sleep = async (ms: number) => new Promise((r) => setTimeout(r, ms));
         const t = new Promise((r) => setTimeout(r, timeout));
         let stop = false;
@@ -66,10 +72,19 @@ export class ExecutionWaiter {
         });
         for (const deploymentTask of serverTasks) {
             while (!stop) {
-                const task = await getServerTask(this.client, this.spaceName, deploymentTask.id);
+                if (pollingCallback) {
+                    const taskDetails = await getServerTaskDetails(this.client, this.spaceName, deploymentTask.id);
+                    pollingCallback(taskDetails);
 
-                if (task.isCompleted) {
-                    break;
+                    if (taskDetails.task.isCompleted) {
+                        break;
+                    }
+                } else {
+                    const task = await getServerTask(this.client, this.spaceName, deploymentTask.id);
+
+                    if (task.isCompleted) {
+                        break;
+                    }
                 }
 
                 await sleep(statusCheckSleepCycle);
