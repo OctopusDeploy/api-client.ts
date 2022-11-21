@@ -36,8 +36,7 @@ describe("deploy a release", () => {
         space = await systemRepository.spaces.create(NewSpace(spaceName, [], [user]));
         console.log(`Space "${spaceName}" created successfully.`);
 
-        let repository: OctopusSpaceRepository;
-        repository = await systemRepository.forSpace(space);
+        const repository = await systemRepository.forSpace(space);
 
         const projectGroup = (await repository.projectGroups.list({ take: 1 })).Items[0];
         const lifecycle = (await repository.lifecycles.list({ take: 1 })).Items[0];
@@ -102,26 +101,26 @@ describe("deploy a release", () => {
     });
 
     test("deploy to single environment", async () => {
-        var releaseCommand = {
+        const releaseCommand: CreateReleaseCommandV1 = {
             spaceName: space.Name,
             ProjectName: project.Name,
-        } as CreateReleaseCommandV1;
-        var releaseResponse = await createRelease(client, releaseCommand);
+        };
+        const releaseResponse = await createRelease(client, releaseCommand);
 
-        var deployCommand = {
+        const deployCommand: CreateDeploymentUntenantedCommandV1 = {
             spaceName: space.Name,
             ProjectName: project.Name,
             ReleaseVersion: releaseResponse.ReleaseVersion,
             EnvironmentNames: [environment.Name],
-        } as CreateDeploymentUntenantedCommandV1;
-        var response = await deployReleaseUntenanted(client, deployCommand);
+        };
+        const response = await deployReleaseUntenanted(client, deployCommand);
 
-        var deploymentRepository = new DeploymentRepository(client, space.Name);
-        var deployments = await deploymentRepository.list({ ids: response.DeploymentServerTasks.map((t) => t.DeploymentId) });
+        const deploymentRepository = new DeploymentRepository(client, space.Name);
+        const deployments = await deploymentRepository.list({ ids: response.DeploymentServerTasks.map((t) => t.deploymentId) });
         expect(deployments.Items.length).toBe(1);
 
-        var taskIds = response.DeploymentServerTasks.map((x) => x.ServerTaskId);
-        var e = new ExecutionWaiter(client, space.Name);
+        const taskIds = response.DeploymentServerTasks.map((x) => x.serverTaskId);
+        const e = new ExecutionWaiter(client, space.Name);
 
         await e.waitForExecutionToComplete(taskIds, false, true, undefined, 1000, 600000, "task", (serverTaskDetails: ServerTaskDetails): void => {
             console.log(

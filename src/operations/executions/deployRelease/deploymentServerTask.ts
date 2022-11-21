@@ -1,4 +1,4 @@
 export interface DeploymentServerTask {
-    DeploymentId: string;
-    ServerTaskId: string;
+    deploymentId: string;
+    serverTaskId: string;
 }

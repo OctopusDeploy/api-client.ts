@@ -6,7 +6,7 @@ export async function runRunbook(client: Client, command: CreateRunbookRunComman
 
     // WARNING: server's API currently expects there to be a SpaceIdOrName value, which was intended to allow use of names/slugs, but doesn't
     // work properly due to limitations in the middleware. For now, we'll just set it to the SpaceId
-    var response = await client.doCreate<CreateRunbookRunResponseV1>("~/api/{spaceId}/runbook-runs/create/v1", {
+    const response = await client.doCreate<CreateRunbookRunResponseV1>("~/api/{spaceId}/runbook-runs/create/v1", {
         spaceIdOrName: command.spaceName,
         ...command,
     });
@@ -15,7 +15,7 @@ export async function runRunbook(client: Client, command: CreateRunbookRunComman
         throw new Error("No server task details returned");
     }
 
-    client.debug(`Runbook executed successfully. [${response.RunbookRunServerTasks.map((t) => t.ServerTaskId).join(", ")}]`);
+    client.debug(`Runbook executed successfully. [${response.RunbookRunServerTasks.map((t) => t.serverTaskId).join(", ")}]`);
 
     return response;
 }
