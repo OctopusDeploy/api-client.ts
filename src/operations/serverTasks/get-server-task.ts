@@ -6,7 +6,7 @@ export async function getServerTask(client: Client, spaceName: string, serverTas
     if (!serverTaskId) {
         throw new Error("Server Task Id was not provided");
     }
-    var response = await client.request<ServerTask>(`~/api/{spaceId}/tasks/{serverTaskId}`, { spaceName, serverTaskId });
+    const response = await client.request<ServerTask>(`~/api/{spaceId}/tasks/{serverTaskId}`, { spaceName, serverTaskId });
     return response;
 }
 
@@ -28,7 +28,7 @@ export async function getServerTaskDetails(client: Client, spaceName: string, se
     if (!serverTaskId) {
         throw new Error("Server Task Id was not provided");
     }
-    var response = await client.request<ServerTaskDetails>(`~/api/{spaceId}/tasks/{serverTaskId}/details`, { spaceName, serverTaskId });
+    const response = await client.request<ServerTaskDetails>(`~/api/{spaceId}/tasks/{serverTaskId}/details`, { spaceName, serverTaskId });
     return response;
 }
 
@@ -36,6 +36,6 @@ export async function getServerTaskRaw(client: Client, spaceName: string, server
     if (!serverTaskId) {
         throw new Error("Server Task Id was not provided");
     }
-    var response = await client.request<string>(`~/api/{spaceId}/tasks/{serverTaskId}/raw`, { spaceName, serverTaskId });
+    const response = await client.request<string>(`~/api/{spaceId}/tasks/{serverTaskId}/raw`, { spaceName, serverTaskId });
     return response;
 }

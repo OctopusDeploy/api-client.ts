@@ -66,7 +66,6 @@ export class ExecutionWaiter {
         const sleep = async (ms: number) => new Promise((r) => setTimeout(r, ms));
         const t = new Promise((r) => setTimeout(r, timeout));
         let stop = false;
-        // eslint-disable-next-line github/no-then
         t.then(() => {
             stop = true;
         });
