@@ -122,7 +122,7 @@ describe("deploy a release", () => {
         const taskIds = response.DeploymentServerTasks.map((x) => x.serverTaskId);
         const e = new ExecutionWaiter(client, space.Name);
 
-        await e.waitForExecutionToComplete(taskIds, false, true, undefined, 1000, 600000, "task", (serverTaskDetails: ServerTaskDetails): void => {
+        await e.waitForExecutionToComplete(taskIds, true, undefined, 1000, 600000, "task", (serverTaskDetails: ServerTaskDetails): void => {
             console.log(
                 `Waiting for task ${serverTaskDetails.Task.Id}. Current status: ${serverTaskDetails.Task.State}, completed: ${serverTaskDetails.Progress.ProgressPercentage}%`
             );

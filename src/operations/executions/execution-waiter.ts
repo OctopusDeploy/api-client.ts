@@ -8,7 +8,6 @@ export class ExecutionWaiter {
 
     async waitForExecutionToComplete(
         serverTaskIds: string[],
-        showProgress: boolean,
         noRawLog: boolean,
         rawLogFile: string | undefined,
         statusCheckSleepCycle: number,
@@ -18,7 +17,6 @@ export class ExecutionWaiter {
     ) {
         const getTasks = serverTaskIds.map(async (taskId) => getServerTask(this.client, this.spaceName, taskId));
         const executionTasks = await Promise.all(getTasks);
-        if (showProgress && serverTaskIds.length > 1) this.client.info(`Only progress of the first task (${executionTasks[0].Name}) will be shown`);
 
         try {
             this.client.info(`Waiting for ${executionTasks.length} ${alias}(s) to complete...`);
