@@ -2,12 +2,25 @@ import { Client } from "../../../client";
 import { CreateDeploymentTenantedCommandV1, CreateDeploymentTenantedResponseV1 } from "./createDeploymentTenantedCommandV1";
 import { CreateDeploymentUntenantedCommandV1, CreateDeploymentUntenantedResponseV1 } from "./createDeploymentUntenantedCommandV1";
 
+// WARNING: we've had to do this to cover a mistake in Octopus' API. The API has been corrected to return PascalCase, but was returning camelCase
+// for a number of versions, so we'll deserialize both and use whichever actually has a value
+interface InternalDeploymentServerTask {
+    DeploymentId: string;
+    deploymentId: string;
+    ServerTaskId: string;
+    serverTaskId: string;
+}
+
+interface InternalCreateDeploymentUntenantedResponseV1 {
+    DeploymentServerTasks: InternalDeploymentServerTask[];
+}
+
 export async function deployReleaseUntenanted(client: Client, command: CreateDeploymentUntenantedCommandV1): Promise<CreateDeploymentUntenantedResponseV1> {
     client.debug(`Deploying a release...`);
 
     // WARNING: server's API currently expects there to be a SpaceIdOrName value, which was intended to allow use of names/slugs, but doesn't
     // work properly due to limitations in the middleware. For now, we'll just set it to the SpaceId
-    const response = await client.doCreate<CreateDeploymentUntenantedResponseV1>(`~/api/{spaceId}/deployments/create/untenanted/v1`, {
+    const response = await client.doCreate<InternalCreateDeploymentUntenantedResponseV1>(`~/api/{spaceId}/deployments/create/untenanted/v1`, {
         spaceIdOrName: command.spaceName,
         ...command,
     });
@@ -16,9 +29,18 @@ export async function deployReleaseUntenanted(client: Client, command: CreateDep
         throw new Error("No server task details returned");
     }
 
-    client.debug(`Deployment(s) created successfully. [${response.DeploymentServerTasks.map((t) => t.ServerTaskId).join(", ")}]`);
+    const mappedTasks = response.DeploymentServerTasks.map((x) => {
+        return {
+            DeploymentId: x.DeploymentId || x.deploymentId,
+            ServerTaskId: x.ServerTaskId || x.serverTaskId,
+        };
+    });
 
-    return response;
+    client.debug(`Deployment(s) created successfully. [${mappedTasks.map((t) => t.ServerTaskId).join(", ")}]`);
+
+    return {
+        DeploymentServerTasks: mappedTasks,
+    };
 }
 
 export async function deployReleaseTenanted(client: Client, command: CreateDeploymentTenantedCommandV1): Promise<CreateDeploymentTenantedResponseV1> {
@@ -26,7 +48,7 @@ export async function deployReleaseTenanted(client: Client, command: CreateDeplo
 
     // WARNING: server's API currently expects there to be a SpaceIdOrName value, which was intended to allow use of names/slugs, but doesn't
     // work properly due to limitations in the middleware. For now, we'll just set it to the SpaceId
-    const response = await client.doCreate<CreateDeploymentTenantedResponseV1>(`~/api/{spaceId}/deployments/create/tenanted/v1`, {
+    const response = await client.doCreate<InternalCreateDeploymentUntenantedResponseV1>(`~/api/{spaceId}/deployments/create/tenanted/v1`, {
         spaceIdOrName: command.spaceName,
         ...command,
     });
@@ -35,7 +57,16 @@ export async function deployReleaseTenanted(client: Client, command: CreateDeplo
         throw new Error("No server task details returned");
     }
 
-    client.debug(`Tenanted Deployment(s) created successfully. [${response.DeploymentServerTasks.map((t) => t.ServerTaskId).join(", ")}]`);
+    const mappedTasks = response.DeploymentServerTasks.map((x) => {
+        return {
+            DeploymentId: x.DeploymentId || x.deploymentId,
+            ServerTaskId: x.ServerTaskId || x.serverTaskId,
+        };
+    });
 
-    return response;
+    client.debug(`Tenanted Deployment(s) created successfully. [${mappedTasks.map((t) => t.ServerTaskId).join(", ")}]`);
+
+    return {
+        DeploymentServerTasks: mappedTasks,
+    };
 }
