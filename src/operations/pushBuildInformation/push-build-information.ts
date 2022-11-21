@@ -5,20 +5,20 @@ import { SpaceScopedOperation } from "../spaceScopedOperation";
 import { PackageIdentity } from "./package-identity";
 
 export interface CreateOctopusBuildInformationCommand extends SpaceScopedOperation {
-    buildEnvironment: string;
-    buildNumber: string;
-    buildUrl: string;
-    branch: string;
-    vcsType: string;
-    vcsRoot: string;
-    vcsCommitNumber: string;
-    packages: PackageIdentity[],
-    commits: IOctopusBuildInformationCommit[];
+    BuildEnvironment: string;
+    BuildNumber: string;
+    BuildUrl: string;
+    Branch: string;
+    VcsType: string;
+    VcsRoot: string;
+    VcsCommitNumber: string;
+    Packages: PackageIdentity[];
+    Commits: IOctopusBuildInformationCommit[];
 }
 
 export interface IOctopusBuildInformationCommit {
-    id: string;
-    comment: string;
+    Id: string;
+    Comment: string;
 }
 
 export async function pushBuildInformation(
@@ -28,22 +28,23 @@ export async function pushBuildInformation(
 ): Promise<void> {
     const tasks: Promise<OctopusPackageVersionBuildInformationMappedResource>[] = [];
 
-    for (const pkg of buildInformation.packages) {
+    for (const pkg of buildInformation.Packages) {
         tasks.push(
-            client.doCreate<OctopusPackageVersionBuildInformationMappedResource>(`~/api/{spaceId}/build-information`,
+            client.doCreate<OctopusPackageVersionBuildInformationMappedResource>(
+                `~/api/{spaceId}/build-information{?overwriteMode}`,
                 {
                     spaceName: buildInformation.spaceName,
-                    packageId: pkg.id,
-                    version: pkg.version,
-                    octopusBuildInformation: {
-                        branch: buildInformation.branch,
-                        buildEnvironment: buildInformation.buildEnvironment,
-                        buildNumber: buildInformation.buildNumber,
-                        buildUrl: buildInformation.buildUrl,
-                        commits: buildInformation.commits.map((c) => ({ id: c.id, comment: c.comment })),
-                        vcsCommitNumber: buildInformation.vcsCommitNumber,
-                        vcsRoot: buildInformation.vcsRoot,
-                        vcsType: buildInformation.vcsType,
+                    PackageId: pkg.Id,
+                    Version: pkg.Version,
+                    OctopusBuildInformation: {
+                        Branch: buildInformation.Branch,
+                        BuildEnvironment: buildInformation.BuildEnvironment,
+                        BuildNumber: buildInformation.BuildNumber,
+                        BuildUrl: buildInformation.BuildUrl,
+                        Commits: buildInformation.Commits.map((c) => ({ Id: c.Id, Comment: c.Comment })),
+                        VcsCommitNumber: buildInformation.VcsCommitNumber,
+                        VcsRoot: buildInformation.VcsRoot,
+                        VcsType: buildInformation.VcsType,
                     },
                 },
                 { overwriteMode }

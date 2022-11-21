@@ -18,25 +18,25 @@ export class ExecutionWaiter {
     ) {
         const getTasks = serverTaskIds.map(async (taskId) => getServerTask(this.client, this.spaceName, taskId));
         const executionTasks = await Promise.all(getTasks);
-        if (showProgress && serverTaskIds.length > 1) this.client.info(`Only progress of the first task (${executionTasks[0].name}) will be shown`);
+        if (showProgress && serverTaskIds.length > 1) this.client.info(`Only progress of the first task (${executionTasks[0].Name}) will be shown`);
 
         try {
             this.client.info(`Waiting for ${executionTasks.length} ${alias}(s) to complete...`);
             await this.waitForCompletion(executionTasks, statusCheckSleepCycle, timeout, pollingCallback);
             let failed = false;
             for (const executionTask of executionTasks) {
-                const updated = await getServerTask(this.client, this.spaceName, executionTask.id);
-                if (updated.finishedSuccessfully) {
-                    this.client.info(`${updated.description}: ${updated.state}`);
+                const updated = await getServerTask(this.client, this.spaceName, executionTask.Id);
+                if (updated.FinishedSuccessfully) {
+                    this.client.info(`${updated.Description}: ${updated.State}`);
                 } else {
-                    this.client.error(`${updated.description}: ${updated.state}, ${updated.errorMessage}`);
+                    this.client.error(`${updated.Description}: ${updated.State}, ${updated.ErrorMessage}`);
 
                     failed = true;
 
                     if (noRawLog) continue;
 
                     try {
-                        const raw = await getServerTaskRaw(this.client, this.spaceName, executionTask.id);
+                        const raw = await getServerTaskRaw(this.client, this.spaceName, executionTask.Id);
                         if (rawLogFile) await fs.writeFile(rawLogFile, raw);
                         else this.client.error(raw);
                     } catch (er: unknown) {
@@ -73,16 +73,16 @@ export class ExecutionWaiter {
         for (const deploymentTask of serverTasks) {
             while (!stop) {
                 if (pollingCallback) {
-                    const taskDetails = await getServerTaskDetails(this.client, this.spaceName, deploymentTask.id);
+                    const taskDetails = await getServerTaskDetails(this.client, this.spaceName, deploymentTask.Id);
                     pollingCallback(taskDetails);
 
-                    if (taskDetails.task.isCompleted) {
+                    if (taskDetails.Task.IsCompleted) {
                         break;
                     }
                 } else {
-                    const task = await getServerTask(this.client, this.spaceName, deploymentTask.id);
+                    const task = await getServerTask(this.client, this.spaceName, deploymentTask.Id);
 
-                    if (task.isCompleted) {
+                    if (task.IsCompleted) {
                         break;
                     }
                 }

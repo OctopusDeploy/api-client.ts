@@ -15,10 +15,10 @@ export default class ApiClient<TResource> {
         this.adapter = new AxiosAdapter<TResource>();
     }
 
-    async execute(useCamelCase: boolean = false) {
+    async execute() {
         try {
             const response = await this.adapter.execute(this.options);
-            this.handleSuccess(response, useCamelCase);
+            this.handleSuccess(response);
         } catch (error: unknown) {
             if (error instanceof AdapterError) {
                 this.handleError(error);
@@ -30,7 +30,7 @@ export default class ApiClient<TResource> {
         }
     }
 
-    private handleSuccess = (response: AdapterResponse<TResource>, useCamelCase: boolean) => {
+    private handleSuccess = (response: AdapterResponse<TResource>) => {
         if (this.options.onResponseCallback) {
             const details: ResponseDetails = {
                 method: this.options.method as any,
@@ -47,17 +47,7 @@ export default class ApiClient<TResource> {
         } else {
             responseText = JSON.stringify(response.data);
             if (responseText && responseText.length > 0) {
-                responseText = JSON.parse(responseText, (_, val) => {
-                    if (val === null || val === undefined || Array.isArray(val) || typeof val !== "object" || !useCamelCase) {
-                        return val;
-                    }
-                    return Object.entries(val).reduce((a, [key, val]) => {
-                        const b = a as any;
-                        const field = key[0].toLowerCase() + key.substring(1);
-                        b[field] = val;
-                        return a;
-                    }, {});
-                });
+                responseText = JSON.parse(responseText);
             }
         }
 

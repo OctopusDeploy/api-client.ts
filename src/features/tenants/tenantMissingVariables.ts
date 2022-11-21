@@ -1,13 +1,12 @@
-
 export interface TenantMissingVariable {
-  tenantId: string;
-  missingVariables: MissingVariable[];
+    TenantId: string;
+    MissingVariables: MissingVariable[];
 }
 
 export interface MissingVariable {
-  projectId?: string;
-  environmentId?: string;
-  libraryVariableSetId?: string;
-  variableTemplateName: string;
-  variableTemplateId: string;
+    ProjectId?: string;
+    EnvironmentId?: string;
+    LibraryVariableSetId?: string;
+    VariableTemplateName: string;
+    VariableTemplateId: string;
 }

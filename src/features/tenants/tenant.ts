@@ -2,33 +2,27 @@ import { NamedResourceV2, NewNamedResourceV2 } from "../namedResourceV2";
 import { NewSpaceScopedResourceV2, SpaceScopedResourceV2 } from "../spaceScopedResourceV2";
 
 interface TenantShared {
-  tenantTags: string[];
-  projectEnvironments: { [projectId: string]: string[] };
+    TenantTags: string[];
+    ProjectEnvironments: { [projectId: string]: string[] };
 }
 
-export interface Tenant
-  extends NamedResourceV2,
-    TenantShared,
-    SpaceScopedResourceV2 {
-  description: string | null;
-  clonedFromTenantId: string | null;
+export interface Tenant extends NamedResourceV2, TenantShared, SpaceScopedResourceV2 {
+    Description: string | null;
+    ClonedFromTenantId: string | null;
 }
 
-export interface NewTenantResource
-  extends NewNamedResourceV2,
-    NewSpaceScopedResourceV2,
-    TenantShared {
-  description?: string;
+export interface NewTenantResource extends NewNamedResourceV2, NewSpaceScopedResourceV2, TenantShared {
+    Description?: string;
 }
 
 export interface TagTestResult {
-  [key: string]: {
-    isMatched: boolean;
-    reason: string;
-    missingTags: string[];
-  };
+    [key: string]: {
+        IsMatched: boolean;
+        Reason: string;
+        MissingTags: string[];
+    };
 }
 
 export interface MultiTenancyStatusResource {
-  enabled: boolean;
+    Enabled: boolean;
 }

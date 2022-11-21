@@ -1,8 +1,7 @@
 import { NewResourceV2, ResourceV2 } from "..";
 
 export interface SpaceScopedResourceV2 extends ResourceV2 {
-    spaceId: string;
+    SpaceId: string;
 }
 
-export interface NewSpaceScopedResourceV2 extends NewResourceV2 {
-}
+export interface NewSpaceScopedResourceV2 extends NewResourceV2 {}

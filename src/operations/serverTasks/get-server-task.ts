@@ -21,7 +21,7 @@ export async function getServerTasks(client: Client, spaceName: string, serverTa
             take: batchSize,
         });
     });
-    return Promise.all(promises).then((result) => flatMap(result, (c) => c.items));
+    return Promise.all(promises).then((result) => flatMap(result, (c) => c.Items));
 }
 
 export async function getServerTaskDetails(client: Client, spaceName: string, serverTaskId: string): Promise<ServerTaskDetails> {

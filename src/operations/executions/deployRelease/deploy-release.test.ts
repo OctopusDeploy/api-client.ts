@@ -97,35 +97,35 @@ describe("deploy a release", () => {
         const environmentName = randomUUID();
         console.log(`Creating environment, "${environmentName}"...`);
         const envRepository = new EnvironmentRepository(client, spaceName);
-        environment = await envRepository.create({ name: environmentName });
-        console.log(`Environment "${environment.name}" created successfully.`);
+        environment = await envRepository.create({ Name: environmentName });
+        console.log(`Environment "${environment.Name}" created successfully.`);
     });
 
     test("deploy to single environment", async () => {
         var releaseCommand = {
             spaceName: space.Name,
-            projectName: project.Name,
+            ProjectName: project.Name,
         } as CreateReleaseCommandV1;
         var releaseResponse = await createRelease(client, releaseCommand);
 
         var deployCommand = {
             spaceName: space.Name,
-            projectName: project.Name,
-            releaseVersion: releaseResponse.releaseVersion,
-            environmentNames: [environment.name],
+            ProjectName: project.Name,
+            ReleaseVersion: releaseResponse.ReleaseVersion,
+            EnvironmentNames: [environment.Name],
         } as CreateDeploymentUntenantedCommandV1;
         var response = await deployReleaseUntenanted(client, deployCommand);
 
         var deploymentRepository = new DeploymentRepository(client, space.Name);
-        var deployments = await deploymentRepository.list({ ids: response.deploymentServerTasks.map((t) => t.deploymentId) });
-        expect(deployments.items.length).toBe(1);
+        var deployments = await deploymentRepository.list({ ids: response.DeploymentServerTasks.map((t) => t.DeploymentId) });
+        expect(deployments.Items.length).toBe(1);
 
-        var taskIds = response.deploymentServerTasks.map((x) => x.serverTaskId);
+        var taskIds = response.DeploymentServerTasks.map((x) => x.ServerTaskId);
         var e = new ExecutionWaiter(client, space.Name);
 
         await e.waitForExecutionToComplete(taskIds, false, true, undefined, 1000, 600000, "task", (serverTaskDetails: ServerTaskDetails): void => {
             console.log(
-                `Waiting for task ${serverTaskDetails.task.id}. Current status: ${serverTaskDetails.task.state}, completed: ${serverTaskDetails.progress.progressPercentage}%`
+                `Waiting for task ${serverTaskDetails.Task.Id}. Current status: ${serverTaskDetails.Task.State}, completed: ${serverTaskDetails.Progress.ProgressPercentage}%`
             );
         });
     });

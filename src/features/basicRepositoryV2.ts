@@ -2,7 +2,7 @@ import type { Dictionary } from "lodash";
 import type { Client } from "../client";
 import type { RouteArgs } from "../resolver";
 import { ResourceCollectionV2 } from "./resourceCollectionV2";
-import { ResourceV2 } from "./resourceV2";
+import { NewResourceV2, ResourceV2 } from "./resourceV2";
 
 export type ListArgsV2 = {
     skip?: number;
@@ -13,15 +13,15 @@ export type AllArgsV2 = {
     ids?: string[];
 };
 
-export type ResourcesByIdV2<TResource> = { [id: string]: TResource };
+export type ResourcesByIdV2<TResource> = { [Id: string]: TResource };
 
 //Although this is exactly the same as `ResourcesById` we just wanted an alias to more clearly specify the intent
-export type ResourcesByNameOrIdV2<TResource> = { [key: string]: TResource };
+export type ResourcesByNameOrIdV2<TResource> = { [Key: string]: TResource };
 
 // Repositories provide a helpful abstraction around the Octopus Deploy API
 export class BasicRepositoryV2<
     TExistingResource extends ResourceV2,
-    TNewResource,
+    TNewResource extends NewResourceV2,
     TListArgs extends ListArgsV2 & RouteArgs = ListArgsV2,
     TGetArgs extends RouteArgs = {},
     TCreateArgs extends RouteArgs = {},
@@ -40,13 +40,11 @@ export class BasicRepositoryV2<
     }
 
     del(resource: TExistingResource) {
-        return this.client.del(`${this.baseApiTemplate}/${resource.id}`).then((d) => this.notifySubscribersToDataModifications(resource));
+        return this.client.del(`${this.baseApiTemplate}/${resource.Id}`).then((d) => this.notifySubscribersToDataModifications(resource));
     }
 
     async create(resource: TNewResource, args?: TCreateArgs): Promise<TExistingResource> {
-        return this.client
-            .doCreate<TExistingResource>(this.baseApiTemplate, resource, args)
-            .then((r) => this.notifySubscribersToDataModifications(r));
+        return this.client.doCreate<TExistingResource>(this.baseApiTemplate, resource, args).then((r) => this.notifySubscribersToDataModifications(r));
     }
 
     get(id: string, args?: TGetArgs): Promise<TExistingResource> {
@@ -74,7 +72,7 @@ export class BasicRepositoryV2<
         }
 
         function isNewResource(resource: TExistingResource | TNewResource): resource is TNewResource {
-            return !("id" in resource && isTruthy(resource.id));
+            return !("Id" in resource && isTruthy(resource.Id));
         }
     }
 

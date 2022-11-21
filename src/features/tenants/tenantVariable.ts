@@ -3,38 +3,38 @@ import type { PropertyValue } from "../variables/propertyValue";
 import { ResourceV2 } from "../resourceV2";
 
 export interface TenantVariableTemplateDisplaySettings {
-  "octopus.SelectOptions"?: string;
-  "octopus.ControlType"?: ControlType;
+    "Octopus.SelectOptions"?: string;
+    "Octopus.ControlType"?: ControlType;
 }
 
 export interface TenantVariableTemplate extends ResourceV2 {
-  name: string;
-  label: string;
-  helpText: string;
-  defaultValue?: PropertyValue;
-  displaySettings: TenantVariableTemplateDisplaySettings;
-  allowClear?: boolean;
+    Name: string;
+    Label: string;
+    HelpText: string;
+    DefaultValue?: PropertyValue;
+    DisplaySettings: TenantVariableTemplateDisplaySettings;
+    AllowClear?: boolean;
 }
 
 export interface TenantVariable extends ResourceV2 {
-  tenantId: string;
-  tenantName: string;
-  libraryVariables: { [libraryVariableSetId: string]: TenantLibraryVariable };
-  projectVariables: { [projectId: string]: TenantProjectVariable };
+    TenantId: string;
+    TenantName: string;
+    LibraryVariables: { [libraryVariableSetId: string]: TenantLibraryVariable };
+    ProjectVariables: { [projectId: string]: TenantProjectVariable };
 }
 
 export interface TenantLibraryVariable {
-  libraryVariableSetId: string;
-  libraryVariableSetName: string;
-  templates: TenantVariableTemplate[];
-  variables: { [variableId: string]: PropertyValue };
+    LibraryVariableSetId: string;
+    LibraryVariableSetName: string;
+    Templates: TenantVariableTemplate[];
+    Variables: { [variableId: string]: PropertyValue };
 }
 
 export interface TenantProjectVariable {
-  projectId: string;
-  projectName: string;
-  templates: TenantVariableTemplate[];
-  variables: {
-    [environmentId: string]: { [variableId: string]: PropertyValue };
-  };
+    ProjectId: string;
+    ProjectName: string;
+    Templates: TenantVariableTemplate[];
+    Variables: {
+        [environmentId: string]: { [variableId: string]: PropertyValue };
+    };
 }

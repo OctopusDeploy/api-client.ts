@@ -1,12 +1,4 @@
-import {
-    NewProject,
-    NewSpace,
-    ProjectResource,
-    RunCondition,
-    SpaceResource,
-    StartTrigger,
-    UserResource,
-} from "@octopusdeploy/message-contracts";
+import { NewProject, NewSpace, ProjectResource, RunCondition, SpaceResource, StartTrigger, UserResource } from "@octopusdeploy/message-contracts";
 import { PackageRequirement } from "@octopusdeploy/message-contracts/dist/deploymentStepResource";
 import { RunConditionForAction } from "@octopusdeploy/message-contracts/dist/runConditionForAction";
 import AdmZip from "adm-zip";
@@ -64,7 +56,7 @@ describe("create a release", () => {
                 StartTrigger: StartTrigger.StartAfterPrevious,
                 Id: "",
                 Name: randomUUID(),
-                Properties: { },
+                Properties: {},
                 Actions: [
                     {
                         Id: "",
@@ -105,18 +97,18 @@ describe("create a release", () => {
         const environmentName = randomUUID();
         console.log(`Creating environment, "${environmentName}"...`);
         const envRepository = new EnvironmentRepository(client, spaceName);
-        environment = await envRepository.create({ name: environmentName });
-        console.log(`Environment "${environment.name}" created successfully.`);
+        environment = await envRepository.create({ Name: environmentName });
+        console.log(`Environment "${environment.Name}" created successfully.`);
     });
 
     test("can create a release", async () => {
         var command = {
             spaceName: space.Name,
-            projectName: project.Name,
+            ProjectName: project.Name,
         } as CreateReleaseCommandV1;
         var response = await createRelease(client, command);
-        expect(response.releaseId).toBeTruthy();
-        expect(response.releaseVersion).toBeTruthy();
+        expect(response.ReleaseId).toBeTruthy();
+        expect(response.ReleaseVersion).toBeTruthy();
     });
 
     describe("create with packages", () => {
@@ -192,7 +184,7 @@ describe("create a release", () => {
             console.log(`Deployment process, "${deploymentProcess.Id}" updated successfully.`);
 
             for (const file of await readdir(tempOutDir)) {
-                await pushPackage(client, space.Name, [path.join(tempOutDir, file)])
+                await pushPackage(client, space.Name, [path.join(tempOutDir, file)]);
             }
         });
 
@@ -203,12 +195,12 @@ describe("create a release", () => {
         test("using packages", async () => {
             var command = {
                 spaceName: space.Name,
-                projectName: project.Name,
-                packages: packages,
+                ProjectName: project.Name,
+                Packages: packages,
             } as CreateReleaseCommandV1;
             var response = await createRelease(repository.client, command);
-            expect(response.releaseId).toBeTruthy();
-            expect(response.releaseVersion).toBeTruthy();
+            expect(response.ReleaseId).toBeTruthy();
+            expect(response.ReleaseVersion).toBeTruthy();
         });
     });
 

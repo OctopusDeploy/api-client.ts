@@ -1,29 +1,29 @@
 export interface ReleaseChanges {
-    version: string;
-    releaseNotes: string;
-    workItems: WorkItemLink[];
-    commits: CommitDetail[];
-    buildInformation: ReleasePackageVersionBuildInformation[];
+    Version: string;
+    ReleaseNotes: string;
+    WorkItems: WorkItemLink[];
+    Commits: CommitDetail[];
+    BuildInformation: ReleasePackageVersionBuildInformation[];
 }
 
 export interface WorkItemLink {
-    id: string;
-    description: string;
-    linkUrl: string;
+    Id: string;
+    Description: string;
+    LinkUrl: string;
 }
 
 export interface CommitDetail {
-    id: string;
-    comment: string;
-    linkUrl: string;
+    Id: string;
+    Comment: string;
+    LinkUrl: string;
 }
 
 export interface ReleasePackageVersionBuildInformation {
-    packageId: string;
-    version: string;
-    buildNumber: string;
-    buildUrl: string;
-    vcsType: string;
-    vcsRoot: string;
-    vcsCommitNumber: string;
-  }
+    PackageId: string;
+    Version: string;
+    BuildNumber: string;
+    BuildUrl: string;
+    VcsType: string;
+    VcsRoot: string;
+    VcsCommitNumber: string;
+}

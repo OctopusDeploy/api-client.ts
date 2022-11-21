@@ -3,5 +3,5 @@ export interface SpaceScopedArgs {
 }
 
 export function isSpaceScopedArgs(args: any): args is SpaceScopedArgs {
-    return 'spaceName' in args;
+    return "spaceName" in args;
 }

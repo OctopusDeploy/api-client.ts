@@ -1,7 +1,5 @@
-
 export interface ResourceV2 {
-    id: string;
+    Id: string;
 }
 
-export interface NewResourceV2 {
-}
+export interface NewResourceV2 {}

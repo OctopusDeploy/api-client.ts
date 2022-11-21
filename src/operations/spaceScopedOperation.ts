@@ -4,5 +4,5 @@ export interface SpaceScopedOperation {
 }
 
 export function isSpaceScopedOperation(command: any): command is SpaceScopedOperation {
-    return 'spaceName' in command;
+    return "spaceName" in command;
 }

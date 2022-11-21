@@ -1,29 +1,24 @@
 export type PropertyValue = string | SensitiveValue | null;
 
 export interface SensitiveValue {
-  hasValue: boolean;
-  hint?: string;
-  // NewValue can also be null at runtime
-  newValue?: string;
+    HasValue: boolean;
+    Hint?: string;
+    // NewValue can also be null at runtime
+    NewValue?: string;
 }
 
-export function NewSensitiveValue(
-  value: string,
-  hint?: string
-): SensitiveValue {
-  return {
-    hasValue: true,
-    hint: hint,
-    newValue: value,
-  };
+export function NewSensitiveValue(value: string, hint?: string): SensitiveValue {
+    return {
+        HasValue: true,
+        Hint: hint,
+        NewValue: value,
+    };
 }
 
-export function isSensitiveValue(
-  value: PropertyValue
-): value is SensitiveValue {
-  if (typeof value === "string" || value === null) {
-    return false;
-  }
+export function isSensitiveValue(value: PropertyValue): value is SensitiveValue {
+    if (typeof value === "string" || value === null) {
+        return false;
+    }
 
-  return Object.prototype.hasOwnProperty.call(value, "hasValue");
+    return Object.prototype.hasOwnProperty.call(value, "HasValue");
 }

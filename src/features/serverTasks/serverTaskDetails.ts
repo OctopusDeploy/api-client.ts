@@ -28,36 +28,36 @@ export enum ActivityLogEntryCategory {
 }
 
 export interface TaskProgress {
-    progressPercentage: number;
-    estimatedTimeRemaining: string;
+    ProgressPercentage: number;
+    EstimatedTimeRemaining: string;
 }
 
 // ActivityLogEntry in Octopus.Server
 export interface ActivityLogElement {
-    category: ActivityLogEntryCategory;
-    occurredAt: string;
-    messageText: string;
-    detail?: string;
-    percentage?: number;
+    Category: ActivityLogEntryCategory;
+    OccurredAt: string;
+    MessageText: string;
+    Detail?: string;
+    Percentage?: number;
 }
 
 // ActivityLogTreeNode in Octopus.Server
 export interface ActivityElement {
-    id: string;
-    name: string;
-    started: string;
-    ended?: string;
-    status?: ActivityStatus;
-    children: ActivityElement[];
-    showAtSummaryLevel: boolean;
-    logElements: ActivityLogElement[];
-    progressPercentage: number;
-    progressMessage: string;
+    Id: string;
+    Name: string;
+    Started: string;
+    Ended?: string;
+    Status?: ActivityStatus;
+    Children: ActivityElement[];
+    ShowAtSummaryLevel: boolean;
+    LogElements: ActivityLogElement[];
+    ProgressPercentage: number;
+    ProgressMessage: string;
 }
 
 export interface ServerTaskDetails {
-    task: ServerTask;
-    progress: TaskProgress;
-    physicalLogSize: number;
-    activityLogs: ActivityElement[];
+    Task: ServerTask;
+    Progress: TaskProgress;
+    PhysicalLogSize: number;
+    ActivityLogs: ActivityElement[];
 }

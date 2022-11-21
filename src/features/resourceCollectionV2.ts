@@ -1,21 +1,21 @@
 export interface ResourceCollectionV2<TResource> {
-    items: TResource[];
-    itemsPerPage: number;
-    itemType: string;
-    lastPageNumber: number;
-    links: LinksCollection<ResourceCollectionLinks>;
-    numberOfPages: number;
-    totalResults: number;
-  }
+    Items: TResource[];
+    ItemsPerPage: number;
+    ItemType: string;
+    LastPageNumber: number;
+    Links: LinksCollection<ResourceCollectionLinks>;
+    NumberOfPages: number;
+    TotalResults: number;
+}
 
-  export interface ResourceCollectionLinks {
-    self: string;
-    template: string;
-    "page.All": string;
-    "page.Current": string;
-    "page.Last": string;
-  }
+export interface ResourceCollectionLinks {
+    Self: string;
+    Template: string;
+    "Page.All": string;
+    "Page.Current": string;
+    "Page.Last": string;
+}
 
-  export type LinksCollection<T = {}> = T & {
-    [name: string]: string;
-  };
+export type LinksCollection<T = {}> = T & {
+    [Name: string]: string;
+};

@@ -2,14 +2,14 @@ import { CreateExecutionBaseV1 } from "../createExecutionBaseV1";
 import { DeploymentServerTask } from "./deploymentServerTask";
 
 export interface CreateDeploymentTenantedCommandV1 extends CreateExecutionBaseV1 {
-    releaseVersion: string;
-    environmentName: string;
-    tenants: string[];
-    tenantTags: string[];
-    forcePackageRedeployment?: boolean;
-    updateVariableSnapshot?: boolean;
+    ReleaseVersion: string;
+    EnvironmentName: string;
+    Tenants: string[];
+    TenantTags: string[];
+    ForcePackageRedeployment?: boolean;
+    UpdateVariableSnapshot?: boolean;
 }
 
 export interface CreateDeploymentTenantedResponseV1 {
-    deploymentServerTasks: DeploymentServerTask[];
+    DeploymentServerTasks: DeploymentServerTask[];
 }

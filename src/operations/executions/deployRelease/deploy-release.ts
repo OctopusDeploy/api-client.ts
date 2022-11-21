@@ -2,10 +2,7 @@ import { Client } from "../../../client";
 import { CreateDeploymentTenantedCommandV1, CreateDeploymentTenantedResponseV1 } from "./createDeploymentTenantedCommandV1";
 import { CreateDeploymentUntenantedCommandV1, CreateDeploymentUntenantedResponseV1 } from "./createDeploymentUntenantedCommandV1";
 
-export async function deployReleaseUntenanted(
-    client: Client,
-    command: CreateDeploymentUntenantedCommandV1
-): Promise<CreateDeploymentUntenantedResponseV1> {
+export async function deployReleaseUntenanted(client: Client, command: CreateDeploymentUntenantedCommandV1): Promise<CreateDeploymentUntenantedResponseV1> {
     client.debug(`Deploying a release...`);
 
     // WARNING: server's API currently expects there to be a SpaceIdOrName value, which was intended to allow use of names/slugs, but doesn't
@@ -15,19 +12,16 @@ export async function deployReleaseUntenanted(
         ...command,
     });
 
-    if (response.deploymentServerTasks.length == 0) {
-        throw new Error('No server task details returned')
+    if (response.DeploymentServerTasks.length == 0) {
+        throw new Error("No server task details returned");
     }
 
-    client.debug(`Deployment(s) created successfully. [${response.deploymentServerTasks.map(t => t.serverTaskId).join(', ')}]`);
+    client.debug(`Deployment(s) created successfully. [${response.DeploymentServerTasks.map((t) => t.ServerTaskId).join(", ")}]`);
 
     return response;
 }
 
-export async function deployReleaseTenanted(
-    client: Client,
-    command: CreateDeploymentTenantedCommandV1
-): Promise<CreateDeploymentTenantedResponseV1> {
+export async function deployReleaseTenanted(client: Client, command: CreateDeploymentTenantedCommandV1): Promise<CreateDeploymentTenantedResponseV1> {
     client.debug(`Deploying a tenanted release...`);
 
     // WARNING: server's API currently expects there to be a SpaceIdOrName value, which was intended to allow use of names/slugs, but doesn't
@@ -37,11 +31,11 @@ export async function deployReleaseTenanted(
         ...command,
     });
 
-    if (response.deploymentServerTasks.length == 0) {
-        throw new Error('No server task details returned')
+    if (response.DeploymentServerTasks.length == 0) {
+        throw new Error("No server task details returned");
     }
 
-    client.debug(`Tenanted Deployment(s) created successfully. [${response.deploymentServerTasks.map(t => t.serverTaskId).join(', ')}]`);
+    client.debug(`Tenanted Deployment(s) created successfully. [${response.DeploymentServerTasks.map((t) => t.ServerTaskId).join(", ")}]`);
 
     return response;
 }

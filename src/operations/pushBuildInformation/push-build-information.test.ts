@@ -30,7 +30,7 @@ describe("push build information", () => {
         zip.addFile("test.txt", Buffer.from("inner content of the file", "utf8"));
 
         for (const p of packages) {
-            const packagePath = path.join(tempOutDir, `${p.id}.${p.version}.zip`);
+            const packagePath = path.join(tempOutDir, `${p.Id}.${p.Version}.zip`);
             zip.writeZip(packagePath);
         }
 
@@ -48,22 +48,22 @@ describe("push build information", () => {
     });
 
     test("to single package", async () => {
-        await pushPackage(client, space.Name, [path.join(tempOutDir, "Hello.1.0.0.zip")])
+        await pushPackage(client, space.Name, [path.join(tempOutDir, "Hello.1.0.0.zip")]);
 
         await pushBuildInformation(client, {
             spaceName: space.Name,
-            buildEnvironment: "BitBucket",
-            branch: "main",
-            buildNumber: "288",
-            buildUrl: "https://bitbucket.org/octopussamples/petclinic/addon/pipelines/home#!/results/288",
-            vcsType: "Git",
-            vcsRoot: "http://bitbucket.org/octopussamples/petclinic",
-            vcsCommitNumber: "314cf2c3ee916c92a384c2796a6abe332d678e4f",
-            packages: [{ id: "Hello", version: "1.0.0" }],
-            commits: [
+            BuildEnvironment: "BitBucket",
+            Branch: "main",
+            BuildNumber: "288",
+            BuildUrl: "https://bitbucket.org/octopussamples/petclinic/addon/pipelines/home#!/results/288",
+            VcsType: "Git",
+            VcsRoot: "http://bitbucket.org/octopussamples/petclinic",
+            VcsCommitNumber: "314cf2c3ee916c92a384c2796a6abe332d678e4f",
+            Packages: [{ Id: "Hello", Version: "1.0.0" }],
+            Commits: [
                 {
-                    id: "314cf2c3ee916c92a384c2796a6abe332d678e4f",
-                    comment: "GOD-1 - 'test build info",
+                    Id: "314cf2c3ee916c92a384c2796a6abe332d678e4f",
+                    Comment: "GOD-1 - 'test build info",
                 },
             ],
         });

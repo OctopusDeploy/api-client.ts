@@ -2,22 +2,22 @@ import { Client } from "../../client";
 import { SpaceScopedOperation } from "../spaceScopedOperation";
 
 export interface CreateReleaseCommandV1 extends SpaceScopedOperation {
-    projectName: string;
-    packageVersion?: string;
-    gitCommit?: string;
-    gitRef?: string;
-    releaseVersion?: string;
-    channelName?: string;
-    packages?: string[];
-    releaseNotes?: string;
-    ignoreIfAlreadyExists?: boolean;
-    ignoreChannelRules?: boolean;
-    packagePrerelease?: string;
+    ProjectName: string;
+    PackageVersion?: string;
+    GitCommit?: string;
+    GitRef?: string;
+    ReleaseVersion?: string;
+    ChannelName?: string;
+    Packages?: string[];
+    ReleaseNotes?: string;
+    IgnoreIfAlreadyExists?: boolean;
+    IgnoreChannelRules?: boolean;
+    PackagePrerelease?: string;
 }
 
 export interface CreateReleaseResponseV1 {
-    releaseId: string;
-    releaseVersion: string;
+    ReleaseId: string;
+    ReleaseVersion: string;
 }
 
 export async function createRelease(client: Client, command: CreateReleaseCommandV1): Promise<CreateReleaseResponseV1> {
