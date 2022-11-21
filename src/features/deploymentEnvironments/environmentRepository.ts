@@ -96,7 +96,7 @@ export type EnvironmentSummaryArgs = {
 };
 
 export interface VariablesScopedToEnvironmentResponse {
-    hasUnauthorizedProjectVariables: boolean;
-    hasUnauthorizedLibraryVariableSetVariables: boolean;
-    variableMap: {};
+    HasUnauthorizedProjectVariables: boolean;
+    HasUnauthorizedLibraryVariableSetVariables: boolean;
+    VariableMap: {};
 }

@@ -1,4 +1,4 @@
 export interface RunbookRunServerTask {
-    runbookRunId: string;
-    serverTaskId: string;
+    RunbookRunId: string;
+    ServerTaskId: string;
 }

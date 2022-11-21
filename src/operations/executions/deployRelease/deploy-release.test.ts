@@ -7,7 +7,7 @@ import { processConfiguration } from "../../../clientConfiguration.test";
 import { DeploymentRepository } from "../../../features";
 import { DeploymentEnvironment, EnvironmentRepository } from "../../../features/deploymentEnvironments";
 import { ServerTaskDetails } from "../../../features/serverTasks";
-import { OctopusSpaceRepository, Repository } from "../../../repository";
+import { Repository } from "../../../repository";
 import { createRelease, CreateReleaseCommandV1 } from "../../createRelease/create-release";
 import { ExecutionWaiter } from "../execution-waiter";
 import { CreateDeploymentUntenantedCommandV1 } from "./createDeploymentUntenantedCommandV1";
@@ -116,10 +116,10 @@ describe("deploy a release", () => {
         const response = await deployReleaseUntenanted(client, deployCommand);
 
         const deploymentRepository = new DeploymentRepository(client, space.Name);
-        const deployments = await deploymentRepository.list({ ids: response.DeploymentServerTasks.map((t) => t.deploymentId) });
+        const deployments = await deploymentRepository.list({ ids: response.DeploymentServerTasks.map((t) => t.DeploymentId) });
         expect(deployments.Items.length).toBe(1);
 
-        const taskIds = response.DeploymentServerTasks.map((x) => x.serverTaskId);
+        const taskIds = response.DeploymentServerTasks.map((x) => x.ServerTaskId);
         const e = new ExecutionWaiter(client, space.Name);
 
         await e.waitForExecutionToComplete(taskIds, true, undefined, 1000, 600000, "task", (serverTaskDetails: ServerTaskDetails): void => {

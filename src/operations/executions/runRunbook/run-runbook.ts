@@ -15,7 +15,7 @@ export async function runRunbook(client: Client, command: CreateRunbookRunComman
         throw new Error("No server task details returned");
     }
 
-    client.debug(`Runbook executed successfully. [${response.RunbookRunServerTasks.map((t) => t.serverTaskId).join(", ")}]`);
+    client.debug(`Runbook executed successfully. [${response.RunbookRunServerTasks.map((t) => t.ServerTaskId).join(", ")}]`);
 
     return response;
 }

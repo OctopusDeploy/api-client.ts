@@ -16,7 +16,7 @@ export async function deployReleaseUntenanted(client: Client, command: CreateDep
         throw new Error("No server task details returned");
     }
 
-    client.debug(`Deployment(s) created successfully. [${response.DeploymentServerTasks.map((t) => t.serverTaskId).join(", ")}]`);
+    client.debug(`Deployment(s) created successfully. [${response.DeploymentServerTasks.map((t) => t.ServerTaskId).join(", ")}]`);
 
     return response;
 }
@@ -35,7 +35,7 @@ export async function deployReleaseTenanted(client: Client, command: CreateDeplo
         throw new Error("No server task details returned");
     }
 
-    client.debug(`Tenanted Deployment(s) created successfully. [${response.DeploymentServerTasks.map((t) => t.serverTaskId).join(", ")}]`);
+    client.debug(`Tenanted Deployment(s) created successfully. [${response.DeploymentServerTasks.map((t) => t.ServerTaskId).join(", ")}]`);
 
     return response;
 }
