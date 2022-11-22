@@ -1,5 +1,6 @@
 import type { Client } from "../../client";
-import { ListArgsV2, NewTagSet, SpaceScopedBasicRepositoryV2, TagSet } from "../..";
+import { NewTagSet, TagSet } from ".";
+import { ListArgsV2, SpaceScopedBasicRepositoryV2 } from "../..";
 
 type TagSetRepositoryListArgs = {
     ids?: string[];

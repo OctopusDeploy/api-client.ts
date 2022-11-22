@@ -1,6 +1,5 @@
 import type { Client } from "../../client";
-import { ListArgsV2 } from "../basicRepositoryV2";
-import { SpaceScopedBasicRepositoryV2 } from "../spaceScopedBasicRepositoryV2";
+import { ListArgsV2, SpaceScopedBasicRepositoryV2 } from "..";
 import { NewTenant, TenantMissingVariable, TagTestResult, Tenant, TenantVariable } from ".";
 
 type TenantRepositoryListArgs = {
