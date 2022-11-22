@@ -1,4 +1,3 @@
-import { promises as fs } from "fs";
 import { Client } from "../..";
 import { ServerTask, ServerTaskDetails } from "../../features/serverTasks";
 import { serverTaskGet, serverTaskDetailsGet } from "../serverTasks";

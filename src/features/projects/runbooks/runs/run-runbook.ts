@@ -1,4 +1,4 @@
-import { Client } from "../../../client";
+import { Client } from "../../../../client";
 import { CreateRunbookRunCommandV1, CreateRunbookRunResponseV1 } from "./createRunbookRunCommandV1";
 
 // WARNING: we've had to do this to cover a mistake in Octopus' API. The API has been corrected to return PascalCase, but was returning camelCase

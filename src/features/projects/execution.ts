@@ -7,7 +7,7 @@ export interface Execution extends SpaceScopedResourceV2 {
     EnvironmentId: string;
     ExcludedMachineIds: string[];
     ForcePackageDownload: boolean;
-    FormValues: any;
+    FormValues: Record<string, unknown>;
     ManifestVariableSetId: string;
     ProjectId: string;
     QueueTime?: Date;
@@ -24,7 +24,7 @@ export interface NewExecution extends NewSpaceScopedResourceV2 {
     EnvironmentId: string;
     ExcludedMachineIds: string[];
     ForcePackageDownload: boolean;
-    FormValues: any;
+    FormValues: Record<string, unknown>;
     Comments: string;
     QueueTime?: Date;
     QueueTimeExpiry?: Date;
