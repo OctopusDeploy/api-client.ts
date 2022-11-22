@@ -12,7 +12,7 @@ type TenantRepositoryListArgs = {
     tags?: string;
 } & ListArgsV2;
 
-class TenantRepository extends SpaceScopedBasicRepositoryV2<Tenant, Tenant, TenantRepositoryListArgs> {
+export class TenantRepository extends SpaceScopedBasicRepositoryV2<Tenant, Tenant, TenantRepositoryListArgs> {
     constructor(client: Client, spaceName: string) {
         super(client, spaceName, "~/api/{spaceId}/tenants{/id}{?skip,projectId,tags,take,ids,clone,partialName,clonedFromTenantId}");
     }
