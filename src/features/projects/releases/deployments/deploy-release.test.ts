@@ -3,14 +3,14 @@ import { NewProject, NewSpace, ProjectResource, RunCondition, SpaceResource, Sta
 import { PackageRequirement } from "@octopusdeploy/message-contracts/dist/deploymentStepResource";
 import { RunConditionForAction } from "@octopusdeploy/message-contracts/dist/runConditionForAction";
 import { randomUUID } from "crypto";
-import { Client } from "../../../client";
-import { processConfiguration } from "../../../clientConfiguration.test";
-import { DeploymentRepository } from "../../../features";
-import { DeploymentEnvironment, EnvironmentRepository } from "../../../features/deploymentEnvironments";
-import { ServerTaskDetails } from "../../../features/serverTasks";
-import { Repository } from "../../../repository";
-import { createRelease, CreateReleaseCommandV1 } from "../../createRelease/create-release";
-import { ExecutionWaiter } from "../execution-waiter";
+import { Client } from "../../../../client";
+import { processConfiguration } from "../../../../clientConfiguration.test";
+import { DeploymentRepository } from "../../../../features/projects/releases/deployments";
+import { DeploymentEnvironment, EnvironmentRepository } from "../../../../features/deploymentEnvironments";
+import { ServerTaskDetails } from "../../../../features/serverTasks";
+import { Repository } from "../../../../repository";
+import { releaseCreate, CreateReleaseCommandV1 } from "../../../projects/releases";
+import { ExecutionWaiter } from "../../execution-waiter";
 import { CreateDeploymentUntenantedCommandV1 } from "./createDeploymentUntenantedCommandV1";
 import { deployReleaseUntenanted } from "./deploy-release";
 
@@ -106,7 +106,7 @@ describe("deploy a release", () => {
             spaceName: space.Name,
             ProjectName: project.Name,
         };
-        const releaseResponse = await createRelease(client, releaseCommand);
+        const releaseResponse = await releaseCreate(client, releaseCommand);
 
         const deployCommand: CreateDeploymentUntenantedCommandV1 = {
             spaceName: space.Name,

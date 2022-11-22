@@ -9,10 +9,6 @@ export type ListArgsV2 = {
     take?: number;
 };
 
-export type AllArgsV2 = {
-    ids?: string[];
-};
-
 export type ResourcesByIdV2<TResource> = { [Id: string]: TResource };
 
 //Although this is exactly the same as `ResourcesById` we just wanted an alias to more clearly specify the intent
@@ -23,8 +19,9 @@ export class BasicRepositoryV2<
     TExistingResource extends ResourceV2,
     TNewResource extends NewResourceV2,
     TListArgs extends ListArgsV2 & RouteArgs = ListArgsV2,
-    TGetArgs extends RouteArgs = {},
+    // eslint-disable-next-line @typescript-eslint/ban-types
     TCreateArgs extends RouteArgs = {},
+    // eslint-disable-next-line @typescript-eslint/ban-types
     TModifyArgs extends RouteArgs = {}
 > {
     readonly takeAll = 2147483647;
@@ -47,9 +44,8 @@ export class BasicRepositoryV2<
         return this.client.doCreate<TExistingResource>(this.baseApiTemplate, resource, args).then((r) => this.notifySubscribersToDataModifications(r));
     }
 
-    get(id: string, args?: TGetArgs): Promise<TExistingResource> {
-        const allArgs = this.extend(args || {}, { id });
-        return this.client.get(this.baseApiTemplate, allArgs);
+    get(id: string): Promise<TExistingResource> {
+        return this.client.get(this.baseApiTemplate, { id });
     }
 
     list(args?: TListArgs): Promise<ResourceCollectionV2<TExistingResource>> {

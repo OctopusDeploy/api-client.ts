@@ -1,6 +1,10 @@
-import { Client } from "../../../client";
-import { CreateDeploymentTenantedCommandV1, CreateDeploymentTenantedResponseV1 } from "./createDeploymentTenantedCommandV1";
-import { CreateDeploymentUntenantedCommandV1, CreateDeploymentUntenantedResponseV1 } from "./createDeploymentUntenantedCommandV1";
+import { Client } from "../../../../client";
+import {
+    CreateDeploymentTenantedCommandV1,
+    CreateDeploymentTenantedResponseV1,
+    CreateDeploymentUntenantedCommandV1,
+    CreateDeploymentUntenantedResponseV1,
+} from ".";
 
 // WARNING: we've had to do this to cover a mistake in Octopus' API. The API has been corrected to return PascalCase, but was returning camelCase
 // for a number of versions, so we'll deserialize both and use whichever actually has a value

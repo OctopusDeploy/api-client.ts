@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/init-declarations */
 import { NewProject, NewSpace, ProjectResource, RunCondition, SpaceResource, StartTrigger, UserResource } from "@octopusdeploy/message-contracts";
 import { PackageRequirement } from "@octopusdeploy/message-contracts/dist/deploymentStepResource";
 import { RunConditionForAction } from "@octopusdeploy/message-contracts/dist/runConditionForAction";
@@ -6,12 +7,12 @@ import { randomUUID } from "crypto";
 import { mkdtemp, readdir, rm } from "fs/promises";
 import { tmpdir } from "os";
 import path from "path";
-import { Client } from "../../client";
-import { processConfiguration } from "../../clientConfiguration.test";
-import { OctopusSpaceRepository, Repository } from "../../repository";
-import { createRelease, CreateReleaseCommandV1 } from "./create-release";
-import { pushPackage } from "../pushPackage";
-import { EnvironmentRepository, DeploymentEnvironment } from "../../features/deploymentEnvironments";
+import { Client } from "../../../client";
+import { processConfiguration } from "../../../clientConfiguration.test";
+import { OctopusSpaceRepository, Repository } from "../../../repository";
+import { releaseCreate, CreateReleaseCommandV1 } from ".";
+import { packagePush } from "../../packages";
+import { EnvironmentRepository, DeploymentEnvironment } from "../../deploymentEnvironments";
 
 describe("create a release", () => {
     let client: Client;
@@ -102,11 +103,11 @@ describe("create a release", () => {
     });
 
     test("can create a release", async () => {
-        var command = {
+        const command: CreateReleaseCommandV1 = {
             spaceName: space.Name,
             ProjectName: project.Name,
-        } as CreateReleaseCommandV1;
-        var response = await createRelease(client, command);
+        };
+        const response = await releaseCreate(client, command);
         expect(response.ReleaseId).toBeTruthy();
         expect(response.ReleaseVersion).toBeTruthy();
     });
@@ -184,7 +185,7 @@ describe("create a release", () => {
             console.log(`Deployment process, "${deploymentProcess.Id}" updated successfully.`);
 
             for (const file of await readdir(tempOutDir)) {
-                await pushPackage(client, space.Name, [path.join(tempOutDir, file)]);
+                await packagePush(client, space.Name, [path.join(tempOutDir, file)]);
             }
         });
 
@@ -193,12 +194,12 @@ describe("create a release", () => {
         });
 
         test("using packages", async () => {
-            var command = {
+            const command: CreateReleaseCommandV1 = {
                 spaceName: space.Name,
                 ProjectName: project.Name,
                 Packages: packages,
-            } as CreateReleaseCommandV1;
-            var response = await createRelease(repository.client, command);
+            };
+            const response = await releaseCreate(repository.client, command);
             expect(response.ReleaseId).toBeTruthy();
             expect(response.ReleaseVersion).toBeTruthy();
         });

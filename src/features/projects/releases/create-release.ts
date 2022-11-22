@@ -1,5 +1,5 @@
-import { Client } from "../../client";
-import { SpaceScopedOperation } from "../spaceScopedOperation";
+import { Client } from "../../../client";
+import { SpaceScopedOperation } from "../../spaceScopedOperation";
 
 export interface CreateReleaseCommandV1 extends SpaceScopedOperation {
     ProjectName: string;
@@ -20,7 +20,7 @@ export interface CreateReleaseResponseV1 {
     ReleaseVersion: string;
 }
 
-export async function createRelease(client: Client, command: CreateReleaseCommandV1): Promise<CreateReleaseResponseV1> {
+export async function releaseCreate(client: Client, command: CreateReleaseCommandV1): Promise<CreateReleaseResponseV1> {
     client.debug(`Creating a release...`);
 
     // WARNING: server's API currently expects there to be a SpaceIdOrName value, which was intended to allow use of names/slugs, but doesn't

@@ -21,7 +21,7 @@ export interface IOctopusBuildInformationCommit {
     Comment: string;
 }
 
-export async function pushBuildInformation(
+export async function buildInformationPush(
     client: Client,
     buildInformation: CreateOctopusBuildInformationCommand,
     overwriteMode: OverwriteMode = OverwriteMode.FailIfExists

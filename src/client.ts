@@ -16,7 +16,7 @@ import { ClientSession } from "./clientSession";
 import Environment from "./environment";
 import { isSpaceScopedArgs } from "./features/spaceScopedArgs";
 import { Logger } from "./logger";
-import { resolveSpaceId, isSpaceScopedOperation, isSpaceScopedRequest } from "./operations";
+import { resolveSpaceId, isSpaceScopedOperation, isSpaceScopedRequest } from "./features";
 import { Resolver, RouteArgs } from "./resolver";
 import { Callback, SubscriptionRecord } from "./subscriptionRecord";
 
@@ -89,10 +89,10 @@ export class Client {
     ) {
         this.configuration = configuration;
         this.logger = configuration.logging || {
-            debug: (message) => {},
-            info: (message) => {},
-            warn: (message) => {},
-            error: (message, err) => {},
+            debug: (message) => null,
+            info: (message) => null,
+            warn: (message) => null,
+            error: (message, err) => null,
         };
         this.resolver = resolver;
         this.rootDocument = rootDocument;
@@ -198,7 +198,7 @@ export class Client {
     }
 
     get<TResource>(path: string | undefined, args?: RouteArgs): Promise<TResource> {
-        if (path === undefined) return {} as Promise<TResource>;
+        if (path === undefined) throw new Error("path parameter was not");
 
         const url = this.resolveUrlWithSpaceId(path, args);
         return this.dispatchRequest("GET", url) as Promise<TResource>;

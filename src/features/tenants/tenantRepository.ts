@@ -1,36 +1,32 @@
 import type { Client } from "../../client";
-import { AllArgsV2, ListArgsV2 } from "../basicRepositoryV2";
+import { ListArgsV2 } from "../basicRepositoryV2";
 import { SpaceScopedBasicRepositoryV2 } from "../spaceScopedBasicRepositoryV2";
 import { TenantMissingVariable, TagTestResult, Tenant, TenantVariable } from ".";
-
-type TenantAllArgs = {
-    projectId?: string;
-} & AllArgsV2;
 
 type TenantRepositoryListArgs = {
     clone?: boolean;
     clonedFromTenantId?: string;
-    ids?: string[],
+    ids?: string[];
     partialName?: string;
     projectId?: string;
     tags?: string;
 } & ListArgsV2;
 
-class TenantRepository extends SpaceScopedBasicRepositoryV2<Tenant, Tenant, TenantRepositoryListArgs, TenantAllArgs> {
+class TenantRepository extends SpaceScopedBasicRepositoryV2<Tenant, Tenant, TenantRepositoryListArgs> {
     constructor(client: Client, spaceName: string) {
-        super(client, spaceName, '~/api/{spaceId}/tenants{/id}{?skip,projectId,tags,take,ids,clone,partialName,clonedFromTenantId}');
+        super(client, spaceName, "~/api/{spaceId}/tenants{/id}{?skip,projectId,tags,take,ids,clone,partialName,clonedFromTenantId}");
     }
 
     tagTest(tenantIds: string[], tags: string[]): Promise<TagTestResult> {
-        return this.client.request('~/api/{spaceId}/tenants/tag-test{?tenantIds,tags}', { tenantIds, tags });
+        return this.client.request("~/api/{spaceId}/tenants/tag-test{?tenantIds,tags}", { tenantIds, tags });
     }
 
     getVariables(tenant: Tenant): Promise<TenantVariable> {
-        return this.client.request('~/api/{spaceId}/tenants/{id}/variables');
+        return this.client.request("~/api/{spaceId}/tenants/{id}/variables");
     }
 
     setVariables(tenant: Tenant, variables: any): Promise<TenantVariable> {
-        return this.client.doUpdate('~/api/{spaceId}/tenants/{id}/variables', variables);
+        return this.client.doUpdate("~/api/{spaceId}/tenants/{id}/variables", variables);
     }
 
     missingVariables(filterOptions: FilterOptions = {}, includeDetails: boolean = false): Promise<TenantMissingVariable[]> {
@@ -40,7 +36,7 @@ class TenantRepository extends SpaceScopedBasicRepositoryV2<Tenant, Tenant, Tena
             projectId: filterOptions.projectId,
             tenantId: filterOptions.tenantId,
         };
-        return this.client.request('~/api/{spaceId}/tenants/variables-missing{?tenantId,projectId,environmentId,includeDetails}', payload);
+        return this.client.request("~/api/{spaceId}/tenants/variables-missing{?tenantId,projectId,environmentId,includeDetails}", payload);
     }
 }
 

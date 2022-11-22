@@ -14,30 +14,6 @@ export class EnvironmentRepository extends SpaceScopedBasicRepositoryV2<Deployme
         super(client, spaceName, "~/api/{spaceId}/environments{/id}{?skip,take,ids,partialName}");
     }
 
-    async find(namesOrIds: string[]): Promise<DeploymentEnvironment[]> {
-        if (namesOrIds.length === 0) return [];
-
-        const environments: DeploymentEnvironment[] = [];
-
-        try {
-            const matchingEnvironments = await this.list({
-                ids: namesOrIds,
-            });
-            environments.push(...matchingEnvironments.Items);
-        } catch {
-            // silently capture all exceptions; assume no IDs were found
-        }
-
-        for (const name of namesOrIds) {
-            const matchingEnvironments = await this.list({
-                partialName: name,
-            });
-            environments.push(...matchingEnvironments.Items.filter((e) => e.Name.localeCompare(name, undefined, { sensitivity: "base" }) === 0));
-        }
-
-        return environments;
-    }
-
     // getMetadata(environment: DeploymentEnvironment): Promise<EnvironmentSettingsMetadata[]> {
     //     return this.client.get('~/api/{spaceId}/environments/{id}/metadata', { spaceId: environment.SpaceId, id: environment.Id });
     // }
@@ -98,5 +74,5 @@ export type EnvironmentSummaryArgs = {
 export interface VariablesScopedToEnvironmentResponse {
     HasUnauthorizedProjectVariables: boolean;
     HasUnauthorizedLibraryVariableSetVariables: boolean;
-    VariableMap: {};
+    VariableMap: Record<string, unknown>;
 }

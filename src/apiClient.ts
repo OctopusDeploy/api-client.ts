@@ -70,12 +70,6 @@ export default class ApiClient<TResource> {
     };
 }
 
-const deserialize = (responseText?: string, raw?: boolean, forceJson: boolean = false) => {
-    if (raw && !forceJson) return responseText;
-    if (responseText && responseText.length) return JSON.parse(responseText);
-    return null;
-};
-
 const generateOctopusError = (requestError: AdapterError) => {
     if (requestError.code) {
         const code = requestError.code;

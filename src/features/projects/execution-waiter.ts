@@ -1,7 +1,7 @@
 import { promises as fs } from "fs";
-import { Client, getServerTaskRaw } from "../..";
+import { Client } from "../..";
 import { ServerTask, ServerTaskDetails } from "../../features/serverTasks";
-import { getServerTask, getServerTaskDetails } from "../serverTasks";
+import { serverTaskGet, serverTaskDetailsGet } from "../serverTasks";
 
 export class ExecutionWaiter {
     constructor(private readonly client: Client, private readonly spaceName: string) {}
@@ -34,7 +34,7 @@ export class ExecutionWaiter {
 
         while (!stop) {
             if (pollingCallback) {
-                const taskDetails = await getServerTaskDetails(this.client, this.spaceName, serverTaskId);
+                const taskDetails = await serverTaskDetailsGet(this.client, this.spaceName, serverTaskId);
                 pollingCallback(taskDetails);
 
                 if (taskDetails.Task.IsCompleted) {
@@ -42,7 +42,7 @@ export class ExecutionWaiter {
                     return taskDetails.Task;
                 }
             } else {
-                const task = await getServerTask(this.client, this.spaceName, serverTaskId);
+                const task = await serverTaskGet(this.client, this.spaceName, serverTaskId);
 
                 if (task.IsCompleted) {
                     clearTimeout(t);

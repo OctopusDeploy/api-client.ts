@@ -2,7 +2,7 @@ import { Client, ResourceCollectionV2 } from "../..";
 import { chunk, flatMap } from "lodash";
 import { ServerTask, ServerTaskDetails } from "../../features/serverTasks";
 
-export async function getServerTask(client: Client, spaceName: string, serverTaskId: string): Promise<ServerTask> {
+export async function serverTaskGet(client: Client, spaceName: string, serverTaskId: string): Promise<ServerTask> {
     if (!serverTaskId) {
         throw new Error("Server Task Id was not provided");
     }
@@ -10,7 +10,7 @@ export async function getServerTask(client: Client, spaceName: string, serverTas
     return response;
 }
 
-export async function getServerTasks(client: Client, spaceName: string, serverTaskIds: string[]): Promise<ServerTask[]> {
+export async function serverTasksGet(client: Client, spaceName: string, serverTaskIds: string[]): Promise<ServerTask[]> {
     const batchSize = 300;
     const idArrays = chunk(serverTaskIds, batchSize);
     const promises: Array<Promise<ResourceCollectionV2<ServerTask>>> = idArrays.map((i, index) => {
@@ -24,7 +24,7 @@ export async function getServerTasks(client: Client, spaceName: string, serverTa
     return Promise.all(promises).then((result) => flatMap(result, (c) => c.Items));
 }
 
-export async function getServerTaskDetails(client: Client, spaceName: string, serverTaskId: string): Promise<ServerTaskDetails> {
+export async function serverTaskDetailsGet(client: Client, spaceName: string, serverTaskId: string): Promise<ServerTaskDetails> {
     if (!serverTaskId) {
         throw new Error("Server Task Id was not provided");
     }
@@ -32,7 +32,7 @@ export async function getServerTaskDetails(client: Client, spaceName: string, se
     return response;
 }
 
-export async function getServerTaskRaw(client: Client, spaceName: string, serverTaskId: string): Promise<string> {
+export async function serverTaskRawGet(client: Client, spaceName: string, serverTaskId: string): Promise<string> {
     if (!serverTaskId) {
         throw new Error("Server Task Id was not provided");
     }

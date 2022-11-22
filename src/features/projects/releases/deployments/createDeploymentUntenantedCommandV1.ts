@@ -1,4 +1,4 @@
-import { CreateExecutionBaseV1 } from "../createExecutionBaseV1";
+import { CreateExecutionBaseV1 } from "../../createExecutionBaseV1";
 import { DeploymentServerTask } from "./deploymentServerTask";
 
 export interface CreateDeploymentUntenantedCommandV1 extends CreateExecutionBaseV1 {
