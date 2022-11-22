@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/init-declarations */
 import { NewProject, NewSpace, ProjectResource, RunCondition, SpaceResource, StartTrigger, UserResource } from "@octopusdeploy/message-contracts";
 import { PackageRequirement } from "@octopusdeploy/message-contracts/dist/deploymentStepResource";
 import { RunConditionForAction } from "@octopusdeploy/message-contracts/dist/runConditionForAction";

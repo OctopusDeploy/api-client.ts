@@ -11,12 +11,12 @@ export class ExecutionWaiter {
         statusCheckSleepCycle: number,
         timeout: number,
         pollingCallback?: (serverTaskDetails: ServerTaskDetails) => void
-    ) {
-        const taskPromises: Promise<void>[] = [];
+    ): Promise<PromiseSettledResult<ServerTask | null>[]> {
+        const taskPromises: Promise<ServerTask | null>[] = [];
         for (const taskId of serverTaskIds) {
             taskPromises.push(this.waitForExecutionToComplete(taskId, statusCheckSleepCycle, timeout, pollingCallback));
         }
-        await Promise.allSettled(taskPromises);
+        return await Promise.allSettled(taskPromises);
     }
 
     async waitForExecutionToComplete(
@@ -24,7 +24,7 @@ export class ExecutionWaiter {
         statusCheckSleepCycle: number,
         timeout: number,
         pollingCallback?: (serverTaskDetails: ServerTaskDetails) => void
-    ) {
+    ): Promise<ServerTask | null> {
         const sleep = async (ms: number) => new Promise((r) => setTimeout(r, ms));
 
         let stop = false;
@@ -39,18 +39,19 @@ export class ExecutionWaiter {
 
                 if (taskDetails.Task.IsCompleted) {
                     clearTimeout(t);
-                    break;
+                    return taskDetails.Task;
                 }
             } else {
                 const task = await getServerTask(this.client, this.spaceName, serverTaskId);
 
                 if (task.IsCompleted) {
                     clearTimeout(t);
-                    break;
+                    return task;
                 }
             }
 
             await sleep(statusCheckSleepCycle);
         }
+        return null;
     }
 }
