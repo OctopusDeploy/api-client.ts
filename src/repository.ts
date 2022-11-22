@@ -56,7 +56,6 @@ import SettingsRepository from "./repositories/settingsRepository";
 import { SmtpConfigurationRepository } from "./repositories/smtpConfigurationRepository";
 import { SpaceRepository } from "./repositories/spaceRepository";
 import SubscriptionRepository from "./repositories/subscriptionRepository";
-import TagSetRepository from "./repositories/tagSetRepository";
 import { TaskRepository } from "./repositories/taskRepository";
 import TeamMembershipRepository from "./repositories/teamMembershipRepository";
 import { TeamRepository } from "./repositories/teamRepository";
@@ -149,7 +148,6 @@ export interface OctopusSpaceRepository extends OctopusCommonRepository {
     proxies: ProxyRepository;
     releases: ReleasesRepository;
     subscriptions: SubscriptionRepository;
-    tagSets: TagSetRepository;
     tenantVariables: TenantVariableRepository;
     userOnboarding: UserOnBoardingRepository;
     variables: VariableRepository;
@@ -218,7 +216,6 @@ export class Repository implements OctopusSpaceRepository, OctopusSystemReposito
     smtpConfiguration: SmtpConfigurationRepository;
     spaces: SpaceRepository;
     subscriptions: SubscriptionRepository;
-    tagSets: TagSetRepository;
     tasks: TaskRepository;
     teams: TeamRepository;
     tenantVariables: TenantVariableRepository;
@@ -292,7 +289,6 @@ export class Repository implements OctopusSpaceRepository, OctopusSystemReposito
         this.smtpConfiguration = new SmtpConfigurationRepository(client);
         this.spaces = new SpaceRepository(client);
         this.subscriptions = new SubscriptionRepository(client);
-        this.tagSets = new TagSetRepository(client);
         this.tasks = new TaskRepository(client);
         this.teams = new TeamRepository(client);
         this.tenantVariables = new TenantVariableRepository(client);

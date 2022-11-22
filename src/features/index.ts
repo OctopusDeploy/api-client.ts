@@ -15,5 +15,6 @@ export * from "./forms";
 export * from "./packages";
 export * from "./projects";
 export * from "./serverTasks";
+export * from "./tagSets";
 export * from "./tenants";
 export * from "./variables";

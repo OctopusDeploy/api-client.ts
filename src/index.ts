@@ -74,7 +74,6 @@ export * from "./repositories/settingsRepository";
 export * from "./repositories/smtpConfigurationRepository";
 export * from "./repositories/spaceRepository";
 export * from "./repositories/subscriptionRepository";
-export * from "./repositories/tagSetRepository";
 export * from "./repositories/taskRepository";
 export * from "./repositories/teamMembershipRepository";
 export * from "./repositories/teamRepository";

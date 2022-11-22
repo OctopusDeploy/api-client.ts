@@ -1,7 +1,7 @@
 import type { Client } from "../../client";
 import { ListArgsV2 } from "../basicRepositoryV2";
 import { SpaceScopedBasicRepositoryV2 } from "../spaceScopedBasicRepositoryV2";
-import { TenantMissingVariable, TagTestResult, Tenant, TenantVariable } from ".";
+import { NewTenant, TenantMissingVariable, TagTestResult, Tenant, TenantVariable } from ".";
 
 type TenantRepositoryListArgs = {
     clone?: boolean;
@@ -12,7 +12,7 @@ type TenantRepositoryListArgs = {
     tags?: string;
 } & ListArgsV2;
 
-export class TenantRepository extends SpaceScopedBasicRepositoryV2<Tenant, Tenant, TenantRepositoryListArgs> {
+export class TenantRepository extends SpaceScopedBasicRepositoryV2<Tenant, NewTenant, TenantRepositoryListArgs> {
     constructor(client: Client, spaceName: string) {
         super(client, spaceName, "~/api/{spaceId}/tenants{/id}{?skip,projectId,tags,take,ids,clone,partialName,clonedFromTenantId}");
     }
