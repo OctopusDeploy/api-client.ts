@@ -6,86 +6,51 @@ import { getServerTask, getServerTaskDetails } from "../serverTasks";
 export class ExecutionWaiter {
     constructor(private readonly client: Client, private readonly spaceName: string) {}
 
-    async waitForExecutionToComplete(
+    async waitForExecutionsToComplete(
         serverTaskIds: string[],
-        noRawLog: boolean,
-        rawLogFile: string | undefined,
         statusCheckSleepCycle: number,
         timeout: number,
-        alias: string,
-        pollingCallback?: (serverTaskDetails: ServerTaskDetails) => any
+        pollingCallback?: (serverTaskDetails: ServerTaskDetails) => void
     ) {
-        const getTasks = serverTaskIds.map(async (taskId) => getServerTask(this.client, this.spaceName, taskId));
-        const executionTasks = await Promise.all(getTasks);
-
-        try {
-            this.client.info(`Waiting for ${executionTasks.length} ${alias}(s) to complete...`);
-            await this.waitForCompletion(executionTasks, statusCheckSleepCycle, timeout, pollingCallback);
-            let failed = false;
-            for (const executionTask of executionTasks) {
-                const updated = await getServerTask(this.client, this.spaceName, executionTask.Id);
-                if (updated.FinishedSuccessfully) {
-                    this.client.info(`${updated.Description}: ${updated.State}`);
-                } else {
-                    this.client.error(`${updated.Description}: ${updated.State}, ${updated.ErrorMessage}`);
-
-                    failed = true;
-
-                    if (noRawLog) continue;
-
-                    try {
-                        const raw = await getServerTaskRaw(this.client, this.spaceName, executionTask.Id);
-                        if (rawLogFile) await fs.writeFile(rawLogFile, raw);
-                        else this.client.error(raw);
-                    } catch (er: unknown) {
-                        if (er instanceof Error) {
-                            this.client.error("Could not retrieve raw log", er);
-                        }
-                    }
-                }
-            }
-
-            if (failed) throw new Error(`One or more ${alias} tasks failed.`);
-
-            this.client.info("Done!");
-        } catch (er: unknown) {
-            if (er instanceof Error) {
-                this.client.error("Failed!", er);
-            }
+        const taskPromises: Promise<void>[] = [];
+        for (const taskId of serverTaskIds) {
+            taskPromises.push(this.waitForExecutionToComplete(taskId, statusCheckSleepCycle, timeout, pollingCallback));
         }
+        await Promise.allSettled(taskPromises);
     }
 
-    private async waitForCompletion(
-        serverTasks: ServerTask[],
+    async waitForExecutionToComplete(
+        serverTaskId: string,
         statusCheckSleepCycle: number,
         timeout: number,
-        pollingCallback?: (serverTaskDetails: ServerTaskDetails) => any
+        pollingCallback?: (serverTaskDetails: ServerTaskDetails) => void
     ) {
         const sleep = async (ms: number) => new Promise((r) => setTimeout(r, ms));
-        const t = new Promise((r) => setTimeout(r, timeout));
+
         let stop = false;
-        t.then(() => {
+        const t = setTimeout(() => {
             stop = true;
-        });
-        for (const deploymentTask of serverTasks) {
-            while (!stop) {
-                if (pollingCallback) {
-                    const taskDetails = await getServerTaskDetails(this.client, this.spaceName, deploymentTask.Id);
-                    pollingCallback(taskDetails);
+        }, timeout);
 
-                    if (taskDetails.Task.IsCompleted) {
-                        break;
-                    }
-                } else {
-                    const task = await getServerTask(this.client, this.spaceName, deploymentTask.Id);
+        while (!stop) {
+            if (pollingCallback) {
+                const taskDetails = await getServerTaskDetails(this.client, this.spaceName, serverTaskId);
+                pollingCallback(taskDetails);
 
-                    if (task.IsCompleted) {
-                        break;
-                    }
+                if (taskDetails.Task.IsCompleted) {
+                    clearTimeout(t);
+                    break;
                 }
+            } else {
+                const task = await getServerTask(this.client, this.spaceName, serverTaskId);
 
-                await sleep(statusCheckSleepCycle);
+                if (task.IsCompleted) {
+                    clearTimeout(t);
+                    break;
+                }
             }
+
+            await sleep(statusCheckSleepCycle);
         }
     }
 }
