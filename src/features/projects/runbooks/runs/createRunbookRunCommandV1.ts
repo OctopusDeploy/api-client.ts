@@ -1,4 +1,4 @@
-import { CreateExecutionBaseV1 } from "../createExecutionBaseV1";
+import { CreateExecutionBaseV1 } from "../../createExecutionBaseV1";
 import { RunbookRunServerTask } from "./runbookRunServerTask";
 
 export interface CreateRunbookRunCommandV1 extends CreateExecutionBaseV1 {
