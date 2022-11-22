@@ -1,4 +1,4 @@
-import type { NewTag, Tag } from ".";
+import type { NewTag, Tag } from "./tag";
 import { NamedResourceV2, NewNamedResourceV2, NewSpaceScopedResourceV2, SpaceScopedResourceV2 } from "../..";
 
 export interface TagSet extends SpaceScopedResourceV2, NamedResourceV2 {
