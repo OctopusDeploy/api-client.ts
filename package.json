@@ -1,175 +1,89 @@
 {
-    "author": "Octopus Deploy",
-    "bugs": {
-        "url": "https://github.com/OctopusDeploy/api-client.ts/issues"
-    },
-    "dependencies": {
-        "@octopusdeploy/message-contracts": "^1.3.2",
-        "axios": "^0.27.2",
-        "form-data": "^4.0.0",
-        "glob": "^8.0.3",
-        "hpagent": "^1.0.0",
-        "lodash": "^4.17.21",
-        "semver": "^7.3.7",
-        "urijs": "^1.19.11"
-    },
-    "description": "TypeScript API client for Octopus Deploy",
-    "devDependencies": {
-        "@tsconfig/node16": "^1.0.3",
-        "@types/adm-zip": "^0.5.0",
-        "@types/glob": "^7.2.0",
-        "@types/jest": "^28.1.6",
-        "@types/json-patch": "^0.0.30",
-        "@types/lodash": "^4.14.182",
-        "@types/node": "^18.0.6",
-        "@types/semver": "^7.3.10",
-        "@types/urijs": "^1.19.19",
-        "@typescript-eslint/eslint-plugin": "^5.30.7",
-        "@typescript-eslint/parser": "^5.30.7",
-        "adm-zip": "^0.5.9",
-        "eslint": "^8.20.0",
-        "eslint-config-prettier": "^8.5.0",
-        "eslint-plugin-import": "^2.26.0",
-        "eslint-plugin-jest": "^26.6.0",
-        "eslint-plugin-prefer-arrow": "^1.2.3",
-        "eslint-plugin-prettier": "^4.2.1",
-        "jest": "^28.1.3",
-        "jest-cli": "^28.1.3",
-        "jest-environment-jsdom": "^28.1.3",
-        "jest-expect-message": "^1.0.2",
-        "jest-extended": "^3.0.1",
-        "jest-junit": "^14.0.0",
-        "jest-runner-eslint": "^1.0.1",
-        "prettier": "^2.7.1",
-        "process": "^0.11.10",
-        "prop-types": "^15.8.1",
-        "ts-jest": "^28.0.7",
-        "ts-node": "^10.9.1",
-        "typedoc": "^0.23.8",
-        "typescript": "^4.7.4"
-    },
-    "files": [
-        "dist/**/*"
-    ],
-    "homepage": "https://github.com/OctopusDeploy/api-client.ts#readme",
-    "keywords": [
-        "api",
-        "client",
-        "node",
-        "octopus deploy"
-    ],
-    "license": "Apache-2.0",
-    "main": "dist/index.js",
-    "module": "dist/index.js",
-    "name": "@octopusdeploy/api-client",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/OctopusDeploy/api-client.ts.git"
-    },
-    "scripts": {
-        "build": "tsc --p tsconfig.json",
-        "docs": "typedoc --options typedoc.json --readme none",
-        "lint:fix": "eslint . --fix",
-        "lint": "eslint .",
-        "prepare": "npm run build",
-        "preversion": "npm run lint",
-        "test": "jest --maxWorkers=4 --config=jest.config.js --ci --reporters=default --reporters=jest-junit"
-    },
-    "types": "dist/index.d.ts",
-    "version": "1.4.0",
-    "jest-junit": {
-        "outputDirectory": "reports",
-        "outputName": "jest-junit.xml",
-        "ancestorSeparator": " › ",
-        "uniqueOutputName": "false",
-        "suiteNameTemplate": "{filepath}",
-        "classNameTemplate": "{classname}",
-        "titleTemplate": "{title}"
-    },
-    "exports": {
-        ".": {
-            "types": "./dist/types/index.d.ts",
-            "node": "./dist/cjs/index.js",
-            "require": "./dist/cjs/index.js",
-            "es2015": "./dist/esm/index.js",
-            "default": "./dist/esm5/index.js"
-        },
-        "./buildInformation": {
-            "types": "./dist/features/buildInformation/index.d.ts",
-            "node": "./dist/features/buildInformation/index.js",
-            "require": "./dist/features/buildInformation/index.js",
-            "es2015": "./dist/features/buildInformation/index.js",
-            "default": "./dist/features/buildInformation/index.js"
-        },
-        "./deploymentEnvironments": {
-            "types": "./dist/features/deploymentEnvironments/index.d.ts",
-            "node": "./dist/features/deploymentEnvironments/index.js",
-            "require": "./dist/features/deploymentEnvironments/index.js",
-            "es2015": "./dist/features/deploymentEnvironments/index.js",
-            "default": "./dist/features/deploymentEnvironments/index.js"
-        },
-        "./forms": {
-            "types": "./dist/features/forms/index.d.ts",
-            "node": "./dist/features/forms/index.js",
-            "require": "./dist/features/forms/index.js",
-            "es2015": "./dist/features/forms/index.js",
-            "default": "./dist/features/forms/index.js"
-        },
-        "./packages": {
-            "types": "./dist/features/packages/index.d.ts",
-            "node": "./dist/features/packages/index.js",
-            "require": "./dist/features/packages/index.js",
-            "es2015": "./dist/features/packages/index.js",
-            "default": "./dist/features/packages/index.js"
-        },
-        "./projects": {
-            "types": "./dist/features/projects/index.d.ts",
-            "node": "./dist/features/projects/index.js",
-            "require": "./dist/features/projects/index.js",
-            "es2015": "./dist/features/projects/index.js",
-            "default": "./dist/features/projects/index.js"
-        },
-        "./releases": {
-            "types": "./dist/features/projects/releases/index.d.ts",
-            "node": "./dist/features/projects/releases/index.js",
-            "require": "./dist/features/projects/releases/index.js",
-            "es2015": "./dist/features/projects/releases/index.js",
-            "default": "./dist/features/projects/releases/index.js"
-        },
-        "./deployments": {
-            "types": "./dist/features/projects/releases/deployments/index.d.ts",
-            "node": "./dist/features/projects/releases/deployments/index.js",
-            "require": "./dist/features/projects/releases/deployments/index.js",
-            "es2015": "./dist/features/projects/releases/deployments/index.js",
-            "default": "./dist/features/projects/releases/deployments/index.js"
-        },
-        "./runbookRuns": {
-            "types": "./dist/features/projects/runbooks/runs/index.d.ts",
-            "node": "./dist/features/projects/runbooks/runs/index.js",
-            "require": "./dist/features/projects/runbooks/runs/index.js",
-            "es2015": "./dist/features/projects/runbooks/runs/index.js",
-            "default": "./dist/features/projects/runbooks/runs/index.js"
-        },
-        "./serverTasks": {
-            "types": "./dist/features/serverTasks/index.d.ts",
-            "node": "./dist/features/serverTasks/index.js",
-            "require": "./dist/features/serverTasks/index.js",
-            "es2015": "./dist/features/serverTasks/index.js",
-            "default": "./dist/features/serverTasks/index.js"
-        },
-        "./tenants": {
-            "types": "./dist/features/tenants/index.d.ts",
-            "node": "./dist/features/tenants/index.js",
-            "require": "./dist/features/tenants/index.js",
-            "es2015": "./dist/features/tenants/index.js",
-            "default": "./dist/features/tenants/index.js"
-        },
-        "./variables": {
-            "types": "./dist/features/variables/index.d.ts",
-            "node": "./dist/features/variables/index.js",
-            "require": "./dist/features/variables/index.js",
-            "es2015": "./dist/features/variables/index.js",
-            "default": "./dist/features/variables/index.js"
-        }
-    }
+  "author": "Octopus Deploy",
+  "bugs": {
+    "url": "https://github.com/OctopusDeploy/api-client.ts/issues"
+  },
+  "dependencies": {
+    "@octopusdeploy/message-contracts": "^1.3.2",
+    "axios": "^0.27.2",
+    "form-data": "^4.0.0",
+    "glob": "^8.0.3",
+    "hpagent": "^1.0.0",
+    "lodash": "^4.17.21",
+    "semver": "^7.3.7",
+    "urijs": "^1.19.11"
+  },
+  "description": "TypeScript API client for Octopus Deploy",
+  "devDependencies": {
+    "@tsconfig/node16": "^1.0.3",
+    "@types/adm-zip": "^0.5.0",
+    "@types/glob": "^7.2.0",
+    "@types/jest": "^28.1.6",
+    "@types/json-patch": "^0.0.30",
+    "@types/lodash": "^4.14.182",
+    "@types/node": "^18.0.6",
+    "@types/semver": "^7.3.10",
+    "@types/urijs": "^1.19.19",
+    "@typescript-eslint/eslint-plugin": "^5.30.7",
+    "@typescript-eslint/parser": "^5.30.7",
+    "adm-zip": "^0.5.9",
+    "eslint": "^8.20.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jest": "^26.6.0",
+    "eslint-plugin-prefer-arrow": "^1.2.3",
+    "eslint-plugin-prettier": "^4.2.1",
+    "jest": "^28.1.3",
+    "jest-cli": "^28.1.3",
+    "jest-environment-jsdom": "^28.1.3",
+    "jest-expect-message": "^1.0.2",
+    "jest-extended": "^3.0.1",
+    "jest-junit": "^14.0.0",
+    "jest-runner-eslint": "^1.0.1",
+    "prettier": "^2.7.1",
+    "process": "^0.11.10",
+    "prop-types": "^15.8.1",
+    "ts-jest": "^28.0.7",
+    "ts-node": "^10.9.1",
+    "typedoc": "^0.23.8",
+    "typescript": "^4.7.4"
+  },
+  "files": [
+    "dist/**/*"
+  ],
+  "homepage": "https://github.com/OctopusDeploy/api-client.ts#readme",
+  "keywords": [
+    "api",
+    "client",
+    "node",
+    "octopus deploy"
+  ],
+  "license": "Apache-2.0",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "name": "@octopusdeploy/api-client",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/OctopusDeploy/api-client.ts.git"
+  },
+  "scripts": {
+    "build": "tsc --p tsconfig.json",
+    "docs": "typedoc --options typedoc.json --readme none",
+    "lint:fix": "eslint . --fix",
+    "lint": "eslint .",
+    "prepare": "npm run build",
+    "preversion": "npm run lint",
+    "test": "jest --maxWorkers=4 --config=jest.config.js --ci --reporters=default --reporters=jest-junit"
+  },
+  "types": "dist/index.d.ts",
+  "version": "1.4.0",
+  "jest-junit": {
+    "outputDirectory": "reports",
+    "outputName": "jest-junit.xml",
+    "ancestorSeparator": " › ",
+    "uniqueOutputName": "false",
+    "suiteNameTemplate": "{filepath}",
+    "classNameTemplate": "{classname}",
+    "titleTemplate": "{title}"
+  }
 }
