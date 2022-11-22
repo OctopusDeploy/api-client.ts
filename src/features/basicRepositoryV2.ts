@@ -19,10 +19,8 @@ export class BasicRepositoryV2<
     TExistingResource extends ResourceV2,
     TNewResource extends NewResourceV2,
     TListArgs extends ListArgsV2 & RouteArgs = ListArgsV2,
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    TCreateArgs extends RouteArgs = {},
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    TModifyArgs extends RouteArgs = {}
+    TCreateArgs extends RouteArgs = RouteArgs,
+    TModifyArgs extends RouteArgs = RouteArgs
 > {
     readonly takeAll = 2147483647;
     readonly takeDefaultPageSize = 30;

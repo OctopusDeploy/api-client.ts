@@ -269,12 +269,12 @@ export class Client {
 
     async doCreate<TReturn>(path: string, command?: any, args?: RouteArgs): Promise<TReturn> {
         if (isSpaceScopedOperation(command)) {
-            var spaceId = await resolveSpaceId(this, command.spaceName);
+            const spaceId = await resolveSpaceId(this, command.spaceName);
             args = { spaceId: spaceId, ...args };
             command = { spaceId: spaceId, ...command };
         }
         if (args && isSpaceScopedArgs(args)) {
-            var spaceId = await resolveSpaceId(this, args.spaceName);
+            const spaceId = await resolveSpaceId(this, args.spaceName);
             args = { spaceId: spaceId, ...args };
         }
 
@@ -284,7 +284,7 @@ export class Client {
 
     async doUpdate<TReturn>(path: string, command?: any, args?: RouteArgs): Promise<TReturn> {
         if (isSpaceScopedOperation(command)) {
-            var spaceId = await resolveSpaceId(this, command.spaceName);
+            const spaceId = await resolveSpaceId(this, command.spaceName);
             args = { spaceId: spaceId, ...args };
             command = { spaceId: spaceId, ...command };
         }
@@ -295,7 +295,7 @@ export class Client {
 
     async request<TReturn>(path: string, request?: any): Promise<TReturn> {
         if (isSpaceScopedRequest(request)) {
-            var spaceId = await resolveSpaceId(this, request.spaceName);
+            const spaceId = await resolveSpaceId(this, request.spaceName);
             request = { spaceId: spaceId, ...request };
         }
 

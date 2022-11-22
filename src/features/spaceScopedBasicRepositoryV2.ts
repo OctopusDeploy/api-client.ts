@@ -8,10 +8,8 @@ export class SpaceScopedBasicRepositoryV2<
     TExistingResource extends SpaceScopedResourceV2,
     TNewResource extends NewSpaceScopedResourceV2,
     TListArgs extends ListArgsV2 & RouteArgs = ListArgsV2,
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    TCreateArgs extends RouteArgs = {},
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    TModifyArgs extends RouteArgs = {}
+    TCreateArgs extends RouteArgs = RouteArgs,
+    TModifyArgs extends RouteArgs = RouteArgs
 > extends BasicRepositoryV2<TExistingResource, TNewResource, TListArgs, TCreateArgs, TModifyArgs> {
     protected readonly spaceName: string;
 
@@ -34,6 +32,7 @@ export class SpaceScopedBasicRepositoryV2<
     }
 
     modify(resource: TExistingResource, args?: TModifyArgs): Promise<TExistingResource> {
-        return super.modify(resource, args);
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        return super.modify(resource, { spaceName: this.spaceName, ...args! });
     }
 }
