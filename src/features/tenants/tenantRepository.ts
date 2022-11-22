@@ -45,5 +45,3 @@ type FilterOptions = {
     projectId?: string;
     environmentId?: string;
 };
-
-export default TenantRepository;

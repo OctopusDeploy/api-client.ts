@@ -6,7 +6,7 @@ type TagSetRepositoryListArgs = {
     partialName?: string;
 } & ListArgsV2;
 
-class TagSetRepository extends SpaceScopedBasicRepositoryV2<TagSet, NewTagSet, TagSetRepositoryListArgs> {
+export class TagSetRepository extends SpaceScopedBasicRepositoryV2<TagSet, NewTagSet, TagSetRepositoryListArgs> {
     constructor(client: Client, spaceName: string) {
         super(client, spaceName, "~/api/{spaceId}/tagsets{/id}{?skip,take,ids,partialName}");
     }
@@ -15,5 +15,3 @@ class TagSetRepository extends SpaceScopedBasicRepositoryV2<TagSet, NewTagSet, T
         return this.client.doUpdate("~/api/{spaceId}/tagsets/sortorder", ids, { spaceName: this.spaceName });
     }
 }
-
-export default TagSetRepository;
