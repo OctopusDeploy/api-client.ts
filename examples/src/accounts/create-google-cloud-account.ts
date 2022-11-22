@@ -1,11 +1,12 @@
-import { Client, ClientConfiguration, Repository } from '@octopusdeploy/api-client';
-import { NewGoogleCloudAccount, NewSensitiveValue } from '@octopusdeploy/message-contracts';
+import { Client, ClientConfiguration, Repository } from "@octopusdeploy/api-client";
+import { NewGoogleCloudAccount, NewSensitiveValue } from "@octopusdeploy/message-contracts";
 
 const main = async () => {
     const configuration: ClientConfiguration = {
-        apiKey: 'api-key', // required
-        instanceURL: 'instance-url', // required
-        autoConnect: true
+        userAgentApp: "examples",
+        instanceURL: "instance-url", // required
+        apiKey: "api-key", // required
+        autoConnect: true,
     };
 
     let client: Client | undefined;
@@ -13,7 +14,7 @@ const main = async () => {
     try {
         client = await Client.create(configuration);
     } catch (error) {
-        console.error('The TypeScript API client could not be constructed.');
+        console.error("The TypeScript API client could not be constructed.");
         return;
     }
 
@@ -23,8 +24,8 @@ const main = async () => {
 
     const repository = new Repository(client);
 
-    const jsonKey = NewSensitiveValue('fake-json-key');
-    const name = 'Google Cloud Account (OK to Delete)';
+    const jsonKey = NewSensitiveValue("fake-json-key");
+    const name = "Google Cloud Account (OK to Delete)";
 
     // define a new Google cloud account
     const account = NewGoogleCloudAccount(name, jsonKey);
@@ -32,11 +33,10 @@ const main = async () => {
     try {
         // create account
         await repository.accounts.create(account);
-    }
-    catch (error) {
+    } catch (error) {
         console.error(error);
         return;
     }
-}
+};
 
 main();
