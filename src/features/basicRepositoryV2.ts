@@ -51,7 +51,9 @@ export class BasicRepositoryV2<
     }
 
     modify(resource: TExistingResource, args?: TModifyArgs): Promise<TExistingResource> {
-        return this.client.doUpdate<TExistingResource>(this.baseApiTemplate, resource, args).then((r) => this.notifySubscribersToDataModifications(r));
+        return this.client
+            .doUpdate<TExistingResource>(this.baseApiTemplate, resource, { id: resource.Id, ...args })
+            .then((r) => this.notifySubscribersToDataModifications(r));
     }
 
     save(resource: TExistingResource | TNewResource): Promise<TExistingResource> {
