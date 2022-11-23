@@ -10,7 +10,7 @@ type RunbookRunListArgs = {
     tenants?: string[];
     runbooks?: string[];
     taskState?: TaskState;
-    partialName: string;
+    partialName?: string;
 } & ListArgsV2;
 
 export class RunbookRunRepository extends SpaceScopedBasicRepositoryV2<RunbookRun, RunbookRun, RunbookRunListArgs> {
