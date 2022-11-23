@@ -1,7 +1,6 @@
 import type { Client } from "../../../../client";
 import type { TaskState } from "@octopusdeploy/message-contracts";
-import { ListArgsV2 } from "../../../basicRepositoryV2";
-import { SpaceScopedBasicRepositoryV2 } from "../../../..";
+import { ListArgsV2, SpaceScopedBasicRepositoryV2 } from "../../..";
 import { RunbookRun } from "./runbookRun";
 
 type RunbookRunListArgs = {
