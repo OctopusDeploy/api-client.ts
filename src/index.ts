@@ -64,7 +64,6 @@ export * from "./repositories/releasesRepository";
 export * from "./repositories/retentionDefaultConfigurationRepository";
 export * from "./repositories/runbookProcessRepository";
 export * from "./repositories/runbookRepository";
-export * from "./repositories/runbookRunRepository";
 export * from "./repositories/runbookSnapshotRepository";
 export * from "./repositories/schedulerRepository";
 export * from "./repositories/scopedUserRoleRepository";

@@ -46,7 +46,6 @@ import { ReleasesRepository } from "./repositories/releasesRepository";
 import { RetentionDefaultConfigurationRepository } from "./repositories/retentionDefaultConfigurationRepository";
 import { RunbookProcessRepository } from "./repositories/runbookProcessRepository";
 import { RunbookRepository } from "./repositories/runbookRepository";
-import { RunbookRunRepository } from "./repositories/runbookRunRepository";
 import { RunbookSnapshotRepository } from "./repositories/runbookSnapshotRepository";
 import { SchedulerRepository } from "./repositories/schedulerRepository";
 import { ScopedUserRoleRepository } from "./repositories/scopedUserRoleRepository";
@@ -139,7 +138,6 @@ export interface OctopusSpaceRepository extends OctopusCommonRepository {
     runbooks: RunbookRepository;
     runbookProcess: RunbookProcessRepository;
     runbookSnapshots: RunbookSnapshotRepository;
-    runbookRuns: RunbookRunRepository;
     packages: PackageRepository;
     progression: ProgressionRepository;
     projectGroups: ProjectGroupRepository;
@@ -198,7 +196,6 @@ export class Repository implements OctopusSpaceRepository, OctopusSystemReposito
     runbooks: RunbookRepository;
     runbookProcess: RunbookProcessRepository;
     runbookSnapshots: RunbookSnapshotRepository;
-    runbookRuns: RunbookRunRepository;
     packages: PackageRepository;
     performanceConfiguration: PerformanceConfigurationRepository;
     permissionDescriptions: PermissionDescriptionRepository;
@@ -269,7 +266,6 @@ export class Repository implements OctopusSpaceRepository, OctopusSystemReposito
         this.runbooks = new RunbookRepository(client);
         this.runbookProcess = new RunbookProcessRepository(client);
         this.runbookSnapshots = new RunbookSnapshotRepository(client);
-        this.runbookRuns = new RunbookRunRepository(client);
         this.packages = new PackageRepository(client);
         this.performanceConfiguration = new PerformanceConfigurationRepository(client);
         this.permissionDescriptions = new PermissionDescriptionRepository(client);
