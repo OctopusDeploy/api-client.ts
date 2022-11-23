@@ -5,6 +5,7 @@ import { SpaceScopedBasicRepositoryV2 } from "../../../..";
 import { RunbookRun } from "./runbookRun";
 
 type RunbookRunListArgs = {
+    ids?: string[];
     projects?: string[];
     environments?: string[];
     tenants?: string[];
