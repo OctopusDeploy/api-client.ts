@@ -34,9 +34,9 @@ type PackageGetArgs = {
 };
 
 export enum OverwriteMode {
-    "FailIfExists",
-    "OverwriteExisting",
-    "IgnoreIfExists",
+    "FailIfExists" = "FailIfExists",
+    "OverwriteExisting" = "OverwriteExisting",
+    "IgnoreIfExists" = "IgnoreIfExists",
 }
 
 export class PackageRepository extends BasicRepository<PackageResource, PackageResource, PackageListArgs, AllArgs, PackageGetArgs> {
