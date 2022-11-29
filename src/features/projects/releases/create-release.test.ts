@@ -37,7 +37,7 @@ describe("create a release", () => {
         const spaceName = randomUUID().substring(0, 20);
         console.log(`Creating space, "${spaceName}"...`);
         const spaceRepository = new SpaceRepository(client);
-        space = await spaceRepository.create({ Name: spaceName, SpaceManagersTeams: [], SpaceManagersTeamMembers: [user.Id] });
+        space = await spaceRepository.create({ Name: spaceName, SpaceManagersTeams: [], SpaceManagersTeamMembers: [user.Id], IsDefault: false });
         console.log(`Space "${spaceName}" created successfully.`);
 
         const projectGroup = (await new ProjectGroupRepository(client, spaceName).list({ take: 1 })).Items[0];

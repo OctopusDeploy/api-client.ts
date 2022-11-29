@@ -9,8 +9,9 @@ import { processConfiguration } from "../../clientConfiguration.test";
 import { PackageIdentity } from "./package-identity";
 import { buildInformationPush } from ".";
 import { packagePush } from "../packages";
-import { packageGet, packagesList, Space, SpaceRepository, UserProjection } from "../..";
-import { userGetCurrent } from "../users/user-get-current";
+import { Space, SpaceRepository } from "../spaces";
+import { packageGet, packagesList } from "../packages";
+import { userGetCurrent, UserProjection } from "../users";
 
 describe("push build information", () => {
     let client: Client;
@@ -42,7 +43,7 @@ describe("push build information", () => {
         const spaceName = randomUUID().substring(0, 20);
         console.log(`Creating space, "${spaceName}"...`);
         const spaceRepository = new SpaceRepository(client);
-        space = await spaceRepository.create({ Name: spaceName, SpaceManagersTeams: [], SpaceManagersTeamMembers: [user.Id] });
+        space = await spaceRepository.create({ Name: spaceName, SpaceManagersTeams: [], SpaceManagersTeamMembers: [user.Id], IsDefault: false });
     });
 
     test("to single package", async () => {

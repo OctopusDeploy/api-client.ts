@@ -12,7 +12,7 @@ export interface Space extends NamedResource {
 export interface NewSpace extends NewNamedResource {
     Slug?: string;
     Description?: string;
-    IsDefault?: boolean;
+    IsDefault: boolean;
     SpaceManagersTeams: string[];
     SpaceManagersTeamMembers: string[];
 }

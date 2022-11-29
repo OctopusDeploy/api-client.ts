@@ -2,15 +2,10 @@ import { Client, GitRef, Project, spaceScopedRoutePrefix } from "../../..";
 import { DeploymentProcess } from "./deploymentProcess";
 
 export async function deploymentProcessUpdate(client: Client, project: Project, deploymentProcess: DeploymentProcess): Promise<DeploymentProcess> {
-    const response = await client.update<DeploymentProcess>(
-        `${spaceScopedRoutePrefix}/projects/{projectId}/deploymentprocesses{/deploymentProcessId}`,
-        deploymentProcess,
-        {
-            spaceId: deploymentProcess.SpaceId,
-            projectId: project.Id,
-            deploymentProcessId: deploymentProcess.Id,
-        }
-    );
+    const response = await client.update<DeploymentProcess>(`${spaceScopedRoutePrefix}/projects/{projectId}/deploymentprocesses`, deploymentProcess, {
+        spaceId: deploymentProcess.SpaceId,
+        projectId: project.Id,
+    });
 
     return response;
 }

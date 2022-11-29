@@ -7,10 +7,9 @@ import path from "path";
 import { Client } from "../../client";
 import { processConfiguration } from "../../clientConfiguration.test";
 import { OverwriteMode } from "../overwriteMode";
-import { packagePush } from ".";
-import { packageGet, packagesList, UserProjection } from "../..";
+import { packagePush, packageGet, packagesList } from ".";
 import { Space, SpaceRepository } from "../spaces";
-import { userGetCurrent } from "../users/user-get-current";
+import { userGetCurrent, UserProjection } from "../users";
 
 describe("push package", () => {
     let client: Client;
@@ -42,7 +41,7 @@ describe("push package", () => {
         const spaceName = randomUUID().substring(0, 20);
         console.log(`Creating space, "${spaceName}"...`);
         const spaceRepository = new SpaceRepository(client);
-        space = await spaceRepository.create({ Name: spaceName, SpaceManagersTeams: [], SpaceManagersTeamMembers: [user.Id] });
+        space = await spaceRepository.create({ Name: spaceName, SpaceManagersTeams: [], SpaceManagersTeamMembers: [user.Id], IsDefault: false });
     });
 
     test("single package", async () => {
