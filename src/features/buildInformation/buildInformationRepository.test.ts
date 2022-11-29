@@ -8,9 +8,8 @@ import { Client } from "../../client";
 import { processConfiguration } from "../../clientConfiguration.test";
 import { PackageIdentity } from "./package-identity";
 import { BuildInformationRepository } from ".";
-import { packagePush } from "../packages";
+import { PackageRepository } from "../packages";
 import { Space, SpaceRepository } from "../spaces";
-import { packageGet, packagesList } from "../packages";
 import { userGetCurrent, UserProjection } from "../users";
 
 describe("push build information", () => {
@@ -47,7 +46,8 @@ describe("push build information", () => {
     });
 
     test("to single package", async () => {
-        await packagePush(client, space.Name, [path.join(tempOutDir, "Hello.1.0.0.zip")]);
+        const packageRepository = new PackageRepository(client, space.Name);
+        await packageRepository.push([path.join(tempOutDir, "Hello.1.0.0.zip")]);
 
         await new BuildInformationRepository(client).push({
             spaceName: space.Name,
@@ -67,8 +67,8 @@ describe("push build information", () => {
             ],
         });
 
-        const results = await packagesList(client, space.Name, { filter: "Hello" });
-        const result = await packageGet(client, space.Name, results.Items[0].Id);
+        const results = await packageRepository.list({ filter: "Hello" });
+        const result = await packageRepository.get(results.Items[0].Id);
 
         expect(result.PackageVersionBuildInformation?.VcsCommitNumber).toStrictEqual("314cf2c3ee916c92a384c2796a6abe332d678e4f");
     });
