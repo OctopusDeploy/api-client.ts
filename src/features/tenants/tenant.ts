@@ -1,14 +1,14 @@
-import { NamedResourceV2, NewNamedResourceV2 } from "../namedResourceV2";
-import { NewSpaceScopedResourceV2, SpaceScopedResourceV2 } from "../spaceScopedResourceV2";
+import { NamedResource, NewNamedResource } from "../namedResource";
+import { NewSpaceScopedResource, SpaceScopedResource } from "../spaceScopedResource";
 
-export interface Tenant extends NamedResourceV2, SpaceScopedResourceV2 {
+export interface Tenant extends SpaceScopedResource, NamedResource {
     Description: string | null;
     ClonedFromTenantId: string | null;
     TenantTags: string[];
     ProjectEnvironments: { [projectId: string]: string[] };
 }
 
-export interface NewTenant extends NewNamedResourceV2, NewSpaceScopedResourceV2 {
+export interface NewTenant extends NewSpaceScopedResource, NewNamedResource {
     Description?: string;
     ClonedFromTenantId?: string;
     TenantTags?: string[];
@@ -23,6 +23,6 @@ export interface TagTestResult {
     };
 }
 
-export interface MultiTenancyStatusResource {
+export interface MultiTenancyStatus {
     Enabled: boolean;
 }

@@ -6,7 +6,6 @@ export interface ClientConfiguration {
     httpsAgent?: Agent;
     apiKey: string;
     instanceURL: string;
-    autoConnect?: boolean;
     space?: string;
     logging?: Logger;
 }

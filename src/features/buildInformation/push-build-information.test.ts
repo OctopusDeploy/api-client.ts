@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/init-declarations */
-import { NewSpace, SpaceResource, UserResource } from "@octopusdeploy/message-contracts";
 import AdmZip from "adm-zip";
 import { randomUUID } from "crypto";
 import { mkdtemp, rm } from "fs/promises";
@@ -7,17 +6,16 @@ import { tmpdir } from "os";
 import path from "path";
 import { Client } from "../../client";
 import { processConfiguration } from "../../clientConfiguration.test";
-import { OctopusSpaceRepository, Repository } from "../../repository";
 import { PackageIdentity } from "./package-identity";
 import { buildInformationPush } from ".";
 import { packagePush } from "../packages";
+import { packageGet, packagesList, Space, SpaceRepository, UserProjection } from "../..";
+import { userGetCurrent } from "../users/user-get-current";
 
 describe("push build information", () => {
     let client: Client;
-    let space: SpaceResource;
-    let systemRepository: Repository;
-    let repository: OctopusSpaceRepository;
-    let user: UserResource;
+    let space: Space;
+    let user: UserProjection;
 
     jest.setTimeout(100000);
 
@@ -37,15 +35,14 @@ describe("push build information", () => {
 
         client = await Client.create(processConfiguration());
         console.log(`Client connected to API endpoint successfully.`);
-        systemRepository = new Repository(client);
-        user = await systemRepository.users.getCurrent();
+        user = await userGetCurrent(client);
     });
 
     beforeEach(async () => {
         const spaceName = randomUUID().substring(0, 20);
         console.log(`Creating space, "${spaceName}"...`);
-        space = await systemRepository.spaces.create(NewSpace(spaceName, [], [user]));
-        repository = await systemRepository.forSpace(space);
+        const spaceRepository = new SpaceRepository(client);
+        space = await spaceRepository.create({ Name: spaceName, SpaceManagersTeams: [], SpaceManagersTeamMembers: [user.Id] });
     });
 
     test("to single package", async () => {
@@ -69,9 +66,8 @@ describe("push build information", () => {
             ],
         });
 
-        const results = await repository.packages.list({ filter: "Hello" });
-
-        const result = await repository.packages.get(results.Items[0].Id);
+        const results = await packagesList(client, space.Name, { filter: "Hello" });
+        const result = await packageGet(client, space.Name, results.Items[0].Id);
 
         expect(result.PackageVersionBuildInformation?.VcsCommitNumber).toStrictEqual("314cf2c3ee916c92a384c2796a6abe332d678e4f");
     });
@@ -85,7 +81,8 @@ describe("push build information", () => {
 
         console.log(`Deleting space, ${space.Name}...`);
         space.TaskQueueStopped = true;
-        await systemRepository.spaces.modify(space);
-        await systemRepository.spaces.del(space);
+        const spaceRepository = new SpaceRepository(client);
+        await spaceRepository.modify(space);
+        await spaceRepository.del(space);
     });
 });

@@ -1,7 +1,7 @@
-import { NamedResourceV2 } from "../../features";
+import { NamedResource } from "../namedResource";
 import { TaskState } from "./taskState";
 
-export interface ServerTask extends NamedResourceV2 {
+export interface ServerTask extends NamedResource {
     Description: string;
     State: TaskState;
     Completed?: string;

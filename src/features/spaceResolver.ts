@@ -1,5 +1,6 @@
-import { PagingCollection, SpaceResource } from "@octopusdeploy/message-contracts";
 import { Client } from "../client";
+import { Space } from "./spaces";
+import { ResourceCollection } from "./resourceCollection";
 
 const knownSpaces: Record<string, string> = {};
 
@@ -10,15 +11,15 @@ export async function resolveSpaceId(client: Client, spaceName: string): Promise
 
     client.debug(`Resolving space from name '${spaceName}'`);
 
-    var spaces = await client.get<PagingCollection<SpaceResource>>("~/api/spaces", { partialName: spaceName });
-    var spaceId = "";
+    const spaces = await client.get<ResourceCollection<Space>>("~/api/spaces", { partialName: spaceName });
+    let spaceId = "";
 
     if (spaces.TotalResults === 0) {
         client.error(`No spaces exist with name '${spaceName}'`);
         throw new Error(`No spaces exist with name '${spaceName}'`);
     }
 
-    spaces.Items.forEach(space => {
+    spaces.Items.forEach((space) => {
         if (space.Name == spaceName) {
             spaceId = space.Id;
             knownSpaces[spaceName] = spaceId;

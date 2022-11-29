@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/init-declarations */
-import { NewProject, NewSpace, ProjectResource, RunCondition, SpaceResource, StartTrigger, UserResource } from "@octopusdeploy/message-contracts";
-import { PackageRequirement } from "@octopusdeploy/message-contracts/dist/deploymentStepResource";
-import { RunConditionForAction } from "@octopusdeploy/message-contracts/dist/runConditionForAction";
+import { PackageRequirement, RunCondition, RunConditionForAction, StartTrigger } from "../deploymentProcesses";
 import AdmZip from "adm-zip";
 import { randomUUID } from "crypto";
 import { mkdtemp, readdir, rm } from "fs/promises";
@@ -9,50 +7,51 @@ import { tmpdir } from "os";
 import path from "path";
 import { Client } from "../../../client";
 import { processConfiguration } from "../../../clientConfiguration.test";
-import { OctopusSpaceRepository, Repository } from "../../../repository";
 import { releaseCreate, CreateReleaseCommandV1 } from ".";
 import { packagePush } from "../../packages";
 import { EnvironmentRepository, DeploymentEnvironment } from "../../deploymentEnvironments";
+import { Space, SpaceRepository } from "../../spaces";
+import { Project, NewProject, ProjectRepository } from "../../projects";
+import { UserProjection, userGetCurrent } from "../../users";
+import { ProjectGroupRepository } from "../../projectGroups";
+import { deploymentProcessGet, deploymentProcessUpdate } from "../../projects/deploymentProcesses";
+import { LifecycleRepository } from "../../lifecycles";
+import { FeedRepository } from "../../feeds/feedRepository";
 
 describe("create a release", () => {
     let client: Client;
     let environment: DeploymentEnvironment;
-    let project: ProjectResource;
-    let repository: OctopusSpaceRepository;
-    let space: SpaceResource;
-    let systemRepository: Repository;
-    let user: UserResource;
+    let project: Project;
+    let space: Space;
+    let user: UserProjection;
 
     jest.setTimeout(100000);
 
     beforeAll(async () => {
         client = await Client.create(processConfiguration());
         console.log(`Client connected to API endpoint successfully.`);
-        systemRepository = new Repository(client);
-        user = await systemRepository.users.getCurrent();
+        user = await userGetCurrent(client);
     });
 
     beforeEach(async () => {
         const spaceName = randomUUID().substring(0, 20);
         console.log(`Creating space, "${spaceName}"...`);
-        space = await systemRepository.spaces.create(NewSpace(spaceName, [], [user]));
+        const spaceRepository = new SpaceRepository(client);
+        space = await spaceRepository.create({ Name: spaceName, SpaceManagersTeams: [], SpaceManagersTeamMembers: [user.Id] });
         console.log(`Space "${spaceName}" created successfully.`);
 
-        repository = await systemRepository.forSpace(space);
-
-        const projectGroup = (await repository.projectGroups.list({ take: 1 })).Items[0];
-        const lifecycle = (await repository.lifecycles.list({ take: 1 })).Items[0];
+        const projectGroup = (await new ProjectGroupRepository(client, spaceName).list({ take: 1 })).Items[0];
+        const lifecycle = (await new LifecycleRepository(client, spaceName).list({ take: 1 })).Items[0];
 
         const projectName = randomUUID();
         console.log(`Creating project, "${projectName}"...`);
-        project = await repository.projects.create(NewProject(projectName, projectGroup, lifecycle));
+        project = await new ProjectRepository(client, spaceName).create(NewProject(projectName, projectGroup, lifecycle));
         console.log(`Project "${projectName}" created successfully.`);
 
-        const deploymentProcess = await repository.deploymentProcesses.get(project.DeploymentProcessId, undefined);
+        const deploymentProcess = await deploymentProcessGet(client, project);
         deploymentProcess.Steps = [
             {
                 Condition: RunCondition.Success,
-                Links: {},
                 PackageRequirement: PackageRequirement.LetOctopusDecide,
                 StartTrigger: StartTrigger.StartAfterPrevious,
                 Id: "",
@@ -85,14 +84,13 @@ describe("create a release", () => {
                             "Octopus.Action.Script.Syntax": "Bash",
                             "Octopus.Action.Script.ScriptBody": "echo 'hello'",
                         },
-                        Links: {},
                     },
                 ],
             },
         ];
 
         console.log(`Updating deployment process, "${deploymentProcess.Id}"...`);
-        await repository.deploymentProcesses.saveToProject(project, deploymentProcess);
+        await deploymentProcessUpdate(client, project, deploymentProcess);
         console.log(`Deployment process, "${deploymentProcess.Id}" updated successfully.`);
 
         const environmentName = randomUUID();
@@ -129,13 +127,12 @@ describe("create a release", () => {
         });
 
         beforeEach(async () => {
-            const feedId = (await repository.feeds.list({ take: 1 })).Items[0].Id;
+            const feedId = (await new FeedRepository(client, space.Name).list({ take: 1 })).Items[0].Id;
 
-            const deploymentProcess = await repository.deploymentProcesses.get(project.DeploymentProcessId, undefined);
+            const deploymentProcess = await deploymentProcessGet(client, project);
             deploymentProcess.Steps = [
                 {
                     Condition: RunCondition.Success,
-                    Links: {},
                     PackageRequirement: PackageRequirement.LetOctopusDecide,
                     StartTrigger: StartTrigger.StartAfterPrevious,
                     Id: "",
@@ -175,13 +172,12 @@ describe("create a release", () => {
                                 "Octopus.Action.Script.Syntax": "Bash",
                                 "Octopus.Action.Script.ScriptBody": "echo 'hello'",
                             },
-                            Links: {},
                         },
                     ],
                 },
             ];
             console.log(`Updating deployment process, "${deploymentProcess.Id}"...`);
-            await repository.deploymentProcesses.saveToProject(project, deploymentProcess);
+            await deploymentProcessUpdate(client, project, deploymentProcess);
             console.log(`Deployment process, "${deploymentProcess.Id}" updated successfully.`);
 
             for (const file of await readdir(tempOutDir)) {
@@ -199,7 +195,7 @@ describe("create a release", () => {
                 ProjectName: project.Name,
                 Packages: packages,
             };
-            const response = await releaseCreate(repository.client, command);
+            const response = await releaseCreate(client, command);
             expect(response.ReleaseId).toBeTruthy();
             expect(response.ReleaseVersion).toBeTruthy();
         });
@@ -210,8 +206,9 @@ describe("create a release", () => {
 
         console.log(`Deleting space, ${space.Name}...`);
         space.TaskQueueStopped = true;
-        await systemRepository.spaces.modify(space);
-        await systemRepository.spaces.del(space);
+        const spaceRepository = new SpaceRepository(client);
+        await spaceRepository.modify(space);
+        await spaceRepository.del(space);
         console.log(`Space '${space.Name}' deleted successfully.`);
     });
 });

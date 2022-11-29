@@ -1,6 +1,6 @@
-import { SpaceScopedResourceV2, NewSpaceScopedResourceV2 } from "../spaceScopedResourceV2";
+import { SpaceScopedResource, NewSpaceScopedResource } from "../spaceScopedResource";
 
-export interface Execution extends SpaceScopedResourceV2 {
+export interface Execution extends SpaceScopedResource {
     Name: string;
     Comments: string;
     Created: string;
@@ -19,7 +19,7 @@ export interface Execution extends SpaceScopedResourceV2 {
     UseGuidedFailure: boolean;
 }
 
-export interface NewExecution extends NewSpaceScopedResourceV2 {
+export interface NewExecution extends NewSpaceScopedResource {
     ProjectId: string;
     EnvironmentId: string;
     ExcludedMachineIds: string[];

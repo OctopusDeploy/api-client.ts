@@ -1,4 +1,4 @@
-import { OctopusError } from "@octopusdeploy/message-contracts";
+import { OctopusError } from "./octopusError";
 import type { Adapter, AdapterResponse } from "./adapter";
 import { AdapterError } from "./adapter";
 import { AxiosAdapter } from "./adapters/axiosAdapter";
@@ -33,6 +33,7 @@ export default class ApiClient<TResource> {
     private handleSuccess = (response: AdapterResponse<TResource>) => {
         if (this.options.onResponseCallback) {
             const details: ResponseDetails = {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/consistent-type-assertions
                 method: this.options.method as any,
                 url: this.options.url,
                 statusCode: response.statusCode,
@@ -43,6 +44,7 @@ export default class ApiClient<TResource> {
         let responseText: string = "";
 
         if (this.options.raw) {
+            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             responseText = response.data as unknown as string;
         } else {
             responseText = JSON.stringify(response.data);
@@ -58,6 +60,7 @@ export default class ApiClient<TResource> {
         const err = generateOctopusError(requestError);
         if (this.options.onErrorResponseCallback) {
             const details: ClientErrorResponseDetails = {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/consistent-type-assertions
                 method: this.options.method as any,
                 url: this.options.url,
                 statusCode: err.StatusCode,

@@ -1,5 +1,5 @@
 export interface RequestDetails {
-  request?: Request;
-  url: string;
-  method: string;
+    request?: Request;
+    url: string;
+    method: string;
 }

@@ -1,6 +1,6 @@
-import { OctopusPackageVersionBuildInformationMappedResource, SpaceResource } from "@octopusdeploy/message-contracts";
+import { MappedOctopusPackageVersionBuildInformation } from "./mappedOctopusPackageVersionBuildInformation";
 import { Client } from "../../client";
-import { OverwriteMode } from "../../repositories/packageRepository";
+import { OverwriteMode } from "../overwriteMode";
 import { SpaceScopedOperation } from "../spaceScopedOperation";
 import { PackageIdentity } from "./package-identity";
 
@@ -26,11 +26,11 @@ export async function buildInformationPush(
     buildInformation: CreateOctopusBuildInformationCommand,
     overwriteMode: OverwriteMode = OverwriteMode.FailIfExists
 ): Promise<void> {
-    const tasks: Promise<OctopusPackageVersionBuildInformationMappedResource>[] = [];
+    const tasks: Promise<MappedOctopusPackageVersionBuildInformation>[] = [];
 
     for (const pkg of buildInformation.Packages) {
         tasks.push(
-            client.doCreate<OctopusPackageVersionBuildInformationMappedResource>(
+            client.doCreate<MappedOctopusPackageVersionBuildInformation>(
                 `~/api/{spaceId}/build-information{?overwriteMode}`,
                 {
                     spaceName: buildInformation.spaceName,

@@ -1,14 +1,14 @@
 import type { ControlType } from "../forms/controlType";
 import type { PropertyValue } from "../variables/propertyValue";
-import { ResourceV2 } from "../resourceV2";
+import { SpaceScopedResource } from "../spaceScopedResource";
+import { NamedResource } from "../namedResource";
 
 export interface TenantVariableTemplateDisplaySettings {
     "Octopus.SelectOptions"?: string;
     "Octopus.ControlType"?: ControlType;
 }
 
-export interface TenantVariableTemplate extends ResourceV2 {
-    Name: string;
+export interface TenantVariableTemplate extends SpaceScopedResource, NamedResource {
     Label: string;
     HelpText: string;
     DefaultValue?: PropertyValue;
@@ -16,7 +16,7 @@ export interface TenantVariableTemplate extends ResourceV2 {
     AllowClear?: boolean;
 }
 
-export interface TenantVariable extends ResourceV2 {
+export interface TenantVariable extends SpaceScopedResource {
     TenantId: string;
     TenantName: string;
     LibraryVariables: { [libraryVariableSetId: string]: TenantLibraryVariable };

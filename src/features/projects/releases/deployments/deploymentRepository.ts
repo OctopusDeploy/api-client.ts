@@ -1,5 +1,5 @@
 import type { Client } from "../../../../client";
-import { SpaceScopedBasicRepositoryV2, ListArgsV2 } from "../../..";
+import { SpaceScopedBasicRepository, ListArgs } from "../../..";
 import { TaskState } from "../../../serverTasks";
 import { Deployment, NewDeployment } from "./deployment";
 
@@ -10,9 +10,9 @@ type DeploymentListArgs = {
     tenants?: string[];
     channels?: string[];
     taskState?: TaskState;
-} & ListArgsV2;
+} & ListArgs;
 
-export class DeploymentRepository extends SpaceScopedBasicRepositoryV2<Deployment, NewDeployment, DeploymentListArgs> {
+export class DeploymentRepository extends SpaceScopedBasicRepository<Deployment, NewDeployment, DeploymentListArgs> {
     constructor(client: Client, spaceName: string) {
         super(client, spaceName, "~/api/{spaceId}/deployments{/id}{?skip,take,ids,projects,environments,tenants,channels,taskState}");
     }

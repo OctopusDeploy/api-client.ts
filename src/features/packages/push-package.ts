@@ -1,9 +1,9 @@
-import { PackageResource } from "@octopusdeploy/message-contracts";
+import { Package } from "./package";
 import { promises as fs } from "fs";
 import path from "path";
 import FormData from "form-data";
 import { Client, resolveSpaceId } from "../..";
-import { OverwriteMode } from "../../repositories/packageRepository";
+import { OverwriteMode } from "../overwriteMode";
 
 export async function packagePush(
     client: Client,
@@ -34,6 +34,6 @@ export async function packagePush(
         const fd = new FormData();
         const data = await fs.readFile(filePath);
         fd.append("fileToUpload", data, fileName);
-        return client.post<PackageResource>(`~/api/{spaceId}/packages/raw{?overwriteMode}`, fd, { overwriteMode, spaceId });
+        return client.post<Package>(`~/api/{spaceId}/packages/raw{?overwriteMode}`, fd, { overwriteMode, spaceId });
     }
 }

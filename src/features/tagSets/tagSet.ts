@@ -1,13 +1,13 @@
 import type { NewTag, Tag } from "./tag";
-import { NamedResourceV2, NewNamedResourceV2, NewSpaceScopedResourceV2, SpaceScopedResourceV2 } from "../..";
+import { NamedResource, NewNamedResource, NewSpaceScopedResource, SpaceScopedResource } from "../..";
 
-export interface TagSet extends SpaceScopedResourceV2, NamedResourceV2 {
+export interface TagSet extends SpaceScopedResource, NamedResource {
     Description?: string;
     SortOrder: number;
     Tags: Tag[];
 }
 
-export interface NewTagSet extends NewSpaceScopedResourceV2, NewNamedResourceV2 {
+export interface NewTagSet extends NewSpaceScopedResource, NewNamedResource {
     Tags: NewTag[];
     Description?: string;
     SortOrder?: number;

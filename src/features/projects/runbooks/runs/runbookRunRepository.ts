@@ -1,7 +1,7 @@
 import type { Client } from "../../../../client";
-import type { TaskState } from "@octopusdeploy/message-contracts";
-import { ListArgsV2, SpaceScopedBasicRepositoryV2 } from "../../..";
+import { ListArgs, SpaceScopedBasicRepository } from "../../..";
 import { RunbookRun } from "./runbookRun";
+import { TaskState } from "../../../serverTasks";
 
 type RunbookRunListArgs = {
     ids?: string[];
@@ -11,9 +11,9 @@ type RunbookRunListArgs = {
     runbooks?: string[];
     taskState?: TaskState;
     partialName?: string;
-} & ListArgsV2;
+} & ListArgs;
 
-export class RunbookRunRepository extends SpaceScopedBasicRepositoryV2<RunbookRun, RunbookRun, RunbookRunListArgs> {
+export class RunbookRunRepository extends SpaceScopedBasicRepository<RunbookRun, RunbookRun, RunbookRunListArgs> {
     constructor(client: Client, spaceName: string) {
         super(client, spaceName, "~/api/{spaceId}/runbookRuns{/id}{?skip,take,ids,projects,environments,tenants,runbooks,taskState,partialName}");
     }

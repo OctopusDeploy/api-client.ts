@@ -1,15 +1,15 @@
 import type { Client } from "../../client";
-import { ListArgsV2 } from "../basicRepositoryV2";
-import { ResourceCollectionV2 } from "../resourceCollectionV2";
-import { SpaceScopedBasicRepositoryV2 } from "../spaceScopedBasicRepositoryV2";
+import { ListArgs } from "../basicRepository";
+import { ResourceCollection } from "../resourceCollection";
+import { SpaceScopedBasicRepository } from "../spaceScopedBasicRepository";
 import { DeploymentEnvironment, NewDeploymentEnvironment } from "./deploymentEnvironment";
 
 type EnvironmentRepositoryListArgs = {
     ids?: string[];
     partialName?: string;
-} & ListArgsV2;
+} & ListArgs;
 
-export class EnvironmentRepository extends SpaceScopedBasicRepositoryV2<DeploymentEnvironment, NewDeploymentEnvironment, EnvironmentRepositoryListArgs> {
+export class EnvironmentRepository extends SpaceScopedBasicRepository<DeploymentEnvironment, NewDeploymentEnvironment, EnvironmentRepositoryListArgs> {
     constructor(client: Client, spaceName: string) {
         super(client, spaceName, "~/api/{spaceId}/environments{/id}{?skip,take,ids,partialName}");
     }
@@ -29,8 +29,8 @@ export class EnvironmentRepository extends SpaceScopedBasicRepositoryV2<Deployme
         );
     }
 
-    machines(environment: DeploymentEnvironment, args?: Partial<EnvironmentMachinesArgs>): Promise<ResourceCollectionV2<DeploymentEnvironment>> {
-        return this.client.request<ResourceCollectionV2<DeploymentEnvironment>>(
+    machines(environment: DeploymentEnvironment, args?: Partial<EnvironmentMachinesArgs>): Promise<ResourceCollection<DeploymentEnvironment>> {
+        return this.client.request<ResourceCollection<DeploymentEnvironment>>(
             "~/api/{spaceId}/environments/{id}/machines{?skip,take,partialName,roles,isDisabled,healthStatuses,commStyles,tenantIds,tenantTags,shellNames,deploymentTargetTypes}",
             { spaceName: this.spaceName, id: environment.Id, ...args }
         );

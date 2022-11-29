@@ -1,28 +1,25 @@
-import type {
-    GlobalRootLinks,
-    PagingCollection,
-    OctopusError,
-    RootResource,
-    SpaceRootLinks,
-    SpaceResource,
-    SpaceRootResource,
-} from "@octopusdeploy/message-contracts";
 import ApiClient from "./apiClient";
 import { ClientConfiguration } from "./clientConfiguration";
 import type { ClientErrorResponseDetails } from "./clientErrorResponseDetails";
 import type { ClientRequestDetails } from "./clientRequestDetails";
 import type { ClientResponseDetails } from "./clientResponseDetails";
-import { ClientSession } from "./clientSession";
 import Environment from "./environment";
 import { isSpaceScopedArgs } from "./features/spaceScopedArgs";
 import { Logger } from "./logger";
 import { resolveSpaceId, isSpaceScopedOperation, isSpaceScopedRequest } from "./features";
 import { Resolver, RouteArgs } from "./resolver";
 import { Callback, SubscriptionRecord } from "./subscriptionRecord";
+import { OctopusError } from "./octopusError";
+import { ServerInformation } from "./serverInformation";
 
 const apiLocation = "~/api";
 
-export type GlobalAndSpaceRootLinks = keyof GlobalRootLinks | keyof SpaceRootLinks;
+interface RootResource {
+    Application: string;
+    Version: string;
+    ApiVersion: string;
+    InstallationId: string;
+}
 
 // The Octopus Client implements the low-level semantics of the Octopus Deploy REST API
 export class Client {
@@ -37,31 +34,13 @@ export class Client {
         }
 
         const resolver = new Resolver(configuration.instanceURL);
-        const client = new Client(null, resolver, null, null, null, configuration);
-        if (configuration.autoConnect) {
-            try {
-                await client.connect((message, error) => {
-                    client.debug(`Attempting to connect to API endpoint...`);
-                });
-            } catch (error: unknown) {
-                if (error instanceof Error) client.error("Could not connect", error);
-                throw error;
-            }
-            if (configuration.space !== undefined && configuration.space !== "") {
-                try {
-                    await client.switchToSpace(configuration.space);
-                } catch (error: unknown) {
-                    if (error instanceof Error) client.error("Could not switch to space", error);
-                    throw error;
-                }
-            }
-        }
+        const client = new Client(resolver, configuration);
         return client;
     }
 
-    onRequestCallback: (details: ClientRequestDetails) => void = undefined!;
-    onResponseCallback: (details: ClientResponseDetails) => void = undefined!;
-    onErrorResponseCallback: (details: ClientErrorResponseDetails) => void = undefined!;
+    onRequestCallback?: (details: ClientRequestDetails) => void = undefined;
+    onResponseCallback?: (details: ClientResponseDetails) => void = undefined;
+    onErrorResponseCallback?: (details: ClientErrorResponseDetails) => void = undefined;
 
     debug = (message: string) => {
         this.logger.debug && this.logger.debug(message);
@@ -79,14 +58,7 @@ export class Client {
         this.logger.error && this.logger.error(message, error);
     };
 
-    private constructor(
-        readonly session: ClientSession | null,
-        private readonly resolver: Resolver,
-        private rootDocument: RootResource | null,
-        public spaceId: string | null,
-        private spaceRootDocument: SpaceRootResource | null,
-        private readonly configuration: ClientConfiguration
-    ) {
+    private constructor(private readonly resolver: Resolver, private readonly configuration: ClientConfiguration) {
         this.configuration = configuration;
         this.logger = configuration.logging || {
             debug: (message) => null,
@@ -95,8 +67,6 @@ export class Client {
             error: (message, err) => null,
         };
         this.resolver = resolver;
-        this.rootDocument = rootDocument;
-        this.spaceRootDocument = spaceRootDocument;
     }
 
     subscribeToRequests = (registrationName: string, callback: Callback<ClientRequestDetails>) => {
@@ -125,82 +95,11 @@ export class Client {
 
     resolve = (path: string, uriTemplateParameters?: RouteArgs) => this.resolver.resolve(path, uriTemplateParameters);
 
-    connect(progressCallback: (message: string, error?: OctopusError) => void): Promise<void> {
-        progressCallback("Checking credentials...");
-
-        return new Promise((resolve, reject) => {
-            if (this.rootDocument) {
-                resolve();
-                return;
-            }
-
-            const attempt = (success: any, fail: any) => {
-                this.get(apiLocation).then((root) => {
-                    success(root);
-                }, fail);
-            };
-
-            const onSuccess = (root: RootResource) => {
-                this.rootDocument = root;
-                resolve();
-            };
-
-            const onFail = (err: OctopusError) => {
-                progressCallback("Unable to connect.", err);
-                reject(err);
-            };
-
-            attempt(onSuccess, onFail);
-        });
-    }
-
-    disconnect() {
-        this.rootDocument = null;
-        this.spaceId = null;
-        this.spaceRootDocument = null;
-    }
-
-    async forSpace(spaceId: string): Promise<Client> {
-        const spaceRootResource = await this.get<SpaceRootResource>(this.rootDocument!.Links["SpaceHome"], { spaceId });
-        return new Client(this.session, this.resolver, this.rootDocument, spaceId, spaceRootResource, this.configuration);
-    }
-
-    forSystem(): Client {
-        return new Client(this.session, this.resolver, this.rootDocument, null, null, this.configuration);
-    }
-
-    async switchToSpace(spaceIdOrName: string): Promise<void> {
-        if (this.rootDocument === null) {
-            throw new Error(
-                "Root document is null; this document is required for the API client. Please ensure that the API endpoint is accessible along with its root document."
-            );
-        }
-
-        const spaceList = await this.get<PagingCollection<SpaceResource>>(this.rootDocument.Links["Spaces"]);
-        const uppercaseSpaceIdOrName = spaceIdOrName.toUpperCase();
-        var spaceResources = spaceList.Items.filter(
-            (s: SpaceResource) => s.Name.toUpperCase() === uppercaseSpaceIdOrName || s.Id.toUpperCase() === uppercaseSpaceIdOrName
-        );
-
-        if (spaceResources.length == 1) {
-            const spaceResource = spaceResources[0];
-            this.spaceId = spaceResource.Id;
-            this.spaceRootDocument = await this.get<SpaceRootResource>(spaceResource.Links["SpaceHome"]);
-            return;
-        }
-
-        throw new Error(`Unable to uniquely identify a space using '${spaceIdOrName}'.`);
-    }
-
-    switchToSystem(): void {
-        this.spaceId = null;
-        this.spaceRootDocument = null;
-    }
-
     get<TResource>(path: string | undefined, args?: RouteArgs): Promise<TResource> {
         if (path === undefined) throw new Error("path parameter was not");
 
-        const url = this.resolveUrlWithSpaceId(path, args);
+        const url = this.resolveUrl(path, args);
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         return this.dispatchRequest("GET", url) as Promise<TResource>;
     }
 
@@ -210,14 +109,11 @@ export class Client {
         return new Promise((resolve, reject) => {
             new ApiClient({
                 configuration: this.configuration,
-                session: this.session,
                 url: url,
                 method: "GET",
                 error: (e) => reject(e),
                 raw: true,
                 success: (data) => resolve(data),
-                tryGetServerInformation: () => this.tryGetServerInformation(),
-                getAntiForgeryTokenCallback: () => this.getAntiforgeryToken(),
                 onRequestCallback: (r) => this.onRequest(r),
                 onResponseCallback: (r) => this.onResponse(r),
                 onErrorResponseCallback: (r) => this.onErrorResponse(r),
@@ -278,7 +174,8 @@ export class Client {
             args = { spaceId: spaceId, ...args };
         }
 
-        const url = this.resolveUrlWithSpaceId(path, args);
+        const url = this.resolveUrl(path, args);
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         return this.dispatchRequest("POST", url, command) as Promise<TReturn>;
     }
 
@@ -289,7 +186,8 @@ export class Client {
             command = { spaceId: spaceId, ...command };
         }
 
-        const url = this.resolveUrlWithSpaceId(path, args);
+        const url = this.resolveUrl(path, args);
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         return this.dispatchRequest("PUT", url, command) as Promise<TReturn>;
     }
 
@@ -299,12 +197,14 @@ export class Client {
             request = { spaceId: spaceId, ...request };
         }
 
-        const url = this.resolveUrlWithSpaceId(path, request);
+        const url = this.resolveUrl(path, request);
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         return this.dispatchRequest("GET", url, null) as Promise<TReturn>;
     }
 
     post<TReturn>(path: string, resource?: any, args?: RouteArgs): Promise<TReturn> {
-        const url = this.resolveUrlWithSpaceId(path, args);
+        const url = this.resolveUrl(path, args);
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         return this.dispatchRequest("POST", url, resource) as Promise<TReturn>;
     }
 
@@ -344,105 +244,38 @@ export class Client {
     }
 
     put<TResource>(path: string, resource?: TResource, args?: RouteArgs): Promise<TResource> {
-        const url = this.resolveUrlWithSpaceId(path, args);
+        const url = this.resolveUrl(path, args);
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         return this.dispatchRequest("PUT", url, resource) as Promise<TResource>;
     }
 
-    getAntiforgeryToken() {
-        if (!this.isConnected()) {
-            return null;
+    async getServerInformation(): Promise<ServerInformation> {
+        const serverInfo = await this.tryGetServerInformation();
+        if (!serverInfo) {
+            throw new Error("The Octopus server information could not be retrieved. Please check the configured URL.");
         }
-
-        const installationId = this.getGlobalRootDocument()!.InstallationId;
-        if (!installationId) {
-            return null;
-        }
-
-        // If we have come this far we know we are on a version of Octopus Server which supports anti-forgery tokens
-        const antiforgeryCookieName = "Octopus-Csrf-Token_" + installationId;
-        const antiforgeryCookies = document.cookie
-            .split(";")
-            .filter((c) => {
-                return c.trim().indexOf(antiforgeryCookieName) === 0;
-            })
-            .map((c) => {
-                return c.trim();
-            });
-
-        if (antiforgeryCookies && antiforgeryCookies.length === 1) {
-            const antiforgeryToken = antiforgeryCookies[0].split("=")[1];
-            return antiforgeryToken;
-        } else {
-            if (Environment.isInDevelopmentMode()) {
-                return "FAKE TOKEN USED FOR DEVELOPMENT";
-            }
-            return null;
-        }
+        return serverInfo;
     }
 
-    resolveLinkTemplate(link: GlobalAndSpaceRootLinks, args: any) {
-        return this.resolve(this.getLink(link), args);
-    }
-
-    getServerInformation() {
-        if (!this.isConnected()) {
-            throw new Error("The Octopus Client has not connected. THIS SHOULD NOT HAPPEN! Please notify support.");
-        }
-        return {
-            version: this.rootDocument!.Version,
-        };
-    }
-
-    tryGetServerInformation() {
-        return this.rootDocument
+    async tryGetServerInformation(): Promise<ServerInformation | null> {
+        const rootDocument = await this.get<RootResource>(apiLocation);
+        return rootDocument
             ? {
-                  version: this.rootDocument.Version,
-                  installationId: this.rootDocument.InstallationId,
+                  version: rootDocument.Version,
+                  installationId: rootDocument.InstallationId,
               }
             : null;
-    }
-
-    throwIfClientNotConnected() {
-        if (!this.isConnected()) {
-            const errorMessage = `Can't get the link from the client, because the client has not yet been connected.`;
-            throw new Error(errorMessage);
-        }
-    }
-
-    getSystemLink<T>(linkGetter: (links: GlobalRootLinks) => T): T {
-        this.throwIfClientNotConnected();
-        const link = linkGetter(this.rootDocument!.Links);
-        if (link === null) {
-            const errorMessage = `Can't get the link for ${name} from the client, because it could not be found in the root document.`;
-            throw new Error(errorMessage);
-        }
-        return link;
-    }
-
-    getLink(name: GlobalAndSpaceRootLinks): string {
-        this.throwIfClientNotConnected();
-
-        const spaceLinkExists = this.spaceRootDocument && this.spaceRootDocument.Links !== undefined && this.spaceRootDocument.Links[name];
-        const link = spaceLinkExists ? this.spaceRootDocument!.Links[name] : this.rootDocument!.Links[name];
-        if (!link) {
-            const errorMessage = `Can't get the link for ${name} from the client, because it could not be found in the root document or the space root document.`;
-            throw new Error(errorMessage);
-        }
-        return link;
     }
 
     private dispatchRequest(method: any, url: string, requestBody?: any) {
         return new Promise((resolve, reject) => {
             new ApiClient({
                 configuration: this.configuration,
-                session: this.session,
                 error: (e) => reject(e),
                 method: method,
                 url: url,
                 requestBody,
                 success: (data) => resolve(data),
-                tryGetServerInformation: () => this.tryGetServerInformation(),
-                getAntiForgeryTokenCallback: () => this.getAntiforgeryToken(),
                 onRequestCallback: (r) => this.onRequest(r),
                 onResponseCallback: (r) => this.onResponse(r),
                 onErrorResponseCallback: (r) => this.onErrorResponse(r),
@@ -450,23 +283,7 @@ export class Client {
         });
     }
 
-    isConnected() {
-        return this.rootDocument !== null;
-    }
-
-    private getArgsWithSpaceId(args: RouteArgs) {
-        return this.spaceId ? { spaceId: this.spaceId, ...args } : args;
-    }
-
-    private getGlobalRootDocument() {
-        if (!this.isConnected()) {
-            throw new Error("The Octopus Client has not connected.");
-        }
-
-        return this.rootDocument;
-    }
-
-    resolveUrlWithSpaceId(path: string, args?: RouteArgs): string {
-        return this.resolve(path, this.getArgsWithSpaceId(args!));
+    resolveUrl(path: string, args?: RouteArgs): string {
+        return this.resolve(path, args);
     }
 }

@@ -20,16 +20,15 @@ export function processConfiguration(configuration?: ClientConfiguration): Clien
             } else {
                 console.error(message);
             }
-        }
-    }
+        },
+    };
 
     if (!configuration) {
         return {
             userAgentApp: "Test",
             apiKey: apiKey,
             instanceURL: host,
-            autoConnect: true,
-            logging: logger
+            logging: logger,
         };
     }
 
@@ -37,8 +36,7 @@ export function processConfiguration(configuration?: ClientConfiguration): Clien
         userAgentApp: "Test",
         instanceURL: !configuration.instanceURL || configuration.instanceURL.length === 0 ? host : configuration.instanceURL,
         apiKey: !configuration.apiKey || configuration.apiKey.length === 0 ? apiKey : configuration.apiKey,
-        autoConnect: configuration.autoConnect === undefined ? true : configuration.autoConnect,
-        logging: logger
+        logging: logger,
     };
 }
 

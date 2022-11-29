@@ -1,6 +1,6 @@
-import { SpaceScopedResourceV2, ExtensionSettingsValues, NamedResourceV2, NewNamedResourceV2, NewSpaceScopedResourceV2 } from "..";
+import { SpaceScopedResource, ExtensionSettingsValues, NamedResource, NewNamedResource, NewSpaceScopedResource } from "..";
 
-export interface DeploymentEnvironment extends NamedResourceV2, SpaceScopedResourceV2 {
+export interface DeploymentEnvironment extends SpaceScopedResource, NamedResource {
     Description?: string;
     AllowDynamicInfrastructure: boolean;
     ExtensionSettings: ExtensionSettingsValues[];
@@ -8,7 +8,7 @@ export interface DeploymentEnvironment extends NamedResourceV2, SpaceScopedResou
     UseGuidedFailure: boolean;
 }
 
-export interface NewDeploymentEnvironment extends NewNamedResourceV2, NewSpaceScopedResourceV2 {
+export interface NewDeploymentEnvironment extends NewSpaceScopedResource, NewNamedResource {
     Description?: string;
     UseGuidedFailure?: boolean;
     AllowDynamicInfrastructure?: boolean;

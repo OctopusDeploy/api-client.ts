@@ -1,4 +1,4 @@
-import { Client, ResourceCollectionV2 } from "../..";
+import { Client, ResourceCollection } from "../..";
 import { chunk, flatMap } from "lodash";
 import { ServerTask, ServerTaskDetails } from "../../features/serverTasks";
 
@@ -13,8 +13,8 @@ export async function serverTaskGet(client: Client, spaceName: string, serverTas
 export async function serverTasksGet(client: Client, spaceName: string, serverTaskIds: string[]): Promise<ServerTask[]> {
     const batchSize = 300;
     const idArrays = chunk(serverTaskIds, batchSize);
-    const promises: Array<Promise<ResourceCollectionV2<ServerTask>>> = idArrays.map((i, index) => {
-        return client.request<ResourceCollectionV2<ServerTask>>(`~/api/{spaceId}/tasks{?skip,take,ids,partialName}`, {
+    const promises: Array<Promise<ResourceCollection<ServerTask>>> = idArrays.map((i, index) => {
+        return client.request<ResourceCollection<ServerTask>>(`~/api/{spaceId}/tasks{?skip,take,ids,partialName}`, {
             spaceName,
             ids: i,
             skip: index * batchSize,

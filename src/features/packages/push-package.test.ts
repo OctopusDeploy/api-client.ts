@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/init-declarations */
-import { NewSpace, SpaceResource, UserResource } from "@octopusdeploy/message-contracts";
 import AdmZip from "adm-zip";
 import { randomUUID } from "crypto";
 import { mkdtemp, rm } from "fs/promises";
@@ -7,16 +6,16 @@ import { tmpdir } from "os";
 import path from "path";
 import { Client } from "../../client";
 import { processConfiguration } from "../../clientConfiguration.test";
-import { OverwriteMode } from "../../repositories/packageRepository";
-import { OctopusSpaceRepository, Repository } from "../../repository";
+import { OverwriteMode } from "../overwriteMode";
 import { packagePush } from ".";
+import { packageGet, packagesList, UserProjection } from "../..";
+import { Space, SpaceRepository } from "../spaces";
+import { userGetCurrent } from "../users/user-get-current";
 
 describe("push package", () => {
     let client: Client;
-    let repository: OctopusSpaceRepository;
-    let space: SpaceResource;
-    let systemRepository: Repository;
-    let user: UserResource;
+    let space: Space;
+    let user: UserProjection;
 
     jest.setTimeout(100000);
 
@@ -36,22 +35,21 @@ describe("push package", () => {
 
         client = await Client.create(processConfiguration());
         console.log(`Client connected to API endpoint successfully.`);
-        systemRepository = new Repository(client);
-        user = await systemRepository.users.getCurrent();
+        user = await userGetCurrent(client);
     });
 
     beforeEach(async () => {
         const spaceName = randomUUID().substring(0, 20);
         console.log(`Creating space, "${spaceName}"...`);
-        space = await systemRepository.spaces.create(NewSpace(spaceName, [], [user]));
-        repository = await systemRepository.forSpace(space);
+        const spaceRepository = new SpaceRepository(client);
+        space = await spaceRepository.create({ Name: spaceName, SpaceManagersTeams: [], SpaceManagersTeamMembers: [user.Id] });
     });
 
     test("single package", async () => {
         await packagePush(client, space.Name, [path.join(tempOutDir, `Hello.1.0.0.zip`)], OverwriteMode.OverwriteExisting);
 
-        const results = await repository.packages.list({ filter: "Hello" });
-        const result = await repository.packages.get(results.Items[0].Id);
+        const results = await packagesList(client, space.Name, { filter: "Hello" });
+        const result = await packageGet(client, space.Name, results.Items[0].Id);
 
         expect(result.PackageId).toStrictEqual("Hello");
         expect(result.Version).toStrictEqual("1.0.0");
@@ -65,14 +63,14 @@ describe("push package", () => {
             OverwriteMode.OverwriteExisting
         );
 
-        let results = await repository.packages.list({ filter: "Hello" });
-        let result = await repository.packages.get(results.Items[0].Id);
+        let results = await packagesList(client, space.Name, { filter: "Hello" });
+        let result = await packageGet(client, space.Name, results.Items[0].Id);
 
         expect(result.PackageId).toStrictEqual("Hello");
         expect(result.Version).toStrictEqual("1.0.0");
 
-        results = await repository.packages.list({ filter: "GoodBye" });
-        result = await repository.packages.get(results.Items[0].Id);
+        results = await packagesList(client, space.Name, { filter: "GoodBye" });
+        result = await packageGet(client, space.Name, results.Items[0].Id);
 
         expect(result.PackageId).toStrictEqual("GoodBye");
         expect(result.Version).toStrictEqual("2.0.0");
@@ -87,8 +85,9 @@ describe("push package", () => {
 
         console.log(`Deleting space, ${space.Name}...`);
         space.TaskQueueStopped = true;
-        await systemRepository.spaces.modify(space);
-        await systemRepository.spaces.del(space);
+        const spaceRepository = new SpaceRepository(client);
+        await spaceRepository.modify(space);
+        await spaceRepository.del(space);
         console.log(`Space '${space.Name}' deleted successfully.`);
     });
 });
