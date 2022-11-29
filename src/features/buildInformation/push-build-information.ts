@@ -3,6 +3,7 @@ import { Client } from "../../client";
 import { OverwriteMode } from "../overwriteMode";
 import { SpaceScopedOperation } from "../spaceScopedOperation";
 import { PackageIdentity } from "./package-identity";
+import { spaceScopedRoutePrefix } from "../..";
 
 export interface CreateOctopusBuildInformationCommand extends SpaceScopedOperation {
     BuildEnvironment: string;
@@ -31,7 +32,7 @@ export async function buildInformationPush(
     for (const pkg of buildInformation.Packages) {
         tasks.push(
             client.doCreate<MappedOctopusPackageVersionBuildInformation>(
-                `~/api/{spaceId}/build-information{?overwriteMode}`,
+                `${spaceScopedRoutePrefix}/build-information{?overwriteMode}`,
                 {
                     spaceName: buildInformation.spaceName,
                     PackageId: pkg.Id,

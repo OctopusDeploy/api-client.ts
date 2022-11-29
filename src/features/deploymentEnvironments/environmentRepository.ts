@@ -2,6 +2,7 @@ import type { Client } from "../../client";
 import { ListArgs } from "../basicRepository";
 import { ResourceCollection } from "../resourceCollection";
 import { SpaceScopedBasicRepository } from "../spaceScopedBasicRepository";
+import { spaceScopedRoutePrefix } from "../spaceScopedRoutePrefix";
 import { DeploymentEnvironment, NewDeploymentEnvironment } from "./deploymentEnvironment";
 
 type EnvironmentRepositoryListArgs = {
@@ -11,33 +12,33 @@ type EnvironmentRepositoryListArgs = {
 
 export class EnvironmentRepository extends SpaceScopedBasicRepository<DeploymentEnvironment, NewDeploymentEnvironment, EnvironmentRepositoryListArgs> {
     constructor(client: Client, spaceName: string) {
-        super(client, spaceName, "~/api/{spaceId}/environments{/id}{?skip,take,ids,partialName}");
+        super(client, spaceName, `${spaceScopedRoutePrefix}/environments{/id}{?skip,take,ids,partialName}`);
     }
 
     // getMetadata(environment: DeploymentEnvironment): Promise<EnvironmentSettingsMetadata[]> {
-    //     return this.client.get('~/api/{spaceId}/environments/{id}/metadata', { spaceId: environment.SpaceId, id: environment.Id });
+    //     return this.client.get('${spaceScopedRoutePrefix}/environments/{id}/metadata', { spaceId: environment.SpaceId, id: environment.Id });
     // }
 
     sort(order: string[]) {
-        return this.client.doUpdate("~/api/{spaceId}/environments/sortorder", order, { spaceName: this.spaceName });
+        return this.client.doUpdate(`${spaceScopedRoutePrefix}/environments/sortorder`, order, { spaceName: this.spaceName });
     }
 
     summary(args?: Partial<EnvironmentSummaryArgs>) {
         return this.client.request<DeploymentEnvironment>(
-            "~/api/{spaceId}/environments/summary{?ids,partialName,machinePartialName,roles,isDisabled,healthStatuses,commStyles,tenantIds,tenantTags,hideEmptyEnvironments,shellNames,deploymentTargetTypes}",
+            `${spaceScopedRoutePrefix}/environments/summary{?ids,partialName,machinePartialName,roles,isDisabled,healthStatuses,commStyles,tenantIds,tenantTags,hideEmptyEnvironments,shellNames,deploymentTargetTypes}`,
             { spaceName: this.spaceName, ...args }
         );
     }
 
     machines(environment: DeploymentEnvironment, args?: Partial<EnvironmentMachinesArgs>): Promise<ResourceCollection<DeploymentEnvironment>> {
         return this.client.request<ResourceCollection<DeploymentEnvironment>>(
-            "~/api/{spaceId}/environments/{id}/machines{?skip,take,partialName,roles,isDisabled,healthStatuses,commStyles,tenantIds,tenantTags,shellNames,deploymentTargetTypes}",
+            `${spaceScopedRoutePrefix}/environments/{id}/machines{?skip,take,partialName,roles,isDisabled,healthStatuses,commStyles,tenantIds,tenantTags,shellNames,deploymentTargetTypes}`,
             { spaceName: this.spaceName, id: environment.Id, ...args }
         );
     }
 
     variablesScopedOnlyToThisEnvironment(environment: DeploymentEnvironment): Promise<VariablesScopedToEnvironmentResponse> {
-        return this.client.request<VariablesScopedToEnvironmentResponse>("~/api/{spaceId}/environments/{id}/singlyScopedVariableDetails", {
+        return this.client.request<VariablesScopedToEnvironmentResponse>(`${spaceScopedRoutePrefix}/environments/{id}/singlyScopedVariableDetails`, {
             spaceName: this.spaceName,
             id: environment.Id,
         });

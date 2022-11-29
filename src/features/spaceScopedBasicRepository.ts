@@ -3,6 +3,7 @@ import { Client } from "../client";
 import { RouteArgs } from "../resolver";
 import { ListArgs, BasicRepository } from "./basicRepository";
 import { ResourceCollection } from "./resourceCollection";
+import { spaceScopedRoutePrefix } from "./spaceScopedRoutePrefix";
 
 export class SpaceScopedBasicRepository<
     TExistingResource extends SpaceScopedResource,
@@ -15,6 +16,9 @@ export class SpaceScopedBasicRepository<
 
     constructor(client: Client, spaceName: string, baseApiTemplate: string) {
         super(client, baseApiTemplate);
+        if (!baseApiTemplate.startsWith(spaceScopedRoutePrefix)) {
+            throw new Error("Space scoped repositories must prefix their baseApiTemplate with `spaceScopedRoutePrefix`");
+        }
         this.spaceName = spaceName;
     }
 

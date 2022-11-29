@@ -3,6 +3,7 @@ import { ListArgs, SpaceScopedBasicRepository } from "..";
 import { NewTenant, Tenant, TagTestResult } from "./tenant";
 import { TenantVariable } from "./tenantVariable";
 import { TenantMissingVariable } from "./tenantMissingVariables";
+import { spaceScopedRoutePrefix } from "../spaceScopedRoutePrefix";
 
 type TenantRepositoryListArgs = {
     clone?: boolean;
@@ -15,19 +16,19 @@ type TenantRepositoryListArgs = {
 
 export class TenantRepository extends SpaceScopedBasicRepository<Tenant, NewTenant, TenantRepositoryListArgs> {
     constructor(client: Client, spaceName: string) {
-        super(client, spaceName, "~/api/{spaceId}/tenants{/id}{?skip,projectId,tags,take,ids,clone,partialName,clonedFromTenantId}");
+        super(client, spaceName, `${spaceScopedRoutePrefix}/tenants{/id}{?skip,projectId,tags,take,ids,clone,partialName,clonedFromTenantId}`);
     }
 
     tagTest(tenantIds: string[], tags: string[]): Promise<TagTestResult> {
-        return this.client.request("~/api/{spaceId}/tenants/tag-test{?tenantIds,tags}", { tenantIds, tags });
+        return this.client.request(`${spaceScopedRoutePrefix}/tenants/tag-test{?tenantIds,tags}`, { tenantIds, tags });
     }
 
     getVariables(tenant: Tenant): Promise<TenantVariable> {
-        return this.client.request("~/api/{spaceId}/tenants/{id}/variables");
+        return this.client.request(`${spaceScopedRoutePrefix}/tenants/{id}/variables`);
     }
 
     setVariables(tenant: Tenant, variables: any): Promise<TenantVariable> {
-        return this.client.doUpdate("~/api/{spaceId}/tenants/{id}/variables", variables);
+        return this.client.doUpdate(`${spaceScopedRoutePrefix}/tenants/{id}/variables`, variables);
     }
 
     missingVariables(filterOptions: FilterOptions = {}, includeDetails: boolean = false): Promise<TenantMissingVariable[]> {
@@ -37,7 +38,7 @@ export class TenantRepository extends SpaceScopedBasicRepository<Tenant, NewTena
             projectId: filterOptions.projectId,
             tenantId: filterOptions.tenantId,
         };
-        return this.client.request("~/api/{spaceId}/tenants/variables-missing{?tenantId,projectId,environmentId,includeDetails}", payload);
+        return this.client.request(`${spaceScopedRoutePrefix}/tenants/variables-missing{?tenantId,projectId,environmentId,includeDetails}`, payload);
     }
 }
 

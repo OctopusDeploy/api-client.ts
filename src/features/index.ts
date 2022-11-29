@@ -11,6 +11,7 @@ export * from "./spaceScopedBasicRepository";
 export * from "./spaceScopedOperation";
 export * from "./spaceScopedRequest";
 export * from "./spaceScopedResource";
+export * from "./spaceScopedRoutePrefix";
 export * from "./overwriteMode";
 export * from "./permission";
 export * from "./buildInformation";

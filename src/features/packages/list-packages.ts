@@ -1,4 +1,4 @@
-import { Client, ListArgs, ResourceCollection } from "../..";
+import { Client, ListArgs, ResourceCollection, spaceScopedRoutePrefix } from "../..";
 import { Package } from "./package";
 
 type PackagesListArgs = {
@@ -9,9 +9,12 @@ type PackagesListArgs = {
 } & ListArgs;
 
 export async function packagesList(client: Client, spaceName: string, args?: PackagesListArgs): Promise<ResourceCollection<Package>> {
-    const response = await client.request<ResourceCollection<Package>>(`~/api/{spaceId}/packages{/id}{?nuGetPackageId,filter,latest,skip,take,includeNotes}`, {
-        spaceName,
-        ...args,
-    });
+    const response = await client.request<ResourceCollection<Package>>(
+        `${spaceScopedRoutePrefix}/packages{/id}{?nuGetPackageId,filter,latest,skip,take,includeNotes}`,
+        {
+            spaceName,
+            ...args,
+        }
+    );
     return response;
 }

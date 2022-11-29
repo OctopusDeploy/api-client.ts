@@ -2,7 +2,7 @@ import { Package } from "./package";
 import { promises as fs } from "fs";
 import path from "path";
 import FormData from "form-data";
-import { Client, resolveSpaceId } from "../..";
+import { Client, resolveSpaceId, spaceScopedRoutePrefix } from "../..";
 import { OverwriteMode } from "../overwriteMode";
 
 export async function packagePush(
@@ -34,6 +34,6 @@ export async function packagePush(
         const fd = new FormData();
         const data = await fs.readFile(filePath);
         fd.append("fileToUpload", data, fileName);
-        return client.post<Package>(`~/api/{spaceId}/packages/raw{?overwriteMode}`, fd, { overwriteMode, spaceId });
+        return client.post<Package>(`${spaceScopedRoutePrefix}/packages/raw{?overwriteMode}`, fd, { overwriteMode, spaceId });
     }
 }

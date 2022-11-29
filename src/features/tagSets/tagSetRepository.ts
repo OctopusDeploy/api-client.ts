@@ -1,6 +1,7 @@
 import type { Client } from "../../client";
 import { ListArgs, SpaceScopedBasicRepository } from "..";
 import { NewTagSet, TagSet } from "./tagSet";
+import { spaceScopedRoutePrefix } from "../spaceScopedRoutePrefix";
 
 type TagSetRepositoryListArgs = {
     ids?: string[];
@@ -9,10 +10,10 @@ type TagSetRepositoryListArgs = {
 
 export class TagSetRepository extends SpaceScopedBasicRepository<TagSet, NewTagSet, TagSetRepositoryListArgs> {
     constructor(client: Client, spaceName: string) {
-        super(client, spaceName, "~/api/{spaceId}/tagsets{/id}{?skip,take,ids,partialName}");
+        super(client, spaceName, `${spaceScopedRoutePrefix}/tagsets{/id}{?skip,take,ids,partialName}`);
     }
 
     sort(ids: string[]) {
-        return this.client.doUpdate("~/api/{spaceId}/tagsets/sortorder", ids, { spaceName: this.spaceName });
+        return this.client.doUpdate(`${spaceScopedRoutePrefix}/tagsets/sortorder`, ids, { spaceName: this.spaceName });
     }
 }
