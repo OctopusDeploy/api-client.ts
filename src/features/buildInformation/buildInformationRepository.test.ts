@@ -6,12 +6,14 @@ import { tmpdir } from "os";
 import path from "path";
 import { Client } from "../../client";
 import { processConfiguration } from "../../clientConfiguration.test";
-import { OverwriteMode } from "../overwriteMode";
-import { packagePush, packageGet, packagesList } from ".";
+import { PackageIdentity } from "./package-identity";
+import { BuildInformationRepository } from ".";
+import { packagePush } from "../packages";
 import { Space, SpaceRepository } from "../spaces";
+import { packageGet, packagesList } from "../packages";
 import { userGetCurrent, UserProjection } from "../users";
 
-describe("push package", () => {
+describe("push build information", () => {
     let client: Client;
     let space: Space;
     let user: UserProjection;
@@ -19,7 +21,7 @@ describe("push package", () => {
     jest.setTimeout(100000);
 
     let tempOutDir: string;
-    const packages: string[] = ["Hello:1.0.0", "GoodBye:2.0.0"];
+    const packages: PackageIdentity[] = [new PackageIdentity("Hello", "1.0.0")];
 
     beforeAll(async () => {
         tempOutDir = await mkdtemp(path.join(tmpdir(), "octopus_"));
@@ -28,7 +30,7 @@ describe("push package", () => {
         zip.addFile("test.txt", Buffer.from("inner content of the file", "utf8"));
 
         for (const p of packages) {
-            const packagePath = path.join(tempOutDir, `${p.replace(":", ".")}.zip`);
+            const packagePath = path.join(tempOutDir, `${p.Id}.${p.Version}.zip`);
             zip.writeZip(packagePath);
         }
 
@@ -44,35 +46,31 @@ describe("push package", () => {
         space = await spaceRepository.create({ Name: spaceName, SpaceManagersTeams: [], SpaceManagersTeamMembers: [user.Id], IsDefault: false });
     });
 
-    test("single package", async () => {
-        await packagePush(client, space.Name, [path.join(tempOutDir, `Hello.1.0.0.zip`)], OverwriteMode.OverwriteExisting);
+    test("to single package", async () => {
+        await packagePush(client, space.Name, [path.join(tempOutDir, "Hello.1.0.0.zip")]);
+
+        await new BuildInformationRepository(client).push({
+            spaceName: space.Name,
+            BuildEnvironment: "BitBucket",
+            Branch: "main",
+            BuildNumber: "288",
+            BuildUrl: "https://bitbucket.org/octopussamples/petclinic/addon/pipelines/home#!/results/288",
+            VcsType: "Git",
+            VcsRoot: "http://bitbucket.org/octopussamples/petclinic",
+            VcsCommitNumber: "314cf2c3ee916c92a384c2796a6abe332d678e4f",
+            Packages: [{ Id: "Hello", Version: "1.0.0" }],
+            Commits: [
+                {
+                    Id: "314cf2c3ee916c92a384c2796a6abe332d678e4f",
+                    Comment: "GOD-1 - 'test build info",
+                },
+            ],
+        });
 
         const results = await packagesList(client, space.Name, { filter: "Hello" });
         const result = await packageGet(client, space.Name, results.Items[0].Id);
 
-        expect(result.PackageId).toStrictEqual("Hello");
-        expect(result.Version).toStrictEqual("1.0.0");
-    });
-
-    test("multiple packages", async () => {
-        await packagePush(
-            client,
-            space.Name,
-            [path.join(tempOutDir, `Hello.1.0.0.zip`), path.join(tempOutDir, `GoodBye.2.0.0.zip`)],
-            OverwriteMode.OverwriteExisting
-        );
-
-        let results = await packagesList(client, space.Name, { filter: "Hello" });
-        let result = await packageGet(client, space.Name, results.Items[0].Id);
-
-        expect(result.PackageId).toStrictEqual("Hello");
-        expect(result.Version).toStrictEqual("1.0.0");
-
-        results = await packagesList(client, space.Name, { filter: "GoodBye" });
-        result = await packageGet(client, space.Name, results.Items[0].Id);
-
-        expect(result.PackageId).toStrictEqual("GoodBye");
-        expect(result.Version).toStrictEqual("2.0.0");
+        expect(result.PackageVersionBuildInformation?.VcsCommitNumber).toStrictEqual("314cf2c3ee916c92a384c2796a6abe332d678e4f");
     });
 
     afterAll(async () => {
@@ -87,6 +85,5 @@ describe("push package", () => {
         const spaceRepository = new SpaceRepository(client);
         await spaceRepository.modify(space);
         await spaceRepository.del(space);
-        console.log(`Space '${space.Name}' deleted successfully.`);
     });
 });

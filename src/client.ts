@@ -3,16 +3,14 @@ import { ClientConfiguration } from "./clientConfiguration";
 import type { ClientErrorResponseDetails } from "./clientErrorResponseDetails";
 import type { ClientRequestDetails } from "./clientRequestDetails";
 import type { ClientResponseDetails } from "./clientResponseDetails";
-import Environment from "./environment";
 import { isSpaceScopedArgs } from "./features/spaceScopedArgs";
 import { Logger } from "./logger";
 import { resolveSpaceId, isSpaceScopedOperation, isSpaceScopedRequest } from "./features";
 import { Resolver, RouteArgs } from "./resolver";
 import { Callback, SubscriptionRecord } from "./subscriptionRecord";
-import { OctopusError } from "./octopusError";
 import { ServerInformation } from "./serverInformation";
 
-const apiLocation = "~/api";
+export const apiLocation = "~/api";
 
 interface RootResource {
     Application: string;

@@ -1,3 +1,5 @@
 export * from "./deployments";
-export * from "./create-release";
+export * from "./createReleaseCommandV1";
+export * from "./createReleaseResponseV1";
 export * from "./releaseChanges";
+export * from "./releaseRepository";

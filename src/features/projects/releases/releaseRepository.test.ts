@@ -7,8 +7,8 @@ import { tmpdir } from "os";
 import path from "path";
 import { Client } from "../../../client";
 import { processConfiguration } from "../../../clientConfiguration.test";
-import { releaseCreate, CreateReleaseCommandV1 } from ".";
-import { packagePush } from "../../packages";
+import { ReleaseRepository, CreateReleaseCommandV1 } from ".";
+import { PackageRepository } from "../../packages";
 import { EnvironmentRepository, DeploymentEnvironment } from "../../deploymentEnvironments";
 import { Space, SpaceRepository } from "../../spaces";
 import { Project, NewProject, ProjectRepository } from "../../projects";
@@ -105,7 +105,8 @@ describe("create a release", () => {
             spaceName: space.Name,
             ProjectName: project.Name,
         };
-        const response = await releaseCreate(client, command);
+        const releaseRepository = new ReleaseRepository(client, space.Name);
+        const response = await releaseRepository.create(command);
         expect(response.ReleaseId).toBeTruthy();
         expect(response.ReleaseVersion).toBeTruthy();
     });
@@ -180,8 +181,9 @@ describe("create a release", () => {
             await deploymentProcessUpdate(client, project, deploymentProcess);
             console.log(`Deployment process, "${deploymentProcess.Id}" updated successfully.`);
 
+            const packageRepository = new PackageRepository(client, space.Name);
             for (const file of await readdir(tempOutDir)) {
-                await packagePush(client, space.Name, [path.join(tempOutDir, file)]);
+                await packageRepository.push([path.join(tempOutDir, file)]);
             }
         });
 
@@ -195,7 +197,8 @@ describe("create a release", () => {
                 ProjectName: project.Name,
                 Packages: packages,
             };
-            const response = await releaseCreate(client, command);
+            const releaseRepository = new ReleaseRepository(client, space.Name);
+            const response = await releaseRepository.create(command);
             expect(response.ReleaseId).toBeTruthy();
             expect(response.ReleaseVersion).toBeTruthy();
         });

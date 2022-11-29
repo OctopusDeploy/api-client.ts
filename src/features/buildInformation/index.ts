@@ -1,2 +1,3 @@
+export * from "./buildInformationRepository";
+export * from "./mappedOctopusPackageVersionBuildInformation";
 export * from "./package-identity";
-export * from "./push-build-information";

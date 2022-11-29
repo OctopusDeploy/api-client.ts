@@ -9,11 +9,3 @@ export interface Deployment extends Execution {
     ChannelId: string;
     ForcePackageRedeployment: boolean;
 }
-
-export interface NewDeployment extends NewExecution {
-    ReleaseId: string;
-    ChannelId?: string;
-    DeploymentProcessId?: string;
-    EnvironmentId: string;
-    ForcePackageRedeployment?: boolean;
-}

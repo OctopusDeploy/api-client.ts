@@ -1,4 +1,4 @@
-import { Client } from "../client";
+import { apiLocation, Client } from "../client";
 import { Space } from "./spaces";
 import { ResourceCollection } from "./resourceCollection";
 
@@ -11,7 +11,7 @@ export async function resolveSpaceId(client: Client, spaceName: string): Promise
 
     client.debug(`Resolving space from name '${spaceName}'`);
 
-    const spaces = await client.get<ResourceCollection<Space>>("~/api/spaces", { partialName: spaceName });
+    const spaces = await client.get<ResourceCollection<Space>>(`${apiLocation}/spaces`, { partialName: spaceName });
     let spaceId = "";
 
     if (spaces.TotalResults === 0) {

@@ -3,13 +3,12 @@ import { PackageRequirement, RunCondition, RunConditionForAction, StartTrigger }
 import { randomUUID } from "crypto";
 import { Client } from "../../../../client";
 import { processConfiguration } from "../../../../clientConfiguration.test";
-import { DeploymentRepository } from "../../../../features/projects/releases/deployments";
 import { DeploymentEnvironment, EnvironmentRepository } from "../../../../features/deploymentEnvironments";
 import { ServerTaskDetails } from "../../../../features/serverTasks";
-import { releaseCreate, CreateReleaseCommandV1 } from "../../../projects/releases";
+import { ReleaseRepository, CreateReleaseCommandV1 } from "../../../projects/releases";
 import { ExecutionWaiter } from "../../execution-waiter";
 import { CreateDeploymentUntenantedCommandV1 } from "./createDeploymentUntenantedCommandV1";
-import { deployReleaseUntenanted } from "./deploy-release";
+import { DeploymentRepository } from "./deploymentRepository";
 import { Space, SpaceRepository } from "../../../spaces";
 import { Project, NewProject, ProjectRepository } from "../../../projects";
 import { UserProjection, userGetCurrent } from "../../../users";
@@ -104,7 +103,8 @@ describe("deploy a release", () => {
             spaceName: space.Name,
             ProjectName: project.Name,
         };
-        const releaseResponse = await releaseCreate(client, releaseCommand);
+        const releaseRepository = new ReleaseRepository(client, space.Name);
+        const releaseResponse = await releaseRepository.create(releaseCommand);
 
         const deployCommand: CreateDeploymentUntenantedCommandV1 = {
             spaceName: space.Name,
@@ -112,9 +112,8 @@ describe("deploy a release", () => {
             ReleaseVersion: releaseResponse.ReleaseVersion,
             EnvironmentNames: [environment.Name],
         };
-        const response = await deployReleaseUntenanted(client, deployCommand);
-
         const deploymentRepository = new DeploymentRepository(client, space.Name);
+        const response = await deploymentRepository.create(deployCommand);
         const deployments = await deploymentRepository.list({ ids: response.DeploymentServerTasks.map((t) => t.DeploymentId) });
         expect(deployments.Items.length).toBe(1);
 

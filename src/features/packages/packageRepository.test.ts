@@ -6,14 +6,12 @@ import { tmpdir } from "os";
 import path from "path";
 import { Client } from "../../client";
 import { processConfiguration } from "../../clientConfiguration.test";
-import { PackageIdentity } from "./package-identity";
-import { buildInformationPush } from ".";
-import { packagePush } from "../packages";
+import { OverwriteMode } from "../overwriteMode";
+import { PackageRepository } from ".";
 import { Space, SpaceRepository } from "../spaces";
-import { packageGet, packagesList } from "../packages";
 import { userGetCurrent, UserProjection } from "../users";
 
-describe("push build information", () => {
+describe("push package", () => {
     let client: Client;
     let space: Space;
     let user: UserProjection;
@@ -21,7 +19,7 @@ describe("push build information", () => {
     jest.setTimeout(100000);
 
     let tempOutDir: string;
-    const packages: PackageIdentity[] = [new PackageIdentity("Hello", "1.0.0")];
+    const packages: string[] = ["Hello:1.0.0", "GoodBye:2.0.0"];
 
     beforeAll(async () => {
         tempOutDir = await mkdtemp(path.join(tmpdir(), "octopus_"));
@@ -30,7 +28,7 @@ describe("push build information", () => {
         zip.addFile("test.txt", Buffer.from("inner content of the file", "utf8"));
 
         for (const p of packages) {
-            const packagePath = path.join(tempOutDir, `${p.Id}.${p.Version}.zip`);
+            const packagePath = path.join(tempOutDir, `${p.replace(":", ".")}.zip`);
             zip.writeZip(packagePath);
         }
 
@@ -46,31 +44,32 @@ describe("push build information", () => {
         space = await spaceRepository.create({ Name: spaceName, SpaceManagersTeams: [], SpaceManagersTeamMembers: [user.Id], IsDefault: false });
     });
 
-    test("to single package", async () => {
-        await packagePush(client, space.Name, [path.join(tempOutDir, "Hello.1.0.0.zip")]);
+    test("single package", async () => {
+        const packageRepository = new PackageRepository(client, space.Name);
+        await packageRepository.push([path.join(tempOutDir, `Hello.1.0.0.zip`)], OverwriteMode.OverwriteExisting);
 
-        await buildInformationPush(client, {
-            spaceName: space.Name,
-            BuildEnvironment: "BitBucket",
-            Branch: "main",
-            BuildNumber: "288",
-            BuildUrl: "https://bitbucket.org/octopussamples/petclinic/addon/pipelines/home#!/results/288",
-            VcsType: "Git",
-            VcsRoot: "http://bitbucket.org/octopussamples/petclinic",
-            VcsCommitNumber: "314cf2c3ee916c92a384c2796a6abe332d678e4f",
-            Packages: [{ Id: "Hello", Version: "1.0.0" }],
-            Commits: [
-                {
-                    Id: "314cf2c3ee916c92a384c2796a6abe332d678e4f",
-                    Comment: "GOD-1 - 'test build info",
-                },
-            ],
-        });
+        const results = await packageRepository.list({ filter: "Hello" });
+        const result = await packageRepository.get(results.Items[0].Id);
 
-        const results = await packagesList(client, space.Name, { filter: "Hello" });
-        const result = await packageGet(client, space.Name, results.Items[0].Id);
+        expect(result.PackageId).toStrictEqual("Hello");
+        expect(result.Version).toStrictEqual("1.0.0");
+    });
 
-        expect(result.PackageVersionBuildInformation?.VcsCommitNumber).toStrictEqual("314cf2c3ee916c92a384c2796a6abe332d678e4f");
+    test("multiple packages", async () => {
+        const packageRepository = new PackageRepository(client, space.Name);
+        await packageRepository.push([path.join(tempOutDir, `Hello.1.0.0.zip`), path.join(tempOutDir, `GoodBye.2.0.0.zip`)], OverwriteMode.OverwriteExisting);
+
+        let results = await packageRepository.list({ filter: "Hello" });
+        let result = await packageRepository.get(results.Items[0].Id);
+
+        expect(result.PackageId).toStrictEqual("Hello");
+        expect(result.Version).toStrictEqual("1.0.0");
+
+        results = await packageRepository.list({ filter: "GoodBye" });
+        result = await packageRepository.get(results.Items[0].Id);
+
+        expect(result.PackageId).toStrictEqual("GoodBye");
+        expect(result.Version).toStrictEqual("2.0.0");
     });
 
     afterAll(async () => {
@@ -85,5 +84,6 @@ describe("push build information", () => {
         const spaceRepository = new SpaceRepository(client);
         await spaceRepository.modify(space);
         await spaceRepository.del(space);
+        console.log(`Space '${space.Name}' deleted successfully.`);
     });
 });
