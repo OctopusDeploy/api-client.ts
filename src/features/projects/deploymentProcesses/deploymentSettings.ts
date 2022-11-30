@@ -1,8 +1,8 @@
 import type { DeploymentActionPackage } from "./deploymentActionPackage";
 import type { ICanBeVersionControlled } from "../../canBeVersionControlled";
 import type { ICommitCommand } from "../../commitCommand";
-import type { Resource } from "../../resource";
-import type { SpaceScopedResource } from "../../spaceScopedResource";
+import type { Resource } from "../../../resource";
+import type { SpaceScopedResource } from "../../../spaceScopedResource";
 
 export enum GuidedFailureMode {
     EnvironmentDefault = "EnvironmentDefault",

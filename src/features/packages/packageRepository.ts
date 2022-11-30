@@ -1,9 +1,13 @@
-import { Client, ListArgs, resolveSpaceId, ResourceCollection, spaceScopedRoutePrefix } from "../..";
 import { Package } from "./package";
 import { promises as fs } from "fs";
 import path from "path";
 import FormData from "form-data";
 import { OverwriteMode } from "../overwriteMode";
+import { ListArgs } from "../basicRepository";
+import { Client } from "../../client";
+import { spaceScopedRoutePrefix } from "../../spaceScopedRoutePrefix";
+import { ResourceCollection } from "../../resourceCollection";
+import { resolveSpaceId } from "../../spaceResolver";
 
 type PackagesListArgs = {
     nuGetPackageId?: string;

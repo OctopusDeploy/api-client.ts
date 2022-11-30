@@ -3,14 +3,15 @@ import { ClientConfiguration } from "./clientConfiguration";
 import type { ClientErrorResponseDetails } from "./clientErrorResponseDetails";
 import type { ClientRequestDetails } from "./clientRequestDetails";
 import type { ClientResponseDetails } from "./clientResponseDetails";
-import { isSpaceScopedArgs } from "./features/spaceScopedArgs";
 import { Logger } from "./logger";
-import { resolveSpaceId, isSpaceScopedOperation, isSpaceScopedRequest } from "./features";
 import { Resolver, RouteArgs } from "./resolver";
 import { Callback, SubscriptionRecord } from "./subscriptionRecord";
 import { ServerInformation } from "./serverInformation";
-
-export const apiLocation = "~/api";
+import { isSpaceScopedOperation } from "./spaceScopedOperation";
+import { resolveSpaceId } from "./spaceResolver";
+import { isSpaceScopedArgs } from "./spaceScopedArgs";
+import { isSpaceScopedRequest } from "./spaceScopedRequest";
+import { apiLocation } from "./apiLocation";
 
 interface RootResource {
     Application: string;
@@ -25,6 +26,7 @@ export class Client {
     responseSubscriptions = new SubscriptionRecord<ClientResponseDetails>();
     errorSubscriptions = new SubscriptionRecord<ClientErrorResponseDetails>();
     private readonly logger: Logger;
+    private serverInformation?: ServerInformation | null;
 
     public static async create(configuration: ClientConfiguration): Promise<Client> {
         if (!configuration.instanceURL) {
@@ -33,6 +35,7 @@ export class Client {
 
         const resolver = new Resolver(configuration.instanceURL);
         const client = new Client(resolver, configuration);
+        await client.getServerInformation();
         return client;
     }
 
@@ -248,11 +251,13 @@ export class Client {
     }
 
     async getServerInformation(): Promise<ServerInformation> {
-        const serverInfo = await this.tryGetServerInformation();
-        if (!serverInfo) {
-            throw new Error("The Octopus server information could not be retrieved. Please check the configured URL.");
+        if (!this.serverInformation) {
+            this.serverInformation = await this.tryGetServerInformation();
+            if (!this.serverInformation) {
+                throw new Error("The Octopus server information could not be retrieved. Please check the configured URL.");
+            }
         }
-        return serverInfo;
+        return this.serverInformation;
     }
 
     async tryGetServerInformation(): Promise<ServerInformation | null> {

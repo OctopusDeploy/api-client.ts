@@ -1,5 +1,5 @@
-import { NamedResource, NewNamedResource } from "../namedResource";
-import { NewSpaceScopedResource, SpaceScopedResource } from "../spaceScopedResource";
+import { NamedResource, NewNamedResource } from "../../namedResource";
+import { NewSpaceScopedResource, SpaceScopedResource } from "../../spaceScopedResource";
 
 export interface Tenant extends SpaceScopedResource, NamedResource {
     Description: string | null;

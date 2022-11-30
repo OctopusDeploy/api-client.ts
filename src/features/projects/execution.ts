@@ -1,4 +1,4 @@
-import { SpaceScopedResource, NewSpaceScopedResource } from "../spaceScopedResource";
+import { SpaceScopedResource, NewSpaceScopedResource } from "../../spaceScopedResource";
 
 export interface Execution extends SpaceScopedResource {
     Name: string;

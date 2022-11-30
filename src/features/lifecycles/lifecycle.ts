@@ -1,5 +1,5 @@
-import { NamedResource } from "../namedResource";
-import { SpaceScopedResource } from "../spaceScopedResource";
+import { NamedResource } from "../../namedResource";
+import { SpaceScopedResource } from "../../spaceScopedResource";
 import type { Phase } from "./phase";
 import type { RetentionPeriod } from "./retentionPeriod";
 

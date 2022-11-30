@@ -1,4 +1,4 @@
-import { NamedResource } from "../namedResource";
+import { NamedResource } from "../../namedResource";
 import type { RetentionPeriod } from "./retentionPeriod";
 
 export type Phase = PhasedResource & {

@@ -1,7 +1,8 @@
 import type { Client } from "../../client";
-import { ListArgs, SpaceScopedBasicRepository } from "..";
 import { NewTagSet, TagSet } from "./tagSet";
-import { spaceScopedRoutePrefix } from "../spaceScopedRoutePrefix";
+import { spaceScopedRoutePrefix } from "../../spaceScopedRoutePrefix";
+import { ListArgs } from "../basicRepository";
+import { SpaceScopedBasicRepository } from "../spaceScopedBasicRepository";
 
 type TagSetRepositoryListArgs = {
     ids?: string[];

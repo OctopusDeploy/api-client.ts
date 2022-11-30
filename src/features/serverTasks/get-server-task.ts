@@ -1,7 +1,7 @@
 import { Client, ResourceCollection } from "../..";
 import { chunk, flatMap } from "lodash";
 import { ServerTask, ServerTaskDetails } from "../../features/serverTasks";
-import { spaceScopedRoutePrefix } from "../spaceScopedRoutePrefix";
+import { spaceScopedRoutePrefix } from "../../spaceScopedRoutePrefix";
 
 export async function serverTaskGet(client: Client, spaceName: string, serverTaskId: string): Promise<ServerTask> {
     if (!serverTaskId) {

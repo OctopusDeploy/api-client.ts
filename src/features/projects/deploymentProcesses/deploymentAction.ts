@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import * as _ from "lodash";
-import { Resource } from "../../resource";
+import { Resource } from "../../../resource";
 import type { ActionInputs } from "./actionInputs";
 import type { ActionProperties } from "./actionProperties";
 import type { DeploymentActionContainer } from "./deploymentActionContainer";

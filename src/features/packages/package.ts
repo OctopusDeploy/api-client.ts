@@ -1,5 +1,5 @@
 import { MappedOctopusPackageVersionBuildInformation } from "../buildInformation/mappedOctopusPackageVersionBuildInformation";
-import { Resource } from "../resource";
+import { Resource } from "../../resource";
 
 export interface Package extends Resource {
     Description: string;

@@ -1,4 +1,4 @@
-import { NewNamedResource, NamedResource } from "../namedResource";
+import { NewNamedResource, NamedResource } from "../../namedResource";
 
 export interface Space extends NamedResource {
     Slug: string;

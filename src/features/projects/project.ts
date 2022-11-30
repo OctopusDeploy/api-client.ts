@@ -2,12 +2,12 @@
 
 import type { DeploymentActionPackage } from "./deploymentProcesses";
 import type { Lifecycle } from "../lifecycles";
-import type { NamedResource } from "../namedResource";
+import type { NamedResource } from "../../namedResource";
 import type { ProjectGroup } from "../projectGroups";
 import type { SensitiveValue } from "../variables";
-import type { NewSpaceScopedResource, SpaceScopedResource } from "../spaceScopedResource";
+import type { NewSpaceScopedResource, SpaceScopedResource } from "../../spaceScopedResource";
 import type { TenantedDeploymentMode } from "./tenantedDeploymentMode";
-import { Resource } from "../resource";
+import { Resource } from "../../resource";
 import { ExtensionSettingsValues } from "../extensionSettingsValues";
 import { ActionTemplateParameter } from "./deploymentProcesses/actionTemplateParameter";
 import { MetadataTypeCollection } from "../forms/dynamicFormResources";

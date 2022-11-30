@@ -1,5 +1,6 @@
-import { Client, SpaceScopedBasicRepository, spaceScopedRoutePrefix } from "../..";
+import { Client, spaceScopedRoutePrefix } from "../..";
 import { ListArgs } from "../basicRepository";
+import { SpaceScopedBasicRepository } from "../spaceScopedBasicRepository";
 import { Feed } from "./feed";
 import { FeedType } from "./feedType";
 

@@ -1,4 +1,4 @@
-import { SpaceScopedResource, ExtensionSettingsValues, NamedResource, NewNamedResource, NewSpaceScopedResource } from "..";
+import { SpaceScopedResource, ExtensionSettingsValues, NamedResource, NewNamedResource, NewSpaceScopedResource } from "../..";
 
 export interface DeploymentEnvironment extends SpaceScopedResource, NamedResource {
     Description?: string;

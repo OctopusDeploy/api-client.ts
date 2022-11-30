@@ -1,7 +1,6 @@
 import { MappedOctopusPackageVersionBuildInformation } from "./mappedOctopusPackageVersionBuildInformation";
-import { Client } from "../../client";
+import { Client, SpaceScopedOperation } from "../..";
 import { OverwriteMode } from "../overwriteMode";
-import { SpaceScopedOperation } from "../spaceScopedOperation";
 import { PackageIdentity } from "./package-identity";
 import { spaceScopedRoutePrefix } from "../..";
 

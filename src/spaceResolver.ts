@@ -1,5 +1,6 @@
-import { apiLocation, Client } from "../client";
-import { Space } from "./spaces";
+import type { Client } from "./client";
+import { apiLocation } from "./apiLocation";
+import { Space } from "./features/spaces/space";
 import { ResourceCollection } from "./resourceCollection";
 
 const knownSpaces: Record<string, string> = {};

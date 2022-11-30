@@ -1,9 +1,9 @@
-import { NewSpaceScopedResource, SpaceScopedResource } from "./spaceScopedResource";
+import { NewSpaceScopedResource, SpaceScopedResource } from "../spaceScopedResource";
 import { Client } from "../client";
 import { RouteArgs } from "../resolver";
 import { ListArgs, BasicRepository } from "./basicRepository";
-import { ResourceCollection } from "./resourceCollection";
-import { spaceScopedRoutePrefix } from "./spaceScopedRoutePrefix";
+import { ResourceCollection } from "../resourceCollection";
+import { spaceScopedRoutePrefix } from "../spaceScopedRoutePrefix";
 
 export class SpaceScopedBasicRepository<
     TExistingResource extends SpaceScopedResource,

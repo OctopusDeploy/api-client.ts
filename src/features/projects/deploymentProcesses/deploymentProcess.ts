@@ -1,7 +1,7 @@
 import { typeSafeHasOwnProperty } from "../../../utils";
 import { ICanBeVersionControlled } from "../../canBeVersionControlled";
 import { ICommitCommand } from "../../commitCommand";
-import { SpaceScopedResource } from "../../spaceScopedResource";
+import { SpaceScopedResource } from "../../../spaceScopedResource";
 import { isRunbookProcess } from "../runbooks/runbookProcess";
 import { DeploymentStep } from "./deploymentStep";
 

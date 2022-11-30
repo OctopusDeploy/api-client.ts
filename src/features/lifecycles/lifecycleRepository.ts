@@ -1,4 +1,6 @@
-import { Client, ListArgs, spaceScopedRoutePrefix } from "../..";
+import { Client } from "../../client";
+import { spaceScopedRoutePrefix } from "../../spaceScopedRoutePrefix";
+import { ListArgs } from "../basicRepository";
 import { SpaceScopedBasicRepository } from "../spaceScopedBasicRepository";
 import { Lifecycle } from "./lifecycle";
 

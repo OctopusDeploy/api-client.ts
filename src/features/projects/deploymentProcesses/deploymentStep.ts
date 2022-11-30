@@ -1,7 +1,7 @@
-import { Resource } from "../../resource";
+import { Resource } from "../../../resource";
 import type { ActionProperties } from "./actionProperties";
 import type { DeploymentAction } from "./deploymentAction";
-import type { NewNamedResource } from "../../namedResource";
+import type { NewNamedResource } from "../../../namedResource";
 
 export interface DeploymentStep extends Resource {
     Id: string;

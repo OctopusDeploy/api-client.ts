@@ -1,5 +1,5 @@
 import type { Client } from "../../../../client";
-import { ResourceCollection, ListArgs, spaceScopedRoutePrefix } from "../../..";
+import { ResourceCollection, ListArgs, spaceScopedRoutePrefix } from "../../../..";
 import { TaskState } from "../../../serverTasks";
 import { Deployment } from "./deployment";
 import {

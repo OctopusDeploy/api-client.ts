@@ -1,4 +1,4 @@
-import { NamedResource } from "../namedResource";
+import { NamedResource } from "../../namedResource";
 import { TaskState } from "./taskState";
 
 export interface ServerTask extends NamedResource {

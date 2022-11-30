@@ -1,5 +1,5 @@
 import { PropertyValue } from "../../..";
-import { Resource } from "../../resource";
+import { Resource } from "../../../resource";
 import type { ActionTemplateParameterDisplaySettings } from "./actionTemplateParameterDisplaySettings";
 
 export interface ActionTemplateParameter extends Resource {

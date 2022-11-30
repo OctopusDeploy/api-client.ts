@@ -1,5 +1,5 @@
 import type { ConnectivityPolicy, GuidedFailureMode } from "../deploymentProcesses";
-import type { NamedResource } from "../../namedResource";
+import type { NamedResource } from "../../../namedResource";
 import type { RunbookEnvironmentScope } from "./runbookEnvironmentScope";
 import type { TenantedDeploymentMode } from "../tenantedDeploymentMode";
 

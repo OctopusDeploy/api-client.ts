@@ -1,8 +1,7 @@
-import type { Client } from "../../client";
+import { Client, spaceScopedRoutePrefix } from "../..";
 import { ListArgs } from "../basicRepository";
-import { ResourceCollection } from "../resourceCollection";
+import { ResourceCollection } from "../../resourceCollection";
 import { SpaceScopedBasicRepository } from "../spaceScopedBasicRepository";
-import { spaceScopedRoutePrefix } from "../spaceScopedRoutePrefix";
 import { DeploymentEnvironment, NewDeploymentEnvironment } from "./deploymentEnvironment";
 
 type EnvironmentRepositoryListArgs = {

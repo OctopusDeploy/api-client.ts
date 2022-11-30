@@ -1,7 +1,7 @@
 import type { ControlType } from "../forms/controlType";
 import type { PropertyValue } from "../variables/propertyValue";
-import { SpaceScopedResource } from "../spaceScopedResource";
-import { NamedResource } from "../namedResource";
+import { SpaceScopedResource } from "../../spaceScopedResource";
+import { NamedResource } from "../../namedResource";
 
 export interface TenantVariableTemplateDisplaySettings {
     "Octopus.SelectOptions"?: string;

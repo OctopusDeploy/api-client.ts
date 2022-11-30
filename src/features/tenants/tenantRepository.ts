@@ -1,9 +1,9 @@
-import type { Client } from "../../client";
-import { ListArgs, SpaceScopedBasicRepository } from "..";
+import { Client, spaceScopedRoutePrefix } from "../..";
+import { ListArgs } from "..";
 import { NewTenant, Tenant, TagTestResult } from "./tenant";
 import { TenantVariable } from "./tenantVariable";
 import { TenantMissingVariable } from "./tenantMissingVariables";
-import { spaceScopedRoutePrefix } from "../spaceScopedRoutePrefix";
+import { SpaceScopedBasicRepository } from "../spaceScopedBasicRepository";
 
 type TenantRepositoryListArgs = {
     clone?: boolean;

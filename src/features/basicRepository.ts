@@ -1,8 +1,8 @@
 import type { Dictionary } from "lodash";
 import type { Client } from "../client";
 import type { RouteArgs } from "../resolver";
-import { ResourceCollection } from "./resourceCollection";
-import { NewResource, Resource } from "./resource";
+import { ResourceCollection } from "../resourceCollection";
+import { NewResource, Resource } from "../resource";
 
 export type ListArgs = {
     skip?: number;

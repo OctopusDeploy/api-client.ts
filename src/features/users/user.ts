@@ -1,4 +1,4 @@
-import { Resource } from "../resource";
+import { Resource } from "../../resource";
 import { ClaimsBasedIdentity } from "./identity";
 
 export interface User extends Resource {
