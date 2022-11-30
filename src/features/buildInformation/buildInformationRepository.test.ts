@@ -49,7 +49,7 @@ describe("push build information", () => {
         const packageRepository = new PackageRepository(client, space.Name);
         await packageRepository.push([path.join(tempOutDir, "Hello.1.0.0.zip")]);
 
-        await new BuildInformationRepository(client).push({
+        await new BuildInformationRepository(client, space.Name).push({
             spaceName: space.Name,
             BuildEnvironment: "BitBucket",
             Branch: "main",

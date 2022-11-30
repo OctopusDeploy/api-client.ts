@@ -22,10 +22,12 @@ export interface IOctopusBuildInformationCommit {
 }
 
 export class BuildInformationRepository {
-    private client: Client;
+    private readonly client: Client;
+    private readonly spaceName: string;
 
-    constructor(client: Client) {
+    constructor(client: Client, spaceName: string) {
         this.client = client;
+        this.spaceName = spaceName;
     }
 
     async push(buildInformation: CreateOctopusBuildInformationCommand, overwriteMode: OverwriteMode = OverwriteMode.FailIfExists): Promise<void> {
