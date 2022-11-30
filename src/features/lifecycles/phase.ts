@@ -9,5 +9,6 @@ export type Phase = PhasedResource & {
 export interface PhasedResource extends NamedResource {
     IsOptionalPhase: boolean;
     MinimumEnvironmentsBeforePromotion: number;
-    OptionalDeploymentTargets: string[];
+    OptionalDeploymentTargets?: string[];
+    AutomaticDeploymentTargets?: string[];
 }
