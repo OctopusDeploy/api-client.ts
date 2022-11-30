@@ -41,12 +41,12 @@ export class DeploymentRepository {
         this.spaceName = spaceName;
     }
 
-    get(id: string): Promise<Deployment> {
-        return this.client.request(this.baseApiTemplate, { id, spaceName: this.spaceName });
+    async get(id: string): Promise<Deployment> {
+        return await this.client.request(this.baseApiTemplate, { id, spaceName: this.spaceName });
     }
 
-    list(args?: DeploymentListArgs): Promise<ResourceCollection<Deployment>> {
-        return this.client.request(this.baseApiTemplate, { spaceName: this.spaceName, ...args });
+    async list(args?: DeploymentListArgs): Promise<ResourceCollection<Deployment>> {
+        return await this.client.request(this.baseApiTemplate, { spaceName: this.spaceName, ...args });
     }
 
     async create(command: CreateDeploymentUntenantedCommandV1): Promise<CreateDeploymentUntenantedResponseV1> {

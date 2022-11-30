@@ -96,12 +96,12 @@ export class Client {
 
     resolve = (path: string, uriTemplateParameters?: RouteArgs) => this.resolver.resolve(path, uriTemplateParameters);
 
-    get<TResource>(path: string | undefined, args?: RouteArgs): Promise<TResource> {
+    async get<TResource>(path: string | undefined, args?: RouteArgs): Promise<TResource> {
         if (path === undefined) throw new Error("path parameter was not");
 
         const url = this.resolveUrl(path, args);
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        return this.dispatchRequest("GET", url) as Promise<TResource>;
+        return await (this.dispatchRequest("GET", url) as Promise<TResource>);
     }
 
     getRaw(path: string, args?: RouteArgs): Promise<string> {
@@ -177,7 +177,7 @@ export class Client {
 
         const url = this.resolveUrl(path, args);
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        return this.dispatchRequest("POST", url, command) as Promise<TReturn>;
+        return await (this.dispatchRequest("POST", url, command) as Promise<TReturn>);
     }
 
     async doUpdate<TReturn>(path: string, command?: any, args?: RouteArgs): Promise<TReturn> {
@@ -193,7 +193,7 @@ export class Client {
 
         const url = this.resolveUrl(path, args);
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        return this.dispatchRequest("PUT", url, command) as Promise<TReturn>;
+        return await (this.dispatchRequest("PUT", url, command) as Promise<TReturn>);
     }
 
     async request<TReturn>(path: string, request?: any): Promise<TReturn> {
@@ -204,54 +204,18 @@ export class Client {
 
         const url = this.resolveUrl(path, request);
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        return this.dispatchRequest("GET", url, null) as Promise<TReturn>;
+        return await (this.dispatchRequest("GET", url, null) as Promise<TReturn>);
     }
 
-    post<TReturn>(path: string, resource?: any, args?: RouteArgs): Promise<TReturn> {
+    async post<TReturn>(path: string, resource?: any, args?: RouteArgs): Promise<TReturn> {
         const url = this.resolveUrl(path, args);
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        return this.dispatchRequest("POST", url, resource) as Promise<TReturn>;
+        return await (this.dispatchRequest("POST", url, resource) as Promise<TReturn>);
     }
 
-    create<TNewResource, TResource>(path: string, resource: TNewResource, args: RouteArgs): Promise<TResource> {
+    async del(path: string, resource?: any, args?: RouteArgs) {
         const url = this.resolve(path, args);
-        return new Promise((resolve, reject) => {
-            this.dispatchRequest("POST", url, resource).then((result: any) => {
-                const selfLink = result.Links?.Self;
-                if (selfLink) {
-                    const result2 = this.get<TResource>(selfLink);
-                    resolve(result2);
-                    return;
-                }
-                resolve(result);
-            }, reject);
-        });
-    }
-
-    update<TResource>(path: string, resource: TResource, args?: RouteArgs): Promise<TResource> {
-        const url = this.resolve(path, args);
-        return new Promise((resolve, reject) => {
-            this.dispatchRequest("PUT", url, resource).then((result: any) => {
-                const selfLink = result.Links?.Self;
-                if (selfLink) {
-                    const result2 = this.get<TResource>(selfLink);
-                    resolve(result2);
-                    return;
-                }
-                resolve(result);
-            }, reject);
-        });
-    }
-
-    del(path: string, resource?: any, args?: RouteArgs) {
-        const url = this.resolve(path, args);
-        return this.dispatchRequest("DELETE", url, resource);
-    }
-
-    put<TResource>(path: string, resource?: TResource, args?: RouteArgs): Promise<TResource> {
-        const url = this.resolveUrl(path, args);
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        return this.dispatchRequest("PUT", url, resource) as Promise<TResource>;
+        return await this.dispatchRequest("DELETE", url, resource);
     }
 
     async getServerInformation(): Promise<ServerInformation> {

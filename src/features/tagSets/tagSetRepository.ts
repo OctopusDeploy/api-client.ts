@@ -14,7 +14,7 @@ export class TagSetRepository extends SpaceScopedBasicRepository<TagSet, NewTagS
         super(client, spaceName, `${spaceScopedRoutePrefix}/tagsets{/id}{?skip,take,ids,partialName}`);
     }
 
-    sort(ids: string[]) {
-        return this.client.doUpdate(`${spaceScopedRoutePrefix}/tagsets/sortorder`, ids, { spaceName: this.spaceName });
+    async sort(ids: string[]) {
+        return await this.client.doUpdate(`${spaceScopedRoutePrefix}/tagsets/sortorder`, ids, { spaceName: this.spaceName });
     }
 }

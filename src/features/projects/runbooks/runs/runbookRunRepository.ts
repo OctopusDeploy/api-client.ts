@@ -39,12 +39,12 @@ export class RunbookRunRepository {
         this.spaceName = spaceName;
     }
 
-    get(id: string): Promise<RunbookRun> {
-        return this.client.request(this.baseApiTemplate, { id, spaceName: this.spaceName });
+    async get(id: string): Promise<RunbookRun> {
+        return await this.client.request(this.baseApiTemplate, { id, spaceName: this.spaceName });
     }
 
-    list(args?: RunbookRunListArgs): Promise<ResourceCollection<RunbookRun>> {
-        return this.client.request(this.baseApiTemplate, { spaceName: this.spaceName, ...args });
+    async list(args?: RunbookRunListArgs): Promise<ResourceCollection<RunbookRun>> {
+        return await this.client.request(this.baseApiTemplate, { spaceName: this.spaceName, ...args });
     }
 
     async create(command: CreateRunbookRunCommandV1): Promise<CreateRunbookRunResponseV1> {
