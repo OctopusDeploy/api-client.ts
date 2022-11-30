@@ -14,6 +14,6 @@
     "typescript": "^4.7.4"
   },
   "dependencies": {
-    "@octopusdeploy/api-client": "github:OctopusDeploy/api-client.ts#enh-dropenvvars"
+    "@octopusdeploy/api-client": "github:OctopusDeploy/api-client.ts#enh-cleanoutv1"
   }
 }

@@ -1,12 +1,10 @@
-import { Client, ClientConfiguration, Repository } from "@octopusdeploy/api-client";
-import { ProjectResource } from "@octopusdeploy/message-contracts";
+import { Client, ClientConfiguration, Project, ProjectRepository } from "@octopusdeploy/api-client";
 
 const main = async () => {
     const configuration: ClientConfiguration = {
         userAgentApp: "examples",
         instanceURL: "instance-url", // required
         apiKey: "api-key", // required
-        autoConnect: true,
     };
 
     let client: Client | undefined;
@@ -22,15 +20,15 @@ const main = async () => {
         return;
     }
 
-    const repository = new Repository(client);
+    const repository = new ProjectRepository(client, "Default");
     const projectNameOrId: string = "project-name-or-ID";
 
     console.log(`Getting project, "${projectNameOrId}"...`);
 
-    let project: ProjectResource | undefined;
+    let project: Project | undefined;
 
     try {
-        project = await repository.projects.find(projectNameOrId);
+        project = (await repository.list({ partialName: projectNameOrId })).Items[0];
     } catch (error) {
         console.error(error);
     }
