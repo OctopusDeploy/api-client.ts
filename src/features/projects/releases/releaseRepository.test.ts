@@ -14,7 +14,7 @@ import { Space, SpaceRepository } from "../../spaces";
 import { Project, NewProject, ProjectRepository } from "../../projects";
 import { UserProjection, userGetCurrent } from "../../users";
 import { ProjectGroupRepository } from "../../projectGroups";
-import { deploymentProcessGet, deploymentProcessUpdate } from "../../projects/deploymentProcesses";
+import { DeploymentProcessRepository } from "../../projects/deploymentProcesses";
 import { LifecycleRepository } from "../../lifecycles";
 import { FeedRepository } from "../../feeds/feedRepository";
 
@@ -48,7 +48,8 @@ describe("create a release", () => {
         project = await new ProjectRepository(client, spaceName).create(NewProject(projectName, projectGroup, lifecycle));
         console.log(`Project "${projectName}" created successfully.`);
 
-        const deploymentProcess = await deploymentProcessGet(client, project);
+        const deploymentProcessRepository = new DeploymentProcessRepository(client, space.Name);
+        const deploymentProcess = await deploymentProcessRepository.get(project);
         deploymentProcess.Steps = [
             {
                 Condition: RunCondition.Success,
@@ -90,7 +91,7 @@ describe("create a release", () => {
         ];
 
         console.log(`Updating deployment process, "${deploymentProcess.Id}"...`);
-        await deploymentProcessUpdate(client, project, deploymentProcess);
+        await deploymentProcessRepository.update(project, deploymentProcess);
         console.log(`Deployment process, "${deploymentProcess.Id}" updated successfully.`);
 
         const environmentName = randomUUID();
@@ -130,7 +131,8 @@ describe("create a release", () => {
         beforeEach(async () => {
             const feedId = (await new FeedRepository(client, space.Name).list({ take: 1 })).Items[0].Id;
 
-            const deploymentProcess = await deploymentProcessGet(client, project);
+            const deploymentProcessRepository = new DeploymentProcessRepository(client, space.Name);
+            const deploymentProcess = await deploymentProcessRepository.get(project);
             deploymentProcess.Steps = [
                 {
                     Condition: RunCondition.Success,
@@ -178,7 +180,7 @@ describe("create a release", () => {
                 },
             ];
             console.log(`Updating deployment process, "${deploymentProcess.Id}"...`);
-            await deploymentProcessUpdate(client, project, deploymentProcess);
+            await deploymentProcessRepository.update(project, deploymentProcess);
             console.log(`Deployment process, "${deploymentProcess.Id}" updated successfully.`);
 
             const packageRepository = new PackageRepository(client, space.Name);
