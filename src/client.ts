@@ -186,6 +186,10 @@ export class Client {
             args = { spaceId: spaceId, ...args };
             command = { spaceId: spaceId, ...command };
         }
+        if (args && isSpaceScopedArgs(args)) {
+            const spaceId = await resolveSpaceId(this, args.spaceName);
+            args = { spaceId: spaceId, ...args };
+        }
 
         const url = this.resolveUrl(path, args);
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions

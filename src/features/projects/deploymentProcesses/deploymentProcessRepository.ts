@@ -12,16 +12,16 @@ export class DeploymentProcessRepository {
     }
 
     async get(project: Project): Promise<DeploymentProcess> {
-        const response = await this.client.get<DeploymentProcess>(`${spaceScopedRoutePrefix}/projects/{projectId}/deploymentprocesses`, {
-            spaceId: project.SpaceId,
+        const response = await this.client.request<DeploymentProcess>(`${spaceScopedRoutePrefix}/projects/{projectId}/deploymentprocesses`, {
+            spaceName: this.spaceName,
             projectId: project.Id,
         });
         return response;
     }
 
     async getByGitRef(project: Project, gitRef: GitRef): Promise<DeploymentProcess> {
-        const response = await this.client.get<DeploymentProcess>(`${spaceScopedRoutePrefix}/projects/{projectId}/{gitRef}/deploymentprocesses`, {
-            spaceId: project.SpaceId,
+        const response = await this.client.request<DeploymentProcess>(`${spaceScopedRoutePrefix}/projects/{projectId}/{gitRef}/deploymentprocesses`, {
+            spaceName: this.spaceName,
             projectId: project.Id,
             gitRef,
         });
@@ -42,13 +42,12 @@ export class DeploymentProcessRepository {
     }
 
     async updateByGitRef(project: Project, deploymentProcess: DeploymentProcess, gitRef: GitRef): Promise<DeploymentProcess> {
-        const response = await this.client.update<DeploymentProcess>(
+        const response = await this.client.doUpdate<DeploymentProcess>(
             `${spaceScopedRoutePrefix}/projects/{projectId}/{gitRef}/deploymentprocesses`,
             deploymentProcess,
             {
-                spaceId: deploymentProcess.SpaceId,
+                spaceName: this.spaceName,
                 projectId: project.Id,
-                deploymentProcessId: deploymentProcess.Id,
                 gitRef,
             }
         );
