@@ -29,10 +29,14 @@ export class DeploymentProcessRepository {
     }
 
     async update(project: Project, deploymentProcess: DeploymentProcess): Promise<DeploymentProcess> {
-        const response = await this.client.update<DeploymentProcess>(`${spaceScopedRoutePrefix}/projects/{projectId}/deploymentprocesses`, deploymentProcess, {
-            spaceId: deploymentProcess.SpaceId,
-            projectId: project.Id,
-        });
+        const response = await this.client.doUpdate<DeploymentProcess>(
+            `${spaceScopedRoutePrefix}/projects/{projectId}/deploymentprocesses`,
+            deploymentProcess,
+            {
+                spaceName: this.spaceName,
+                projectId: project.Id,
+            }
+        );
 
         return response;
     }
