@@ -39,28 +39,28 @@ export class BasicRepository<
     }
 
     async create(resource: TNewResource, args?: TCreateArgs): Promise<TExistingResource> {
-        return await this.client.doCreate<TExistingResource>(this.baseApiTemplate, resource, args).then((r) => this.notifySubscribersToDataModifications(r));
+        return this.client.doCreate<TExistingResource>(this.baseApiTemplate, resource, args).then((r) => this.notifySubscribersToDataModifications(r));
     }
 
-    async get(id: string): Promise<TExistingResource> {
-        return await this.client.get(this.baseApiTemplate, { id });
+    get(id: string): Promise<TExistingResource> {
+        return this.client.get(this.baseApiTemplate, { id });
     }
 
-    async list(args?: TListArgs): Promise<ResourceCollection<TExistingResource>> {
-        return await this.client.get(this.baseApiTemplate, args);
+    list(args?: TListArgs): Promise<ResourceCollection<TExistingResource>> {
+        return this.client.get(this.baseApiTemplate, args);
     }
 
-    async modify(resource: TExistingResource, args?: TModifyArgs): Promise<TExistingResource> {
-        return await this.client
+    modify(resource: TExistingResource, args?: TModifyArgs): Promise<TExistingResource> {
+        return this.client
             .doUpdate<TExistingResource>(this.baseApiTemplate, resource, { id: resource.Id, ...args })
             .then((r) => this.notifySubscribersToDataModifications(r));
     }
 
-    async save(resource: TExistingResource | TNewResource): Promise<TExistingResource> {
+    save(resource: TExistingResource | TNewResource): Promise<TExistingResource> {
         if (isNewResource(resource)) {
-            return await this.create(resource);
+            return this.create(resource);
         } else {
-            return await this.modify(resource);
+            return this.modify(resource);
         }
 
         function isTruthy<T>(value: T): boolean {

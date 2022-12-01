@@ -18,26 +18,26 @@ export class EnvironmentRepository extends SpaceScopedBasicRepository<Deployment
     //     return this.client.get('${spaceScopedRoutePrefix}/environments/{id}/metadata', { spaceId: environment.SpaceId, id: environment.Id });
     // }
 
-    async sort(order: string[]) {
-        return await this.client.doUpdate(`${spaceScopedRoutePrefix}/environments/sortorder`, order, { spaceName: this.spaceName });
+    sort(order: string[]) {
+        return this.client.doUpdate(`${spaceScopedRoutePrefix}/environments/sortorder`, order, { spaceName: this.spaceName });
     }
 
-    async summary(args?: Partial<EnvironmentSummaryArgs>) {
-        return await this.client.request<DeploymentEnvironment>(
+    summary(args?: Partial<EnvironmentSummaryArgs>) {
+        return this.client.request<DeploymentEnvironment>(
             `${spaceScopedRoutePrefix}/environments/summary{?ids,partialName,machinePartialName,roles,isDisabled,healthStatuses,commStyles,tenantIds,tenantTags,hideEmptyEnvironments,shellNames,deploymentTargetTypes}`,
             { spaceName: this.spaceName, ...args }
         );
     }
 
-    async machines(environment: DeploymentEnvironment, args?: Partial<EnvironmentMachinesArgs>): Promise<ResourceCollection<DeploymentEnvironment>> {
-        return await this.client.request<ResourceCollection<DeploymentEnvironment>>(
+    machines(environment: DeploymentEnvironment, args?: Partial<EnvironmentMachinesArgs>): Promise<ResourceCollection<DeploymentEnvironment>> {
+        return this.client.request<ResourceCollection<DeploymentEnvironment>>(
             `${spaceScopedRoutePrefix}/environments/{id}/machines{?skip,take,partialName,roles,isDisabled,healthStatuses,commStyles,tenantIds,tenantTags,shellNames,deploymentTargetTypes}`,
             { spaceName: this.spaceName, id: environment.Id, ...args }
         );
     }
 
-    async variablesScopedOnlyToThisEnvironment(environment: DeploymentEnvironment): Promise<VariablesScopedToEnvironmentResponse> {
-        return await this.client.request<VariablesScopedToEnvironmentResponse>(`${spaceScopedRoutePrefix}/environments/{id}/singlyScopedVariableDetails`, {
+    variablesScopedOnlyToThisEnvironment(environment: DeploymentEnvironment): Promise<VariablesScopedToEnvironmentResponse> {
+        return this.client.request<VariablesScopedToEnvironmentResponse>(`${spaceScopedRoutePrefix}/environments/{id}/singlyScopedVariableDetails`, {
             spaceName: this.spaceName,
             id: environment.Id,
         });

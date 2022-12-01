@@ -22,21 +22,21 @@ export class SpaceScopedBasicRepository<
         this.spaceName = spaceName;
     }
 
-    override async create(resource: TNewResource, args?: TCreateArgs): Promise<TExistingResource> {
+    override create(resource: TNewResource, args?: TCreateArgs): Promise<TExistingResource> {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        return await super.create(resource, { spaceName: this.spaceName, ...args! });
+        return super.create(resource, { spaceName: this.spaceName, ...args! });
     }
 
-    override async get(id: string): Promise<TExistingResource> {
-        return await this.client.request(this.baseApiTemplate, { id, spaceName: this.spaceName });
+    override get(id: string): Promise<TExistingResource> {
+        return this.client.request(this.baseApiTemplate, { id, spaceName: this.spaceName });
     }
 
-    async list(args?: TListArgs): Promise<ResourceCollection<TExistingResource>> {
-        return await this.client.request(this.baseApiTemplate, { spaceName: this.spaceName, ...args });
+    list(args?: TListArgs): Promise<ResourceCollection<TExistingResource>> {
+        return this.client.request(this.baseApiTemplate, { spaceName: this.spaceName, ...args });
     }
 
-    async modify(resource: TExistingResource, args?: TModifyArgs): Promise<TExistingResource> {
+    modify(resource: TExistingResource, args?: TModifyArgs): Promise<TExistingResource> {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        return await super.modify(resource, { spaceName: this.spaceName, ...args! });
+        return super.modify(resource, { spaceName: this.spaceName, ...args! });
     }
 }

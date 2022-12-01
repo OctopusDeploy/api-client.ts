@@ -19,26 +19,26 @@ export class TenantRepository extends SpaceScopedBasicRepository<Tenant, NewTena
         super(client, spaceName, `${spaceScopedRoutePrefix}/tenants{/id}{?skip,projectId,tags,take,ids,clone,partialName,clonedFromTenantId}`);
     }
 
-    async tagTest(tenantIds: string[], tags: string[]): Promise<TagTestResult> {
-        return await this.client.request(`${spaceScopedRoutePrefix}/tenants/tag-test{?tenantIds,tags}`, { tenantIds, tags });
+    tagTest(tenantIds: string[], tags: string[]): Promise<TagTestResult> {
+        return this.client.request(`${spaceScopedRoutePrefix}/tenants/tag-test{?tenantIds,tags}`, { tenantIds, tags });
     }
 
-    async getVariables(tenant: Tenant): Promise<TenantVariable> {
-        return await this.client.request(`${spaceScopedRoutePrefix}/tenants/{id}/variables`);
+    getVariables(tenant: Tenant): Promise<TenantVariable> {
+        return this.client.request(`${spaceScopedRoutePrefix}/tenants/{id}/variables`);
     }
 
-    async setVariables(tenant: Tenant, variables: any): Promise<TenantVariable> {
-        return await this.client.doUpdate(`${spaceScopedRoutePrefix}/tenants/{id}/variables`, variables);
+    setVariables(tenant: Tenant, variables: any): Promise<TenantVariable> {
+        return this.client.doUpdate(`${spaceScopedRoutePrefix}/tenants/{id}/variables`, variables);
     }
 
-    async missingVariables(filterOptions: FilterOptions = {}, includeDetails: boolean = false): Promise<TenantMissingVariable[]> {
+    missingVariables(filterOptions: FilterOptions = {}, includeDetails: boolean = false): Promise<TenantMissingVariable[]> {
         const payload = {
             environmentId: filterOptions.environmentId,
             includeDetails: !!includeDetails,
             projectId: filterOptions.projectId,
             tenantId: filterOptions.tenantId,
         };
-        return await this.client.request(`${spaceScopedRoutePrefix}/tenants/variables-missing{?tenantId,projectId,environmentId,includeDetails}`, payload);
+        return this.client.request(`${spaceScopedRoutePrefix}/tenants/variables-missing{?tenantId,projectId,environmentId,includeDetails}`, payload);
     }
 }
 
