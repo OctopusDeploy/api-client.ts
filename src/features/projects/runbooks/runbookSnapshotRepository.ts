@@ -21,12 +21,12 @@ export class RunbookSnapshotRepository {
             RunbookId: runbook.Id,
             Name: name,
             Notes: notes,
-            Publish: publish ? "true" : undefined,
         };
 
-        const response = await this.client.doCreate<RunbookSnapshot>(`${spaceScopedRoutePrefix}/projects/{projectId}/runbookSnapshots`, snapshot, {
+        const response = await this.client.doCreate<RunbookSnapshot>(`${spaceScopedRoutePrefix}/projects/{projectId}/runbookSnapshots{?publish}`, snapshot, {
             spaceName: this.spaceName,
             projectId: this.projectId,
+            publish: publish ? "true" : undefined,
         });
         return response;
     }
