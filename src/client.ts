@@ -165,22 +165,14 @@ export class Client {
     }
 
     async doCreate<TReturn>(path: string, command?: any, args?: RouteArgs): Promise<TReturn> {
-        if (isSpaceScopedOperation(command)) {
-            const spaceId = await resolveSpaceId(this, command.spaceName);
-            args = { spaceId: spaceId, ...args };
-            command = { spaceId: spaceId, ...command };
-        }
-        if (args && isSpaceScopedArgs(args)) {
-            const spaceId = await resolveSpaceId(this, args.spaceName);
-            args = { spaceId: spaceId, ...args };
-        }
-
-        const url = this.resolveUrl(path, args);
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        return this.dispatchRequest("POST", url, command) as Promise<TReturn>;
+        return this.doCommand<TReturn>("POST", path, command, args);
     }
 
     async doUpdate<TReturn>(path: string, command?: any, args?: RouteArgs): Promise<TReturn> {
+        return this.doCommand<TReturn>("PUT", path, command, args);
+    }
+
+    private async doCommand<TReturn>(verb: string, path: string, command?: any, args?: RouteArgs): Promise<TReturn> {
         if (isSpaceScopedOperation(command)) {
             const spaceId = await resolveSpaceId(this, command.spaceName);
             args = { spaceId: spaceId, ...args };
@@ -193,7 +185,7 @@ export class Client {
 
         const url = this.resolveUrl(path, args);
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        return this.dispatchRequest("PUT", url, command) as Promise<TReturn>;
+        return this.dispatchRequest(verb, url, command) as Promise<TReturn>;
     }
 
     async request<TReturn>(path: string, request?: any): Promise<TReturn> {
