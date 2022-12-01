@@ -11,6 +11,6 @@ type LifecycleRepositoryListArgs = {
 
 export class LifecycleRepository extends SpaceScopedBasicRepository<Lifecycle, Lifecycle, LifecycleRepositoryListArgs> {
     constructor(client: Client, spaceName: string) {
-        super(client, spaceName, `${spaceScopedRoutePrefix}/lifecycles{/id}{?skip,take,ids,partialName}`);
+        super(client, spaceName, `${spaceScopedRoutePrefix}/lifecycles`, "skip,take,ids,partialName");
     }
 }

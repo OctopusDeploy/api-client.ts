@@ -14,9 +14,9 @@ export class SpaceScopedBasicRepository<
 > extends BasicRepository<TExistingResource, TNewResource, TListArgs, TCreateArgs, TModifyArgs> {
     protected readonly spaceName: string;
 
-    constructor(client: Client, spaceName: string, baseApiTemplate: string) {
-        super(client, baseApiTemplate);
-        if (!baseApiTemplate.startsWith(spaceScopedRoutePrefix)) {
+    constructor(client: Client, spaceName: string, baseApiPathTemplate: string, listParametersTemplate: string) {
+        super(client, baseApiPathTemplate, listParametersTemplate);
+        if (!baseApiPathTemplate.startsWith(spaceScopedRoutePrefix)) {
             throw new Error("Space scoped repositories must prefix their baseApiTemplate with `spaceScopedRoutePrefix`");
         }
         this.spaceName = spaceName;
@@ -28,11 +28,11 @@ export class SpaceScopedBasicRepository<
     }
 
     override get(id: string): Promise<TExistingResource> {
-        return this.client.request(this.baseApiTemplate, { id, spaceName: this.spaceName });
+        return this.client.request(this.baseApiPathTemplate, { id, spaceName: this.spaceName });
     }
 
     list(args?: TListArgs): Promise<ResourceCollection<TExistingResource>> {
-        return this.client.request(this.baseApiTemplate, { spaceName: this.spaceName, ...args });
+        return this.client.request(this.baseApiPathTemplate, { spaceName: this.spaceName, ...args });
     }
 
     modify(resource: TExistingResource, args?: TModifyArgs): Promise<TExistingResource> {

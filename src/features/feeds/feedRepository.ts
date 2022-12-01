@@ -12,6 +12,6 @@ type FeedListArgs = {
 
 export class FeedRepository extends SpaceScopedBasicRepository<Feed, Feed, FeedListArgs> {
     constructor(client: Client, spaceName: string) {
-        super(client, spaceName, `${spaceScopedRoutePrefix}/feeds{/id}{?skip,take,ids,partialName,feedType}`);
+        super(client, spaceName, `${spaceScopedRoutePrefix}/feeds`, "skip,take,ids,partialName,feedType");
     }
 }

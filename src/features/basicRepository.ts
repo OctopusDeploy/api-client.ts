@@ -25,34 +25,36 @@ export class BasicRepository<
     readonly takeAll = 2147483647;
     readonly takeDefaultPageSize = 30;
     protected client: Client;
-    protected readonly baseApiTemplate: string;
+    protected readonly baseApiPathTemplate: string;
+    private readonly listParametersTemplate: string;
     private readonly subscribersToDataModifications: Dictionary<(data: TExistingResource) => void>;
 
-    constructor(client: Client, baseApiTemplate: string) {
+    constructor(client: Client, baseApiPathTemplate: string, listParametersTemplate: string) {
         this.client = client;
-        this.baseApiTemplate = baseApiTemplate;
+        this.baseApiPathTemplate = baseApiPathTemplate;
+        this.listParametersTemplate = listParametersTemplate;
         this.subscribersToDataModifications = {};
     }
 
     del(resource: TExistingResource) {
-        return this.client.del(`${this.baseApiTemplate}/${resource.Id}`).then((d) => this.notifySubscribersToDataModifications(resource));
+        return this.client.del(`${this.baseApiPathTemplate}/${resource.Id}`).then((d) => this.notifySubscribersToDataModifications(resource));
     }
 
     async create(resource: TNewResource, args?: TCreateArgs): Promise<TExistingResource> {
-        return this.client.doCreate<TExistingResource>(this.baseApiTemplate, resource, args).then((r) => this.notifySubscribersToDataModifications(r));
+        return this.client.doCreate<TExistingResource>(this.baseApiPathTemplate, resource, args).then((r) => this.notifySubscribersToDataModifications(r));
     }
 
     get(id: string): Promise<TExistingResource> {
-        return this.client.get(this.baseApiTemplate, { id });
+        return this.client.get(`${this.baseApiPathTemplate}/${id}`);
     }
 
     list(args?: TListArgs): Promise<ResourceCollection<TExistingResource>> {
-        return this.client.get(this.baseApiTemplate, args);
+        return this.client.get(`${this.baseApiPathTemplate}{?${this.listParametersTemplate}}`, args);
     }
 
     modify(resource: TExistingResource, args?: TModifyArgs): Promise<TExistingResource> {
         return this.client
-            .doUpdate<TExistingResource>(this.baseApiTemplate, resource, { id: resource.Id, ...args })
+            .doUpdate<TExistingResource>(`${this.baseApiPathTemplate}/${resource.Id}`, resource, args)
             .then((r) => this.notifySubscribersToDataModifications(r));
     }
 

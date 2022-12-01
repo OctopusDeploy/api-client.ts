@@ -30,7 +30,7 @@ type RunbookRunListArgs = {
 } & ListArgs;
 
 export class RunbookRunRepository {
-    private baseApiTemplate = `${spaceScopedRoutePrefix}/runbookRuns{/id}{?skip,take,ids,projects,environments,tenants,runbooks,taskState,partialName}`;
+    private baseApiPathTemplate = `${spaceScopedRoutePrefix}/runbookRuns`;
     private client: Client;
     private spaceName: string;
 
@@ -40,11 +40,14 @@ export class RunbookRunRepository {
     }
 
     get(id: string): Promise<RunbookRun> {
-        return this.client.request(this.baseApiTemplate, { id, spaceName: this.spaceName });
+        return this.client.request(`${this.baseApiPathTemplate}/${id}`, { spaceName: this.spaceName });
     }
 
     list(args?: RunbookRunListArgs): Promise<ResourceCollection<RunbookRun>> {
-        return this.client.request(this.baseApiTemplate, { spaceName: this.spaceName, ...args });
+        return this.client.request(`${this.baseApiPathTemplate}{?skip,take,ids,projects,environments,tenants,runbooks,taskState,partialName}`, {
+            spaceName: this.spaceName,
+            ...args,
+        });
     }
 
     async create(command: CreateRunbookRunCommandV1): Promise<CreateRunbookRunResponseV1> {

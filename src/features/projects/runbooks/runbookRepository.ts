@@ -12,6 +12,6 @@ type RunbookListArgs = {
 
 export class RunbookRepository extends SpaceScopedBasicRepository<Runbook, NewRunbook, RunbookListArgs> {
     constructor(client: Client, spaceName: string, project: Project) {
-        super(client, spaceName, `${spaceScopedRoutePrefix}/projects/${project.Id}/runbooks{/id}{?skip,take,ids,partialName}`);
+        super(client, spaceName, `${spaceScopedRoutePrefix}/projects/${project.Id}/runbooks`, "skip,take,ids,partialName");
     }
 }

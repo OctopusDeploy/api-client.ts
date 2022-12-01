@@ -16,7 +16,7 @@ type TenantRepositoryListArgs = {
 
 export class TenantRepository extends SpaceScopedBasicRepository<Tenant, NewTenant, TenantRepositoryListArgs> {
     constructor(client: Client, spaceName: string) {
-        super(client, spaceName, `${spaceScopedRoutePrefix}/tenants{/id}{?skip,projectId,tags,take,ids,clone,partialName,clonedFromTenantId}`);
+        super(client, spaceName, `${spaceScopedRoutePrefix}/tenants`, "skip,projectId,tags,take,ids,clone,partialName,clonedFromTenantId");
     }
 
     tagTest(tenantIds: string[], tags: string[]): Promise<TagTestResult> {

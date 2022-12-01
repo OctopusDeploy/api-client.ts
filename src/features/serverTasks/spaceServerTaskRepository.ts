@@ -6,7 +6,7 @@ import { ServerTask } from "./serverTask";
 import { ServerTaskDetails } from "./serverTaskDetails";
 
 export class SpaceServerTaskRepository {
-    private baseApiTemplate = `${spaceScopedRoutePrefix}/tasks{/id}{?skip,take,ids}`;
+    private baseApiPathTemplate = `${spaceScopedRoutePrefix}/tasks`;
     private readonly client: Client;
     private readonly spaceName: string;
 
@@ -19,7 +19,7 @@ export class SpaceServerTaskRepository {
         if (!serverTaskId) {
             throw new Error("Server Task Id was not provided");
         }
-        const response = await this.client.request<ServerTask>(`${spaceScopedRoutePrefix}/tasks/{serverTaskId}`, { spaceName: this.spaceName, serverTaskId });
+        const response = await this.client.request<ServerTask>(`${this.baseApiPathTemplate}/${serverTaskId}`, { spaceName: this.spaceName });
         return response;
     }
 
@@ -27,7 +27,7 @@ export class SpaceServerTaskRepository {
         const batchSize = 300;
         const idArrays = chunk(serverTaskIds, batchSize);
         const promises: Array<Promise<ResourceCollection<ServerTask>>> = idArrays.map((i, index) => {
-            return this.client.request<ResourceCollection<ServerTask>>(`${spaceScopedRoutePrefix}/tasks{?skip,take,ids,partialName}`, {
+            return this.client.request<ResourceCollection<ServerTask>>(`${this.baseApiPathTemplate}{?skip,take,ids,partialName}`, {
                 spaceName: this.spaceName,
                 ids: i,
                 skip: index * batchSize,
@@ -41,9 +41,8 @@ export class SpaceServerTaskRepository {
         if (!serverTaskId) {
             throw new Error("Server Task Id was not provided");
         }
-        const response = await this.client.request<ServerTaskDetails>(`${spaceScopedRoutePrefix}/tasks/{serverTaskId}/details`, {
+        const response = await this.client.request<ServerTaskDetails>(`${this.baseApiPathTemplate}/${serverTaskId}/details`, {
             spaceName: this.spaceName,
-            serverTaskId,
         });
         return response;
     }
@@ -52,7 +51,7 @@ export class SpaceServerTaskRepository {
         if (!serverTaskId) {
             throw new Error("Server Task Id was not provided");
         }
-        const response = await this.client.request<string>(`${spaceScopedRoutePrefix}/tasks/{serverTaskId}/raw`, { spaceName: this.spaceName, serverTaskId });
+        const response = await this.client.request<string>(`${this.baseApiPathTemplate}/${serverTaskId}/raw`, { spaceName: this.spaceName });
         return response;
     }
 }

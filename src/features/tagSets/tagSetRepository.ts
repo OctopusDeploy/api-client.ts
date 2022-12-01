@@ -11,7 +11,7 @@ type TagSetRepositoryListArgs = {
 
 export class TagSetRepository extends SpaceScopedBasicRepository<TagSet, NewTagSet, TagSetRepositoryListArgs> {
     constructor(client: Client, spaceName: string) {
-        super(client, spaceName, `${spaceScopedRoutePrefix}/tagsets{/id}{?skip,take,ids,partialName}`);
+        super(client, spaceName, `${spaceScopedRoutePrefix}/tagsets`, "skip,take,ids,partialName");
     }
 
     sort(ids: string[]) {

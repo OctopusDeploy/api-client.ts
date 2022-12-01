@@ -32,7 +32,7 @@ type DeploymentListArgs = {
 } & ListArgs;
 
 export class DeploymentRepository {
-    private baseApiTemplate = `${spaceScopedRoutePrefix}/deployments{/id}{?skip,take,ids,projects,environments,tenants,channels,taskState}`;
+    private baseApiPathTemplate = `${spaceScopedRoutePrefix}/deployments`;
     private client: Client;
     private spaceName: string;
 
@@ -42,11 +42,14 @@ export class DeploymentRepository {
     }
 
     get(id: string): Promise<Deployment> {
-        return this.client.request(this.baseApiTemplate, { id, spaceName: this.spaceName });
+        return this.client.request(`${this.baseApiPathTemplate}/${id}`, { spaceName: this.spaceName });
     }
 
     list(args?: DeploymentListArgs): Promise<ResourceCollection<Deployment>> {
-        return this.client.request(this.baseApiTemplate, { spaceName: this.spaceName, ...args });
+        return this.client.request(`${this.baseApiPathTemplate}{?skip,take,ids,projects,environments,tenants,channels,taskState}`, {
+            spaceName: this.spaceName,
+            ...args,
+        });
     }
 
     async create(command: CreateDeploymentUntenantedCommandV1): Promise<CreateDeploymentUntenantedResponseV1> {
@@ -54,7 +57,7 @@ export class DeploymentRepository {
 
         // WARNING: server's API currently expects there to be a SpaceIdOrName value, which was intended to allow use of names/slugs, but doesn't
         // work properly due to limitations in the middleware. For now, we'll just set it to the SpaceId
-        const response = await this.client.doCreate<InternalCreateDeploymentResponseV1>(`${spaceScopedRoutePrefix}/deployments/create/untenanted/v1`, {
+        const response = await this.client.doCreate<InternalCreateDeploymentResponseV1>(`${this.baseApiPathTemplate}/create/untenanted/v1`, {
             spaceIdOrName: command.spaceName,
             ...command,
         });
@@ -82,7 +85,7 @@ export class DeploymentRepository {
 
         // WARNING: server's API currently expects there to be a SpaceIdOrName value, which was intended to allow use of names/slugs, but doesn't
         // work properly due to limitations in the middleware. For now, we'll just set it to the SpaceId
-        const response = await this.client.doCreate<InternalCreateDeploymentResponseV1>(`${spaceScopedRoutePrefix}/deployments/create/tenanted/v1`, {
+        const response = await this.client.doCreate<InternalCreateDeploymentResponseV1>(`${this.baseApiPathTemplate}/create/tenanted/v1`, {
             spaceIdOrName: command.spaceName,
             ...command,
         });

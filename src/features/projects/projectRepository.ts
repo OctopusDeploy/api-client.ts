@@ -11,6 +11,6 @@ type ProjectListArgs = {
 
 export class ProjectRepository extends SpaceScopedBasicRepository<Project, NewProject, ProjectListArgs> {
     constructor(client: Client, spaceName: string) {
-        super(client, spaceName, `${spaceScopedRoutePrefix}/projects{/id}{?skip,take,ids,partialName,clonedFromProjectId}`);
+        super(client, spaceName, `${spaceScopedRoutePrefix}/projects`, "skip,take,ids,partialName,clonedFromProjectId");
     }
 }

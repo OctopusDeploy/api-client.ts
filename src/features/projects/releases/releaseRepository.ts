@@ -4,7 +4,6 @@ import { CreateReleaseCommandV1 } from "./createReleaseCommandV1";
 import { CreateReleaseResponseV1 } from "./createReleaseResponseV1";
 
 export class ReleaseRepository {
-    private baseApiTemplate = `${spaceScopedRoutePrefix}/releases{/id}{?skip,take,ids}`;
     private client: Client;
     private spaceName: string;
 
