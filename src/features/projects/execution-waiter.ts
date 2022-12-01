@@ -1,6 +1,6 @@
 import { Client } from "../..";
 import { ServerTask, ServerTaskDetails } from "../../features/serverTasks";
-import { serverTaskGet, serverTaskDetailsGet } from "../serverTasks";
+import { SpaceServerTaskRepository } from "../serverTasks";
 
 export class ExecutionWaiter {
     constructor(private readonly client: Client, private readonly spaceName: string) {}
@@ -11,14 +11,28 @@ export class ExecutionWaiter {
         timeout: number,
         pollingCallback?: (serverTaskDetails: ServerTaskDetails) => void
     ): Promise<PromiseSettledResult<ServerTask | null>[]> {
+        const spaceServerTaskRepository = new SpaceServerTaskRepository(this.client, this.spaceName);
         const taskPromises: Promise<ServerTask | null>[] = [];
-        for (const taskId of serverTaskIds) {
-            taskPromises.push(this.waitForExecutionToComplete(taskId, statusCheckSleepCycle, timeout, pollingCallback));
+        for (const serverTaskId of serverTaskIds) {
+            taskPromises.push(
+                this.waitForExecutionToCompleteInternal(spaceServerTaskRepository, serverTaskId, statusCheckSleepCycle, timeout, pollingCallback)
+            );
         }
         return await Promise.allSettled(taskPromises);
     }
 
     async waitForExecutionToComplete(
+        serverTaskId: string,
+        statusCheckSleepCycle: number,
+        timeout: number,
+        pollingCallback?: (serverTaskDetails: ServerTaskDetails) => void
+    ): Promise<ServerTask | null> {
+        const spaceServerTaskRepository = new SpaceServerTaskRepository(this.client, this.spaceName);
+        return this.waitForExecutionToCompleteInternal(spaceServerTaskRepository, serverTaskId, statusCheckSleepCycle, timeout, pollingCallback);
+    }
+
+    private async waitForExecutionToCompleteInternal(
+        spaceServerTaskRepository: SpaceServerTaskRepository,
         serverTaskId: string,
         statusCheckSleepCycle: number,
         timeout: number,
@@ -33,7 +47,7 @@ export class ExecutionWaiter {
 
         while (!stop) {
             if (pollingCallback) {
-                const taskDetails = await serverTaskDetailsGet(this.client, this.spaceName, serverTaskId);
+                const taskDetails = await spaceServerTaskRepository.getDetails(serverTaskId);
                 pollingCallback(taskDetails);
 
                 if (taskDetails.Task.IsCompleted) {
@@ -41,7 +55,7 @@ export class ExecutionWaiter {
                     return taskDetails.Task;
                 }
             } else {
-                const task = await serverTaskGet(this.client, this.spaceName, serverTaskId);
+                const task = await spaceServerTaskRepository.getById(serverTaskId);
 
                 if (task.IsCompleted) {
                     clearTimeout(t);
