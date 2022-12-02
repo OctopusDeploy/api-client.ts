@@ -26,15 +26,19 @@ export class SpaceServerTaskRepository {
     async getByIds(serverTaskIds: string[]): Promise<ServerTask[]> {
         const batchSize = 300;
         const idArrays = chunk(serverTaskIds, batchSize);
-        const promises: Array<Promise<ResourceCollection<ServerTask>>> = idArrays.map((i, index) => {
-            return this.client.request<ResourceCollection<ServerTask>>(`${this.baseApiPathTemplate}{?skip,take,ids,partialName}`, {
-                spaceName: this.spaceName,
-                ids: i,
-                skip: index * batchSize,
-                take: batchSize,
-            });
-        });
-        return Promise.all(promises).then((result) => flatMap(result, (c) => c.Items));
+        const promises: Array<Promise<ResourceCollection<ServerTask>>> = [];
+
+        for (const [index, ids] of idArrays.entries()) {
+            promises.push(
+                this.client.request<ResourceCollection<ServerTask>>(`${this.baseApiPathTemplate}{?skip,take,ids,partialName}`, {
+                    spaceName: this.spaceName,
+                    ids: ids,
+                    skip: index * batchSize,
+                    take: batchSize,
+                })
+            );
+        }
+        return Promise.allSettled(promises).then((result) => flatMap(result, (c) => (c.status == "fulfilled" ? c.value.Items : [])));
     }
 
     async getDetails(serverTaskId: string): Promise<ServerTaskDetails> {
