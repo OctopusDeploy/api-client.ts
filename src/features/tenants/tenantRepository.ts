@@ -34,7 +34,7 @@ export class TenantRepository extends SpaceScopedBasicRepository<Tenant, NewTena
     missingVariables(filterOptions: FilterOptions = {}, includeDetails: boolean = false): Promise<TenantMissingVariable[]> {
         const payload = {
             environmentId: filterOptions.environmentId,
-            includeDetails: !!includeDetails,
+            includeDetails: includeDetails,
             projectId: filterOptions.projectId,
             tenantId: filterOptions.tenantId,
         };
