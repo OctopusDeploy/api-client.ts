@@ -56,7 +56,7 @@ export class PackageRepository {
             tasks.push(this.packageUpload(spaceId, packagePath, overwriteMode));
         }
 
-        await Promise.all(tasks);
+        await Promise.allSettled(tasks);
 
         this.client.info("Packages uploaded");
     }
