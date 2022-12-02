@@ -57,6 +57,6 @@ export class BuildInformationRepository {
             );
         }
 
-        await Promise.all(tasks);
+        await Promise.allSettled(tasks);
     }
 }

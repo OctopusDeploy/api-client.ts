@@ -2,10 +2,10 @@ import { Client } from "../..";
 import { ServerTask, ServerTaskDetails } from "../../features/serverTasks";
 import { SpaceServerTaskRepository } from "../serverTasks";
 
-export class ExecutionWaiter {
+export class ServerTaskWaiter {
     constructor(private readonly client: Client, private readonly spaceName: string) {}
 
-    async waitForExecutionsToComplete(
+    async waitForServerTasksToComplete(
         serverTaskIds: string[],
         statusCheckSleepCycle: number,
         timeout: number,
@@ -14,24 +14,22 @@ export class ExecutionWaiter {
         const spaceServerTaskRepository = new SpaceServerTaskRepository(this.client, this.spaceName);
         const taskPromises: Promise<ServerTask | null>[] = [];
         for (const serverTaskId of serverTaskIds) {
-            taskPromises.push(
-                this.waitForExecutionToCompleteInternal(spaceServerTaskRepository, serverTaskId, statusCheckSleepCycle, timeout, pollingCallback)
-            );
+            taskPromises.push(this.waitForTask(spaceServerTaskRepository, serverTaskId, statusCheckSleepCycle, timeout, pollingCallback));
         }
         return await Promise.allSettled(taskPromises);
     }
 
-    async waitForExecutionToComplete(
+    async waitForServerTaskToComplete(
         serverTaskId: string,
         statusCheckSleepCycle: number,
         timeout: number,
         pollingCallback?: (serverTaskDetails: ServerTaskDetails) => void
     ): Promise<ServerTask | null> {
         const spaceServerTaskRepository = new SpaceServerTaskRepository(this.client, this.spaceName);
-        return this.waitForExecutionToCompleteInternal(spaceServerTaskRepository, serverTaskId, statusCheckSleepCycle, timeout, pollingCallback);
+        return this.waitForTask(spaceServerTaskRepository, serverTaskId, statusCheckSleepCycle, timeout, pollingCallback);
     }
 
-    private async waitForExecutionToCompleteInternal(
+    private async waitForTask(
         spaceServerTaskRepository: SpaceServerTaskRepository,
         serverTaskId: string,
         statusCheckSleepCycle: number,
