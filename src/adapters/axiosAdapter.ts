@@ -19,7 +19,7 @@ export class AxiosAdapter<TResource> implements Adapter<TResource> {
             };
             if (typeof XMLHttpRequest === "undefined") {
                 if (config.headers) {
-                    var userAgent = "ts-octopusdeploy";
+                    let userAgent = "ts-octopusdeploy";
                     if (options.configuration.userAgentApp) {
                         userAgent = `${userAgent} ${options.configuration.userAgentApp}`;
                     }
