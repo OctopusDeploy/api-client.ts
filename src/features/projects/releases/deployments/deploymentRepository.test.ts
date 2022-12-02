@@ -4,9 +4,8 @@ import { randomUUID } from "crypto";
 import { Client } from "../../../../client";
 import { processConfiguration } from "../../../../clientConfiguration.test";
 import { DeploymentEnvironment, EnvironmentRepository } from "../../../../features/deploymentEnvironments";
-import { ServerTaskDetails } from "../../../../features/serverTasks";
+import { ServerTaskDetails, ServerTaskWaiter } from "../../../../features/serverTasks";
 import { ReleaseRepository, CreateReleaseCommandV1 } from "../../../projects/releases";
-import { ExecutionWaiter } from "../../execution-waiter";
 import { CreateDeploymentUntenantedCommandV1 } from "./createDeploymentUntenantedCommandV1";
 import { DeploymentRepository } from "./deploymentRepository";
 import { Space, SpaceRepository } from "../../../spaces";
@@ -119,9 +118,9 @@ describe("deploy a release", () => {
         expect(deployments.Items.length).toBe(1);
 
         const taskIds = response.DeploymentServerTasks.map((x) => x.ServerTaskId);
-        const e = new ExecutionWaiter(client, space.Name);
+        const e = new ServerTaskWaiter(client, space.Name);
 
-        await e.waitForExecutionsToComplete(taskIds, 1000, 600000, (serverTaskDetails: ServerTaskDetails): void => {
+        await e.waitForServerTasksToComplete(taskIds, 1000, 600000, (serverTaskDetails: ServerTaskDetails): void => {
             console.log(
                 `Waiting for task ${serverTaskDetails.Task.Id}. Current status: ${serverTaskDetails.Task.State}, completed: ${serverTaskDetails.Progress.ProgressPercentage}%`
             );
