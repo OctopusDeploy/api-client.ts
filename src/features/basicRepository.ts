@@ -40,7 +40,7 @@ export class BasicRepository<
         return this.client.del(`${this.baseApiPathTemplate}/${resource.Id}`).then((d) => this.notifySubscribersToDataModifications(resource));
     }
 
-    async create(resource: TNewResource, args?: TCreateArgs): Promise<TExistingResource> {
+    create(resource: TNewResource, args?: TCreateArgs): Promise<TExistingResource> {
         return this.client.doCreate<TExistingResource>(this.baseApiPathTemplate, resource, args).then((r) => this.notifySubscribersToDataModifications(r));
     }
 
@@ -49,7 +49,7 @@ export class BasicRepository<
     }
 
     list(args?: TListArgs): Promise<ResourceCollection<TExistingResource>> {
-        return this.client.get(`${this.baseApiPathTemplate}{?${this.listParametersTemplate}}`, args);
+        return this.client.request(`${this.baseApiPathTemplate}{?${this.listParametersTemplate}}`, args);
     }
 
     modify(resource: TExistingResource, args?: TModifyArgs): Promise<TExistingResource> {

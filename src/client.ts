@@ -205,9 +205,13 @@ export class Client {
         return this.dispatchRequest("POST", url, resource) as Promise<TReturn>;
     }
 
-    del(path: string, resource?: any, args?: RouteArgs) {
+    async del(path: string, args?: RouteArgs) {
+        if (args && isSpaceScopedArgs(args)) {
+            const spaceId = await resolveSpaceId(this, args.spaceName);
+            args = { spaceId: spaceId, ...args };
+        }
         const url = this.resolve(path, args);
-        return this.dispatchRequest("DELETE", url, resource);
+        return this.dispatchRequest("DELETE", url, undefined);
     }
 
     async getServerInformation(): Promise<ServerInformation> {
