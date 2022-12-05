@@ -47,12 +47,10 @@ describe("configuration", () => {
         let configuration = processConfiguration();
         expect(configuration.apiKey).not.toBeNull();
         expect(configuration.instanceURL).not.toBeNull();
-        expect(configuration.space).not.toBeNull();
 
         configuration = processConfiguration(undefined);
         expect(configuration.apiKey).not.toBeNull();
         expect(configuration.instanceURL).not.toBeNull();
-        expect(configuration.space).not.toBeNull();
     });
 
     test("blank", async () => {
@@ -60,11 +58,9 @@ describe("configuration", () => {
             userAgentApp: "",
             apiKey: "",
             instanceURL: "",
-            space: "",
         };
         expect(configuration.userAgentApp).not.toBeNull();
         expect(configuration.apiKey).not.toBeNull();
         expect(configuration.instanceURL).not.toBeNull();
-        expect(configuration.space).not.toBeNull();
     });
 });
