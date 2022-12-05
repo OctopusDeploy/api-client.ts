@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.0.0](https://github.com/OctopusDeploy/api-client.ts/compare/v1.4.0...v2.0.0) (2022-12-05)
+
+
+### ⚠ BREAKING CHANGES
+
+* Removed environment variables from client, it is callers responsibility. Removed monolithic repositoy object and added space awareness to individual repository implementations
+* Updates to call the create release/executions APIs ([#123](https://github.com/OctopusDeploy/api-client.ts/issues/123))
+
+### Features
+
+* Removed environment variables from client, it is callers responsibility. Removed monolithic repositoy object and added space awareness to individual repository implementations ([86e86e1](https://github.com/OctopusDeploy/api-client.ts/commit/86e86e19e7c1a44d54b994e497055658c2bf33a1))
+* Updates to call the create release/executions APIs ([#123](https://github.com/OctopusDeploy/api-client.ts/issues/123)) ([03eddec](https://github.com/OctopusDeploy/api-client.ts/commit/03eddece5e674c5a16b33765e9e4342d5602bf08))
+
 ## [1.4.0](https://github.com/OctopusDeploy/api-client.ts/compare/v1.3.2...v1.4.0) (2022-07-21)
 
 
