@@ -1,4 +1,4 @@
-import { OctopusError } from "@octopusdeploy/message-contracts";
+import { OctopusError } from "./octopusError";
 import type { Adapter, AdapterResponse } from "./adapter";
 import { AdapterError } from "./adapter";
 import { AxiosAdapter } from "./adapters/axiosAdapter";
@@ -15,10 +15,10 @@ export default class ApiClient<TResource> {
         this.adapter = new AxiosAdapter<TResource>();
     }
 
-    async execute(useCamelCase: boolean = false) {
+    async execute() {
         try {
             const response = await this.adapter.execute(this.options);
-            this.handleSuccess(response, useCamelCase);
+            this.handleSuccess(response);
         } catch (error: unknown) {
             if (error instanceof AdapterError) {
                 this.handleError(error);
@@ -30,9 +30,10 @@ export default class ApiClient<TResource> {
         }
     }
 
-    private handleSuccess = (response: AdapterResponse<TResource>, useCamelCase: boolean) => {
+    private handleSuccess = (response: AdapterResponse<TResource>) => {
         if (this.options.onResponseCallback) {
             const details: ResponseDetails = {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/consistent-type-assertions
                 method: this.options.method as any,
                 url: this.options.url,
                 statusCode: response.statusCode,
@@ -43,21 +44,12 @@ export default class ApiClient<TResource> {
         let responseText: string = "";
 
         if (this.options.raw) {
+            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             responseText = response.data as unknown as string;
         } else {
             responseText = JSON.stringify(response.data);
             if (responseText && responseText.length > 0) {
-                responseText = JSON.parse(responseText, (_, val) => {
-                    if (val === null || val === undefined || Array.isArray(val) || typeof val !== "object" || !useCamelCase) {
-                        return val;
-                    }
-                    return Object.entries(val).reduce((a, [key, val]) => {
-                        const b = a as any;
-                        const field = key[0].toLowerCase() + key.substring(1);
-                        b[field] = val;
-                        return a;
-                    }, {});
-                });
+                responseText = JSON.parse(responseText);
             }
         }
 
@@ -68,6 +60,7 @@ export default class ApiClient<TResource> {
         const err = generateOctopusError(requestError);
         if (this.options.onErrorResponseCallback) {
             const details: ClientErrorResponseDetails = {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/consistent-type-assertions
                 method: this.options.method as any,
                 url: this.options.url,
                 statusCode: err.StatusCode,
@@ -79,12 +72,6 @@ export default class ApiClient<TResource> {
         this.options.error(err);
     };
 }
-
-const deserialize = (responseText?: string, raw?: boolean, forceJson: boolean = false) => {
-    if (raw && !forceJson) return responseText;
-    if (responseText && responseText.length) return JSON.parse(responseText);
-    return null;
-};
 
 const generateOctopusError = (requestError: AdapterError) => {
     if (requestError.code) {

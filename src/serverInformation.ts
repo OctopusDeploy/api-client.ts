@@ -1,4 +1,4 @@
 export interface ServerInformation {
-  installationId: string;
-  version: string;
+    installationId: string;
+    version: string;
 }

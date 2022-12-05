@@ -39,28 +39,31 @@ jobs:
       statuses: write
       checks: write
     steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-node@v3
-        with:
-          cache: 'npm'
-          node-version: 16
-          registry-url: 'https://registry.npmjs.org'
-          scope: '@octopusdeploy'
-      - run: npm install
-      - run: |
-          curl '${{ env.SERVER_URL }}/api/configuration/webportal/values' -X 'PUT' -H 'Content-Type: application/json' -H 'X-Octopus-ApiKey: ${{ env.ADMIN_API_KEY }}' --data-binary '{"Security":{"CorsWhitelist":"http://localhost,${{ env.SERVER_URL }}","ReferrerPolicy":"no-referrer","ContentSecurityPolicyEnabled":true,"HttpStrictTransportSecurityEnabled":false,"HttpStrictTransportSecurityMaxAge":31556926,"XOptions":{"XFrameOptionAllowFrom":null,"XFrameOptions":"None"}}}' -o /dev/null -s -w "%{http_code}\n"
-        name: Add server url to CORS
-      - run: npm run test
-        name: 'Run the tests'
-        env:
-          OCTOPUS_URL: ${{ env.SERVER_URL }}
-          OCTOPUS_API_KEY: ${{ env.ADMIN_API_KEY }}
-      - uses: dorny/test-reporter@v1
-        if: success() || failure()
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - uses: actions/setup-node@v3
+      with:
+        cache: 'npm'
+        node-version: 16
+        registry-url: 'https://registry.npmjs.org'
+        scope: '@octopusdeploy'
+    - run: npm install
+    - run: |
+        curl '${{ env.SERVER_URL }}/api/configuration/webportal/values' -X 'PUT' -H 'Content-Type: application/json' -H 'X-Octopus-ApiKey: ${{ env.ADMIN_API_KEY }}' --data-binary '{"Security":{"CorsWhitelist":"http://localhost,${{ env.SERVER_URL }}","ReferrerPolicy":"no-referrer","ContentSecurityPolicyEnabled":true,"HttpStrictTransportSecurityEnabled":false,"HttpStrictTransportSecurityMaxAge":31556926,"XOptions":{"XFrameOptionAllowFrom":null,"XFrameOptions":"None"}}}' -o /dev/null -s -w "%{http_code}\n"
+      name: Add server url to CORS
+
+    - run: npm run test
+      name: 'Run the tests'
+      env:
+        OCTOPUS_TEST_URL: ${{ env.SERVER_URL }}
+        OCTOPUS_TEST_API_KEY: ${{ env.ADMIN_API_KEY }}
+
+    - uses: dorny/test-reporter@v1
+      if: success() || failure()
+      name: Tests report
+      with:
         name: Tests report
-        with:
-          name: Tests report
-          path: 'reports/jest-*.xml'
-          reporter: jest-junit
+        path: 'reports/jest-*.xml'
+        reporter: jest-junit
