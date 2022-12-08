@@ -50,20 +50,17 @@ export class ServerTaskWaiter {
                     pollingCallback(taskDetails);
 
                     if (taskDetails.Task.IsCompleted) {
-                        clearTimeout(t);
                         return taskDetails.Task;
                     }
                 } else {
                     const task = await spaceServerTaskRepository.getById(serverTaskId);
 
                     if (task.IsCompleted) {
-                        clearTimeout(t);
                         return task;
                     }
                 }
-            } catch (e) {
+            } finally {
                 clearTimeout(t);
-                throw e;
             }
 
             await sleep(statusCheckSleepCycle);
