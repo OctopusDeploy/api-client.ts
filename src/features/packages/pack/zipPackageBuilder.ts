@@ -6,8 +6,9 @@ type ZipPackArgs = {
 } & PackArgs;
 
 export class ZipPackageBuilder {
-    async pack(args: ZipPackArgs): Promise<void> {
+    async pack(args: ZipPackArgs): Promise<string> {
         const archiveFilename = `${args.packageId}.${args.version}.zip`;
-        return doZip(args.inputFilePatterns, args.outputFolder, archiveFilename, args.compressionLevel, args.overwrite);
+        await doZip(args.inputFilePatterns, args.outputFolder, archiveFilename, args.compressionLevel, args.overwrite);
+        return archiveFilename;
     }
 }

@@ -15,7 +15,7 @@ type NuGetPackArgs = {
 } & PackArgs;
 
 export class NuGetPackageBuilder {
-    async pack(args: NuGetPackArgs): Promise<void> {
+    async pack(args: NuGetPackArgs): Promise<string> {
         const archiveFilename = `${args.packageId}.${args.version}.nupkg`;
         const tmpFolder = os.tmpdir();
         const inputFilePatterns = args.inputFilePatterns;
@@ -41,6 +41,8 @@ export class NuGetPackageBuilder {
             inputFilePatterns.push(nuspecFile);
         }
 
-        return doZip(inputFilePatterns, args.outputFolder, archiveFilename, 8, args.overwrite);
+        await doZip(inputFilePatterns, args.outputFolder, archiveFilename, 8, args.overwrite);
+
+        return archiveFilename;
     }
 }
