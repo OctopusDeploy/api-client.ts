@@ -3,8 +3,14 @@ import fs from "fs";
 import os from "os";
 import path from "path";
 import AdmZip from "adm-zip";
+import { Logger } from "../../../logger";
 
 describe("Can create a Zip packages", () => {
+    const logger: Logger = {
+        debug: (m) => console.log(m),
+        info: (m) => console.log(m),
+    };
+
     test("Can create with a single specific file", async () => {
         const tmpFolder = os.tmpdir();
 
@@ -16,6 +22,7 @@ describe("Can create a Zip packages", () => {
             inputFilePatterns: [path.join(tmpFolder, "ZipPackagingTest.txt")],
             outputFolder: tmpFolder,
             overwrite: true,
+            logger,
         });
 
         const expectedPackageFile = path.join(tmpFolder, `TestPackage.1.0.1.zip`);
@@ -37,6 +44,7 @@ describe("Can create a Zip packages", () => {
             inputFilePatterns: ["src/features/packages/pack/*.ts"],
             outputFolder: tmpFolder,
             overwrite: true,
+            logger,
         });
 
         const expectedPackageFile = path.join(tmpFolder, `TestPackageA.1.1.1.zip`);

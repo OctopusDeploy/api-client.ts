@@ -2,6 +2,7 @@ import AdmZip from "adm-zip";
 import { glob } from "glob";
 import path from "path";
 import { promisify } from "util";
+import { Logger } from "../../../logger";
 
 const globp = promisify(glob);
 
@@ -9,17 +10,23 @@ export async function doZip(
     inputFilePatterns: string[],
     outputFolder: string,
     zipFilename: string,
+    logger: Logger,
     compressionLevel?: number,
     overwrite?: boolean
 ): Promise<void> {
-    const archivePath = path.join(outputFolder, zipFilename);
+    const archivePath = path.resolve(outputFolder, zipFilename);
+    logger.info?.(`Writing to package: ${archivePath}`);
     const zip = new AdmZip();
 
     const files = await expandGlobs(inputFilePatterns);
     for (const file of files) {
+        logger.debug?.(`Adding file: ${file}`);
         zip.addLocalFile(file);
     }
 
+    if (compressionLevel) {
+        logger.info?.(`Overriding compression level: ${compressionLevel}`);
+    }
     setCompressionLevel(zip, compressionLevel || 8);
     await zip.writeZipPromise(archivePath, { overwrite: overwrite });
 }
