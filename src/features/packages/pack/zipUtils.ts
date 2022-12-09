@@ -21,7 +21,8 @@ export async function doZip(
 
     const files = await expandGlobs(inputFilePatterns);
     for (const file of files) {
-        logger.debug?.(`Adding file: ${file}`);
+        logger.debug?.(`Adding file: ${file}...`);
+
         zip.addLocalFile(file);
     }
 
