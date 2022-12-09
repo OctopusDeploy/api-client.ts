@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.1.0](https://github.com/OctopusDeploy/api-client.ts/compare/v2.0.0...v2.1.0) (2022-12-09)
+
+
+### Features
+
+* Add support for creating Zip and NuGet packages ([#128](https://github.com/OctopusDeploy/api-client.ts/issues/128)) ([804e2e7](https://github.com/OctopusDeploy/api-client.ts/commit/804e2e7fd633a1c5649873460bd22e59ed461ebb))
+
+
+### Bug Fixes
+
+* Fixed an issue with error handling in task waiter ([#127](https://github.com/OctopusDeploy/api-client.ts/issues/127)) ([7e2ec6e](https://github.com/OctopusDeploy/api-client.ts/commit/7e2ec6eb94153b576cd1e76d01931a4881cdb91b))
+
 ## [2.0.0](https://github.com/OctopusDeploy/api-client.ts/compare/v1.4.0...v2.0.0) (2022-12-05)
 
 
