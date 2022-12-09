@@ -44,21 +44,23 @@ export class ServerTaskWaiter {
         }, timeout);
 
         while (!stop) {
-            if (pollingCallback) {
-                const taskDetails = await spaceServerTaskRepository.getDetails(serverTaskId);
-                pollingCallback(taskDetails);
+            try {
+                if (pollingCallback) {
+                    const taskDetails = await spaceServerTaskRepository.getDetails(serverTaskId);
+                    pollingCallback(taskDetails);
 
-                if (taskDetails.Task.IsCompleted) {
-                    clearTimeout(t);
-                    return taskDetails.Task;
-                }
-            } else {
-                const task = await spaceServerTaskRepository.getById(serverTaskId);
+                    if (taskDetails.Task.IsCompleted) {
+                        return taskDetails.Task;
+                    }
+                } else {
+                    const task = await spaceServerTaskRepository.getById(serverTaskId);
 
-                if (task.IsCompleted) {
-                    clearTimeout(t);
-                    return task;
+                    if (task.IsCompleted) {
+                        return task;
+                    }
                 }
+            } finally {
+                clearTimeout(t);
             }
 
             await sleep(statusCheckSleepCycle);
