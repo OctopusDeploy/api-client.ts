@@ -15,7 +15,8 @@ export async function doZip(
     overwrite?: boolean
 ): Promise<void> {
     const archivePath = path.resolve(outputFolder, zipFilename);
-    logger.info?.(`Writing to package: ${archivePath}`);
+    logger.info?.(`Writing to package: ${archivePath}...`);
+
     const zip = new AdmZip();
 
     const files = await expandGlobs(inputFilePatterns);
