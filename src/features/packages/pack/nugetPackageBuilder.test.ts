@@ -90,7 +90,7 @@ describe("Can create a NuGet packages", () => {
         fs.writeFileSync(path.join(tmpFolder, "NuGetPackagingTest.txt"), "Some test content to add to the zip archive");
         const packageBuilder = new NuGetPackageBuilder();
         await packageBuilder.pack({
-            packageId: "TestNuGetPackage",
+            packageId: "TestNuGetPackageRel",
             version: "1.0.1",
             basePath: tmpFolder,
             inputFilePatterns: ["NuGetPackagingTest.txt"],
@@ -99,7 +99,7 @@ describe("Can create a NuGet packages", () => {
             logger,
         });
 
-        const expectedPackageFile = path.join("RelativeFolderTest", "TestNuGetPackage.1.0.1.nupkg");
+        const expectedPackageFile = path.join("RelativeFolderTest", "TestNuGetPackageRel.1.0.1.nupkg");
 
         expect(fs.existsSync(expectedPackageFile)).toBe(true);
         const zip = new AdmZip(expectedPackageFile);

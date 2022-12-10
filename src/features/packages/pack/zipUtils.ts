@@ -40,7 +40,7 @@ export async function doZip(
         logger.debug?.(`Adding file: ${file}...`);
 
         if (fs.lstatSync(file).isDirectory()) {
-            zip.addFile(`${file}/`, new Buffer([0x00]));
+            zip.addFile(`${file}/`, Buffer.from([0x00]));
         } else {
             const dirName = path.dirname(file);
             zip.addLocalFile(file, dirName === "." ? "" : dirName);
@@ -54,7 +54,7 @@ export async function doZip(
 
     process.chdir(initialWorkingDirectory);
 
-    await zip.writeZipPromise(archivePath, { overwrite: overwrite });
+    await zip.writeZipPromise(archivePath, { overwrite: overwrite || true });
 }
 
 const setCompressionLevel = (zip: AdmZip, level: number): void => {
