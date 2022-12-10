@@ -17,11 +17,11 @@ type NuGetPackArgs = {
 export class NuGetPackageBuilder {
     async pack(args: NuGetPackArgs): Promise<string> {
         const archiveFilename = `${args.packageId}.${args.version}.nupkg`;
-        const tmpFolder = os.tmpdir();
         const inputFilePatterns = args.inputFilePatterns;
 
         if (args.nuspecArgs) {
-            const nuspecFile = path.join(tmpFolder, `${args.packageId}.nuspec`);
+            const nuspecFilename = `${args.packageId}.nuspec`;
+            const nuspecFile = path.join(args.basePath, nuspecFilename);
             fs.writeFileSync(nuspecFile, '<?xml version="1.0" encoding="utf-8"?>\n');
             fs.appendFileSync(nuspecFile, '<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">\n');
             fs.appendFileSync(nuspecFile, "    <metadata>\n");
@@ -38,7 +38,7 @@ export class NuGetPackageBuilder {
             fs.appendFileSync(nuspecFile, "</package>\n");
 
             // include the nuspec into the package
-            inputFilePatterns.push(nuspecFile);
+            inputFilePatterns.push(nuspecFilename);
         }
 
         await doZip(args.basePath, inputFilePatterns, args.outputFolder, archiveFilename, args.logger, 8, args.overwrite);

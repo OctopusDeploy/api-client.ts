@@ -19,7 +19,8 @@ describe("Can create a NuGet packages", () => {
         await packageBuilder.pack({
             packageId: "TestNuGetPackage",
             version: "1.0.1",
-            inputFilePatterns: [path.join(tmpFolder, "NuGetPackagingTest.txt")],
+            basePath: tmpFolder,
+            inputFilePatterns: ["NuGetPackagingTest.txt"],
             outputFolder: tmpFolder,
             overwrite: true,
             logger,
@@ -41,7 +42,8 @@ describe("Can create a NuGet packages", () => {
         await packageBuilder.pack({
             packageId: "TestNuGetPackageA",
             version: "1.1.1",
-            inputFilePatterns: ["src/features/packages/pack/*.ts"],
+            basePath: "src/features/packages/pack",
+            inputFilePatterns: ["*.ts"],
             outputFolder: tmpFolder,
             overwrite: true,
             logger,
@@ -63,7 +65,8 @@ describe("Can create a NuGet packages", () => {
         await packageBuilder.pack({
             packageId: "TestNuGetPackageWithSpec",
             version: "1.0.0",
-            inputFilePatterns: ["src/features/packages/pack/*.ts"],
+            basePath: "src/features/packages/pack",
+            inputFilePatterns: ["*.ts"],
             outputFolder: tmpFolder,
             overwrite: true,
             nuspecArgs: {
@@ -89,7 +92,8 @@ describe("Can create a NuGet packages", () => {
         await packageBuilder.pack({
             packageId: "TestNuGetPackage",
             version: "1.0.1",
-            inputFilePatterns: [path.join(tmpFolder, "NuGetPackagingTest.txt")],
+            basePath: tmpFolder,
+            inputFilePatterns: ["NuGetPackagingTest.txt"],
             outputFolder: "RelativeFolderTest",
             overwrite: true,
             logger,
