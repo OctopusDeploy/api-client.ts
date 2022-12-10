@@ -81,4 +81,30 @@ describe("Can create a Zip packages", () => {
         entry = zip.getEntry("features/projects/index.ts");
         expect(entry).not.toBeNull();
     });
+
+    test("Can create with '.' as the basePath", async () => {
+        const tmpFolder = os.tmpdir();
+
+        const zipPackageBuilder = new ZipPackageBuilder();
+        await zipPackageBuilder.pack({
+            packageId: "TestPackageDot",
+            version: "1.1.1",
+            basePath: ".",
+            inputFilePatterns: ["src/features/basicRepository.ts", "src/features/packages/**/*", "src/features/projects/**/*"],
+            outputFolder: tmpFolder,
+            overwrite: true,
+            logger,
+        });
+
+        const expectedPackageFile = path.join(tmpFolder, `TestPackageDot.1.1.1.zip`);
+
+        expect(fs.existsSync(expectedPackageFile)).toBe(true);
+        const zip = new AdmZip(expectedPackageFile);
+        let entry = zip.getEntry("src/features/basicRepository.ts");
+        expect(entry).not.toBeNull();
+        entry = zip.getEntry("src/features/packages/pack/zipPackageBuilder.test.ts");
+        expect(entry).not.toBeNull();
+        entry = zip.getEntry("src/features/projects/index.ts");
+        expect(entry).not.toBeNull();
+    });
 });
