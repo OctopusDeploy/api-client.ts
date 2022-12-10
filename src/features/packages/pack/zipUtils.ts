@@ -1,4 +1,5 @@
 import AdmZip from "adm-zip";
+import fs from "fs";
 import { glob } from "glob";
 import path from "path";
 import { promisify } from "util";
@@ -23,7 +24,11 @@ export async function doZip(
     for (const file of files) {
         logger.debug?.(`Adding file: ${file}...`);
 
-        zip.addLocalFile(file);
+        if (fs.lstatSync(file).isDirectory()) {
+            zip.addFile(`${file}/`, new Buffer([0x00]));
+        } else {
+            zip.addLocalFile(file, path.dirname(file));
+        }
     }
 
     if (compressionLevel) {

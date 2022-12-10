@@ -36,7 +36,6 @@ describe("Can create a Zip packages", () => {
     test("Can create with wildcarded files", async () => {
         const tmpFolder = os.tmpdir();
 
-        fs.writeFileSync(path.join(tmpFolder, "ZipPackagingTest1.txt"), "Some test content to add to the zip archive AAA");
         const zipPackageBuilder = new ZipPackageBuilder();
         await zipPackageBuilder.pack({
             packageId: "TestPackageA",
@@ -52,6 +51,27 @@ describe("Can create a Zip packages", () => {
         expect(fs.existsSync(expectedPackageFile)).toBe(true);
         const zip = new AdmZip(expectedPackageFile);
         const entry = zip.getEntry("zipPackageBuilder.ts");
+        expect(entry).not.toBeNull();
+    });
+
+    test("Can create with wildcarded directories", async () => {
+        const tmpFolder = os.tmpdir();
+
+        const zipPackageBuilder = new ZipPackageBuilder();
+        await zipPackageBuilder.pack({
+            packageId: "TestPackageWild",
+            version: "1.1.1",
+            inputFilePatterns: ["src/features/**/*"],
+            outputFolder: tmpFolder,
+            overwrite: true,
+            logger,
+        });
+
+        const expectedPackageFile = path.join(tmpFolder, `TestPackageWild.1.1.1.zip`);
+
+        expect(fs.existsSync(expectedPackageFile)).toBe(true);
+        const zip = new AdmZip(expectedPackageFile);
+        const entry = zip.getEntry("src/features/index.ts");
         expect(entry).not.toBeNull();
     });
 });
