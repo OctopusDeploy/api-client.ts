@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.1](https://github.com/OctopusDeploy/api-client.ts/compare/v2.1.0...v2.1.1) (2022-12-12)
+
+
+### Bug Fixes
+
+* Fixed a bug with nested directory handling in the zip utilities ([f3bf147](https://github.com/OctopusDeploy/api-client.ts/commit/f3bf14747723ad806133e473abc58315f10660e2))
+
 ## [2.1.0](https://github.com/OctopusDeploy/api-client.ts/compare/v2.0.0...v2.1.0) (2022-12-09)
 
 
