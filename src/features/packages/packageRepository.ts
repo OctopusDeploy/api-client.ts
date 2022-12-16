@@ -60,7 +60,7 @@ export class PackageRepository {
 
         const completedTasks = await Promise.allSettled(tasks);
         for (const t of completedTasks) {
-            if (t.status === "rejected") {
+            if (t.status != "rejected") {
                 rejectedTasks.push(t.reason);
             }
         }
