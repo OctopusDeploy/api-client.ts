@@ -56,7 +56,19 @@ export class PackageRepository {
             tasks.push(this.packageUpload(spaceId, packagePath, overwriteMode));
         }
 
-        await Promise.allSettled(tasks);
+        const rejectedTasks: unknown[] = [];
+
+        const completedTasks = await Promise.allSettled(tasks);
+        for (const t of completedTasks) {
+            if (t.status === "rejected") {
+                rejectedTasks.push(t.reason);
+            }
+        }
+
+        if (rejectedTasks.length > 0) {
+            throw new Error(`${rejectedTasks}`);
+        }
+
 
         this.client.info("Packages uploaded");
     }
