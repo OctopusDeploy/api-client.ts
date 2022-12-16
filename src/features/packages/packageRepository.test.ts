@@ -10,6 +10,7 @@ import { OverwriteMode } from "../overwriteMode";
 import { PackageRepository } from ".";
 import { Space, SpaceRepository } from "../spaces";
 import { userGetCurrent, UserProjection } from "../users";
+import { assert } from "console";
 
 describe("push package", () => {
     let client: Client;
@@ -81,6 +82,8 @@ describe("push package", () => {
             expect(error).toBeDefined();
             if (error instanceof Error) {
                 expect(error.message).toContain(`rejected`);
+            } else {
+                throw error;
             }
         }
     });
