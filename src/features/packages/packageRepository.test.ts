@@ -10,6 +10,7 @@ import { OverwriteMode } from "../overwriteMode";
 import { PackageRepository } from ".";
 import { Space, SpaceRepository } from "../spaces";
 import { userGetCurrent, UserProjection } from "../users";
+import { assert } from "console";
 
 describe("push package", () => {
     let client: Client;
@@ -70,6 +71,21 @@ describe("push package", () => {
 
         expect(result.PackageId).toStrictEqual("GoodBye");
         expect(result.Version).toStrictEqual("2.0.0");
+    });
+
+    test("failed package", async () => {
+        const packageRepository = new PackageRepository(client, space.Name);
+        try {
+            await packageRepository.push([path.join(tempOutDir, `Hello.1.0.0.zip`)], OverwriteMode.FailIfExists);
+            await packageRepository.push([path.join(tempOutDir, `Hello.1.0.0.zip`)], OverwriteMode.FailIfExists);
+        } catch (error) {
+            expect(error).toBeDefined();
+            if (error instanceof Error) {
+                expect(error.message).toContain(`A package with the same ID and version already exists`);
+            } else {
+                throw error;
+            }
+        }
     });
 
     afterAll(async () => {
