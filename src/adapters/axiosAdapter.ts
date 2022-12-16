@@ -10,9 +10,12 @@ export class AxiosAdapter<TResource> implements Adapter<TResource> {
             const config: AxiosRequestConfig = {
                 httpsAgent: options.configuration.httpsAgent,
                 url: options.url,
+                maxContentLength: Infinity,
+                maxBodyLength: Infinity,
                 method: options.method as Method,
                 data: options.requestBody,
                 headers: {
+                    "Accept-Encoding": "gzip,deflate,compress", // HACK: required for https://github.com/axios/axios/issues/5346 -- this line can be removed once this bug has been fixed
                     "X-Octopus-ApiKey": options.configuration.apiKey ?? "",
                 },
                 responseType: "json",
