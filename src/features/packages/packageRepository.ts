@@ -60,15 +60,14 @@ export class PackageRepository {
 
         const completedTasks = await Promise.allSettled(tasks);
         for (const t of completedTasks) {
-            if (t.status != "rejected") {
-                rejectedTasks.push(t.reason);
+            if (t.status === "rejected") {
+                rejectedTasks.push(t.status);
             }
         }
 
         if (rejectedTasks.length > 0) {
             throw new Error(`${rejectedTasks}`);
         }
-
 
         this.client.info("Packages uploaded");
     }
