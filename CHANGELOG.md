@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.2](https://github.com/OctopusDeploy/api-client.ts/compare/v2.1.1...v2.1.2) (2022-12-16)
+
+
+### Bug Fixes
+
+* ensure errors for failed package push are raised ([8a96573](https://github.com/OctopusDeploy/api-client.ts/commit/8a9657347ec4a8af855112e4fb839c25e7859210))
+
 ## [2.1.1](https://github.com/OctopusDeploy/api-client.ts/compare/v2.1.0...v2.1.1) (2022-12-12)
 
 
