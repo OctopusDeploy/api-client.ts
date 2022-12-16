@@ -72,6 +72,19 @@ describe("push package", () => {
         expect(result.Version).toStrictEqual("2.0.0");
     });
 
+    test("failed package", async () => {
+        const packageRepository = new PackageRepository(client, space.Name);
+        try {
+            await packageRepository.push([path.join(tempOutDir, `Hello.1.0.0.zip`)], OverwriteMode.FailIfExists);
+            await packageRepository.push([path.join(tempOutDir, `Hello.1.0.0.zip`)], OverwriteMode.FailIfExists);
+        } catch (error) {
+            expect(error).toBeDefined();
+            if (error instanceof Error) {
+                expect(error.message).toContain(`rejected`);
+            }
+        }
+    });
+
     afterAll(async () => {
         await rm(tempOutDir, { recursive: true });
     });
