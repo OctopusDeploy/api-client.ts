@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.1.3](https://github.com/OctopusDeploy/api-client.ts/compare/v2.1.2...v2.1.3) (2022-12-19)
+
+
+### Bug Fixes
+
+* ERR_FR_MAX_BODY_LENGTH_EXCEEDED When Attempting to Upload Large Packages ([2468619](https://github.com/OctopusDeploy/api-client.ts/commit/246861969a53785efa0eafcb64302515b3cb5046))
+* updated request configuration ([2450652](https://github.com/OctopusDeploy/api-client.ts/commit/2450652f13792f45ea9b8f25d1aab99bc2f00a33)), closes [#134](https://github.com/OctopusDeploy/api-client.ts/issues/134)
+
 ## [2.1.2](https://github.com/OctopusDeploy/api-client.ts/compare/v2.1.1...v2.1.2) (2022-12-16)
 
 
