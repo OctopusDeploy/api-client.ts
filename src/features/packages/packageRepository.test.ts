@@ -11,6 +11,7 @@ import { PackageRepository } from ".";
 import { Space, SpaceRepository } from "../spaces";
 import { userGetCurrent, UserProjection } from "../users";
 import { assert } from "console";
+import { faker } from "@faker-js/faker";
 
 describe("push package", () => {
     let client: Client;
@@ -86,6 +87,20 @@ describe("push package", () => {
                 throw error;
             }
         }
+    });
+
+    test("very large package", async () => {
+        let largeData: string = "";
+        while (largeData.length < 60_000_000) {
+            largeData += faker.lorem.paragraphs(5);
+        }
+
+        const zip = new AdmZip();
+        zip.addFile("largedata.txt", Buffer.from(largeData, "utf-8"));
+        const largePackagePath = path.join(tempOutDir, `LargeData.3.0.0.zip`);
+        zip.writeZip(largePackagePath);
+        const packageRepository = new PackageRepository(client, space.Name);
+        await packageRepository.push([largePackagePath], OverwriteMode.OverwriteExisting);
     });
 
     afterAll(async () => {
