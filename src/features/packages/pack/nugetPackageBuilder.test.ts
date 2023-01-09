@@ -1,5 +1,5 @@
 import { NuGetPackageBuilder } from "./nugetPackageBuilder";
-import fs, { rmdir } from "fs";
+import fs from "fs";
 import os from "os";
 import path from "path";
 import AdmZip from "adm-zip";

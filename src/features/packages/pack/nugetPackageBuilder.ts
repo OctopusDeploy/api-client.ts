@@ -1,7 +1,6 @@
 import { PackArgs } from "./packArgs";
 import { doZip } from "./zipUtils";
 import fs from "fs";
-import os from "os";
 import path from "path";
 
 export type NuSpecArgs = {
