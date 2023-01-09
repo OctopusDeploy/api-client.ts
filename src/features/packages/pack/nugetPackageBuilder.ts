@@ -41,7 +41,7 @@ export class NuGetPackageBuilder {
             inputFilePatterns.push(nuspecFilename);
         }
 
-        await doZip(args.basePath, inputFilePatterns, args.outputFolder, archiveFilename, args.logger, 8, args.overwrite);
+        await doZip(args.basePath, inputFilePatterns, args.outputFolder, archiveFilename, args.logger, 8, args.overwrite, args.logAddedFiles);
 
         return archiveFilename;
     }
