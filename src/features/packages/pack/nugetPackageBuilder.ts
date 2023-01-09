@@ -4,14 +4,14 @@ import fs from "fs";
 import os from "os";
 import path from "path";
 
-type NuSpecArgs = {
+export type NuSpecArgs = {
     description: string;
     authors: string[];
     title?: string;
     releaseNotes?: string;
 };
 
-type NuGetPackArgs = {
+export type NuGetPackArgs = {
     nuspecArgs?: NuSpecArgs;
 } & PackArgs;
 
