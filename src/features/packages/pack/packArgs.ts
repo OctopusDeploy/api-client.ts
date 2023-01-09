@@ -8,5 +8,4 @@ export type PackArgs = {
     outputFolder: string;
     overwrite?: boolean;
     logger: Logger;
-    logAddedFiles?: boolean;
 };

@@ -7,6 +7,7 @@ import path from "path";
 type NuSpecArgs = {
     description: string;
     authors: string[];
+    title?: string;
     releaseNotes?: string;
 };
 
@@ -30,6 +31,10 @@ export class NuGetPackageBuilder {
             fs.appendFileSync(nuspecFile, `        <description>${args.nuspecArgs.description}</description>\n`);
             fs.appendFileSync(nuspecFile, `        <authors>${args.nuspecArgs.authors.join(",")}</authors>\n`);
 
+            if (args.nuspecArgs.title) {
+                fs.appendFileSync(nuspecFile, `        <title>${args.nuspecArgs.title}</title>\n`);
+            }
+
             if (args.nuspecArgs.releaseNotes) {
                 fs.appendFileSync(nuspecFile, `        <releaseNotes>${args.nuspecArgs.releaseNotes}</releaseNotes>\n`);
             }
@@ -41,7 +46,7 @@ export class NuGetPackageBuilder {
             inputFilePatterns.push(nuspecFilename);
         }
 
-        await doZip(args.basePath, inputFilePatterns, args.outputFolder, archiveFilename, args.logger, 8, args.overwrite, args.logAddedFiles);
+        await doZip(args.basePath, inputFilePatterns, args.outputFolder, archiveFilename, args.logger, 8, args.overwrite);
 
         return archiveFilename;
     }
