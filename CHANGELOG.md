@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.1.4](https://github.com/OctopusDeploy/api-client.ts/compare/v2.1.3...v2.1.4) (2023-01-11)
+
+
+### Bug Fixes
+
+* Added support for setting a Nuspec title, when creating a NuGet package ([#138](https://github.com/OctopusDeploy/api-client.ts/issues/138)) ([1865329](https://github.com/OctopusDeploy/api-client.ts/commit/1865329d9c462e9385f9b3a96e44f409a11653d7))
+* Fixed a bug with the prompted variables structure/serialization ([#140](https://github.com/OctopusDeploy/api-client.ts/issues/140)) ([330049e](https://github.com/OctopusDeploy/api-client.ts/commit/330049ef612be446ae940c4699010516ebc929bc))
+
 ## [2.1.3](https://github.com/OctopusDeploy/api-client.ts/compare/v2.1.2...v2.1.3) (2022-12-19)
 
 
