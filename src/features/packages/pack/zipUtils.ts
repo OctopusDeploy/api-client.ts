@@ -25,8 +25,7 @@ export async function doZip(
     zipFilename: string,
     logger: Logger,
     compressionLevel?: number,
-    overwrite?: boolean,
-    logAddedFiles?: boolean
+    overwrite?: boolean
 ): Promise<void> {
     const archivePath = path.resolve(outputFolder, zipFilename);
     logger.info?.(`Writing to package: ${archivePath}...`);
@@ -38,11 +37,7 @@ export async function doZip(
 
     const files = await expandGlobs(inputFilePatterns);
     for (const file of files) {
-        if (logAddedFiles === true) {
-            logger.info?.(`Adding file: ${file}...`);
-        } else {
-            logger.debug?.(`Adding file: ${file}...`);
-        }
+        logger.debug?.(`Adding file: ${file}...`);
 
         if (fs.lstatSync(file).isDirectory()) {
             zip.addFile(`${file}/`, Buffer.from([0x00]));
