@@ -9,5 +9,5 @@ export interface CreateExecutionBaseV1 extends SpaceScopedOperation {
     UseGuidedFailure?: boolean;
     RunAt?: Date | undefined;
     NoRunAfter?: Date | undefined;
-    Variables?: Map<string, string>;
+    Variables?: { [name: string]: string };
 }
