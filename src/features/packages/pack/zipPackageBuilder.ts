@@ -1,7 +1,7 @@
 import { PackArgs } from "./packArgs";
 import { doZip } from "./zipUtils";
 
-type ZipPackArgs = {
+export type ZipPackArgs = {
     compressionLevel?: number;
 } & PackArgs;
 

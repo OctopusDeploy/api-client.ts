@@ -1,16 +1,16 @@
 import { PackArgs } from "./packArgs";
 import { doZip } from "./zipUtils";
 import fs from "fs";
-import os from "os";
 import path from "path";
 
-type NuSpecArgs = {
+export type NuSpecArgs = {
     description: string;
     authors: string[];
+    title?: string;
     releaseNotes?: string;
 };
 
-type NuGetPackArgs = {
+export type NuGetPackArgs = {
     nuspecArgs?: NuSpecArgs;
 } & PackArgs;
 
@@ -29,6 +29,10 @@ export class NuGetPackageBuilder {
             fs.appendFileSync(nuspecFile, `        <version>${args.version}</version>\n`);
             fs.appendFileSync(nuspecFile, `        <description>${args.nuspecArgs.description}</description>\n`);
             fs.appendFileSync(nuspecFile, `        <authors>${args.nuspecArgs.authors.join(",")}</authors>\n`);
+
+            if (args.nuspecArgs.title) {
+                fs.appendFileSync(nuspecFile, `        <title>${args.nuspecArgs.title}</title>\n`);
+            }
 
             if (args.nuspecArgs.releaseNotes) {
                 fs.appendFileSync(nuspecFile, `        <releaseNotes>${args.nuspecArgs.releaseNotes}</releaseNotes>\n`);
