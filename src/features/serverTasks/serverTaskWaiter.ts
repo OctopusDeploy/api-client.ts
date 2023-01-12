@@ -21,7 +21,7 @@ export class ServerTaskWaiter {
         statusCheckSleepCycle: number,
         timeout: number,
         pollingCallback?: (serverTask: ServerTask) => void
-    ): Promise<ServerTask | null> {
+    ): Promise<ServerTask> {
         const spaceServerTaskRepository = new SpaceServerTaskRepository(this.client, this.spaceName);
         const tasks = await this.waitForTasks(spaceServerTaskRepository, [serverTaskId], statusCheckSleepCycle, timeout, pollingCallback);
         return tasks[0];
@@ -47,6 +47,11 @@ export class ServerTaskWaiter {
             try {
                 const tasks = await spaceServerTaskRepository.getByIds(serverTaskIds);
 
+                const unknownTaskIds = serverTaskIds.filter((id) => tasks.filter((t) => t.Id === id).length == 0);
+                if (unknownTaskIds.length) {
+                    throw new Error(`Unknown task Id(s) ${unknownTaskIds.join(", ")}`);
+                }
+
                 const nowCompletedTaskIds: string[] = [];
 
                 for (const task of tasks) {
@@ -65,7 +70,7 @@ export class ServerTaskWaiter {
                 serverTaskIds = serverTaskIds.filter((id) => nowCompletedTaskIds.indexOf(id) < 0);
 
                 // once all tasks have completed we can stop the loop
-                if (serverTaskIds.length === 0) {
+                if (serverTaskIds.length === 0 || tasks.length === 0) {
                     stop = true;
                 }
             } finally {

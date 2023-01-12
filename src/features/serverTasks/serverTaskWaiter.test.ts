@@ -14,7 +14,7 @@ describe("push build information", () => {
 
         await expect(() => {
             return serverTaskWaiter.waitForServerTaskToComplete("ServerTasks-99999", 1000, 10000);
-        }).rejects.toThrow();
+        }).rejects.toThrow("Unknown task Id(s) ServerTasks-99999");
 
         const endTime = new Date();
         const timeDiff = endTime.getTime() - startTime.getTime();
