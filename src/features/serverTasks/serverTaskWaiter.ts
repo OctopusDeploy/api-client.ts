@@ -34,6 +34,13 @@ export class ServerTaskWaiter {
         timeout: number,
         pollingCallback?: (serverTask: ServerTask) => void
     ): Promise<ServerTask[]> {
+        // short circuit if no ids are passed. Sending an empty array to server here
+        // doesn't do what you may expect. To server, no ids == return every task the user
+        // has permission to see
+        if (serverTaskIds.length === 0) {
+            return [];
+        }
+
         const sleep = async (ms: number) => new Promise((r) => setTimeout(r, ms));
 
         let stop = false;
