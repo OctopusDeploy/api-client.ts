@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.0.0](https://github.com/OctopusDeploy/api-client.ts/compare/v2.1.4...v3.0.0) (2023-01-18)
+
+
+### ⚠ BREAKING CHANGES
+
+* Modified the ServerTaskWaiter implementation to optimise API calls ([#142](https://github.com/OctopusDeploy/api-client.ts/issues/142))
+
+### Features
+
+* Modified the ServerTaskWaiter implementation to optimise API calls ([#142](https://github.com/OctopusDeploy/api-client.ts/issues/142)) ([1e2433a](https://github.com/OctopusDeploy/api-client.ts/commit/1e2433ad09c72d1c3d76cde687540b258cd78b90))
+
 ## [2.1.4](https://github.com/OctopusDeploy/api-client.ts/compare/v2.1.3...v2.1.4) (2023-01-11)
 
 
