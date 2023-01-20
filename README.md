@@ -11,6 +11,8 @@ The TypeScript API Client for Octopus Deploy is easy to use after it's been init
 
 The reference documentation for this library is auto-generated via [Typedoc](https://typedoc.org/) and made available through GitHub Pages: [octopusdeploy.github.io/api-client.ts](https://octopusdeploy.github.io/api-client.ts/)
 
+Run `npx typedoc src` to update the documentation.
+
 ## 🏎 Usage
 
 ```typescript
