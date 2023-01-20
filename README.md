@@ -11,32 +11,30 @@ The TypeScript API Client for Octopus Deploy is easy to use after it's been init
 
 The reference documentation for this library is auto-generated via [Typedoc](https://typedoc.org/) and made available through GitHub Pages: [octopusdeploy.github.io/api-client.ts](https://octopusdeploy.github.io/api-client.ts/)
 
+Run `npx typedoc src` to update the documentation.
+
 ## 🏎 Usage
 
 ```typescript
-import { Client, ClientConfiguration, Repository } from "@octopusdeploy/api-client";
-import type { ProjectResource } from "@octopusdeploy/message-contracts";
+import { Client, ClientConfiguration, ProjectRepository } from "@octopusdeploy/api-client";
 
 const configuration: ClientConfiguration = {
+    userAgentApp: 'CustomTypeScript',
     instanceURL: "instance-url",
     apiKey: "api-key",
-    space: "space-id",
     agent: new Agent({ proxy: { hostname: "127.0.0.1", port: 8866 } }), // proxy agent if required
 };
 
 const client = await Client.create(configuration);
-if (client === undefined) {
-    throw new Error("client could not be constructed");
-}
+const repository = new ProjectRepository(client);
+const projectName: string = "project-name";
 
-const repository = new Repository(client);
-const projectNameOrId: string = "project-name-or-ID";
-
-console.log(`Getting project, "${projectNameOrId}"...`);
+console.log(`Getting project, "${projectName}"...`);
 
 let project: ProjectResource | undefined;
 try {
-    project = await repository.projects.find(projectNameOrId);
+    const projects = await repository.list({ partialName: projectName });
+    project = projects[0];
 } catch (error) {
     console.error(error);
 }
@@ -44,6 +42,6 @@ try {
 if (project !== null && project !== undefined) {
     console.log(`Project found: "${project?.Name}" (${project?.Id})`);
 } else {
-    console.error(`Project, "${projectNameOrId}" not found`);
+    console.error(`Project, "${projectName}" not found`);
 }
 ```
