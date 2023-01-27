@@ -13,7 +13,7 @@ export class ReleaseRepository {
     }
 
     async create(command: CreateReleaseCommandV1): Promise<CreateReleaseResponseV1> {
-        const capabilityError = await checkForCapability(this.client, "CreateReleaseCommandV1");
+        const capabilityError = await checkForCapability(this.client, "CreateReleaseCommandV1", "2022.3");
         if (capabilityError) {
             this.client.error?.(capabilityError);
             throw new Error(capabilityError);

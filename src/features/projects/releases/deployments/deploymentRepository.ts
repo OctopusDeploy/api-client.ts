@@ -53,7 +53,7 @@ export class DeploymentRepository {
     }
 
     async create(command: CreateDeploymentUntenantedCommandV1): Promise<CreateDeploymentUntenantedResponseV1> {
-        const capabilityError = await checkForCapability(this.client, "CreateDeploymentUntenantedCommandV1");
+        const capabilityError = await checkForCapability(this.client, "CreateDeploymentUntenantedCommandV1", "2022.3");
         if (capabilityError) {
             this.client.error?.(capabilityError);
             throw new Error(capabilityError);
@@ -87,7 +87,7 @@ export class DeploymentRepository {
     }
 
     async createTenanted(command: CreateDeploymentTenantedCommandV1): Promise<CreateDeploymentTenantedResponseV1> {
-        const capabilityError = await checkForCapability(this.client, "CreateDeploymentTenantedCommandV1");
+        const capabilityError = await checkForCapability(this.client, "CreateDeploymentTenantedCommandV1", "2022.3");
         if (capabilityError) {
             this.client.error?.(capabilityError);
             throw new Error(capabilityError);

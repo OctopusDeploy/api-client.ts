@@ -52,7 +52,7 @@ export class RunbookRunRepository {
     }
 
     async create(command: CreateRunbookRunCommandV1): Promise<CreateRunbookRunResponseV1> {
-        const capabilityError = await checkForCapability(this.client, "CreateRunbookRunCommandV1");
+        const capabilityError = await checkForCapability(this.client, "CreateRunbookRunCommandV1", "2022.3");
         if (capabilityError) {
             this.client.error?.(capabilityError);
             throw new Error(capabilityError);

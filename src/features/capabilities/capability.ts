@@ -6,12 +6,12 @@ interface CapabilitiesResponse {
     Capabilities: string[];
 }
 
-export async function checkForCapability(client: Client, capabilityName: string): Promise<string | null> {
+export async function checkForCapability(client: Client, capabilityName: string, minimumVersionThisWouldAppearIn: string): Promise<string | null> {
     try {
         const response = await client.get<CapabilitiesResponse>(`${apiLocation}/capabilities`);
         return response.Capabilities.filter((c) => c === capabilityName).length === 1
             ? null
-            : `The Octopus instance does not support ${capabilityName}, you may need to upgrade it to get access to the feature you are trying to use.`;
+            : `The Octopus instance does not support ${capabilityName}, it needs to be at least version ${minimumVersionThisWouldAppearIn} to get access to the feature you are trying to use.`;
     } catch (e) {
         if (e instanceof OctopusError) {
             if (e.StatusCode && e.StatusCode != 200) {
