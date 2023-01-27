@@ -1,5 +1,5 @@
 import type { Client } from "../../../../client";
-import { ResourceCollection, ListArgs, spaceScopedRoutePrefix } from "../../../..";
+import { ResourceCollection, ListArgs, spaceScopedRoutePrefix, checkForCapability } from "../../../..";
 import { TaskState } from "../../../serverTasks";
 import { Deployment } from "./deployment";
 import {
@@ -53,6 +53,12 @@ export class DeploymentRepository {
     }
 
     async create(command: CreateDeploymentUntenantedCommandV1): Promise<CreateDeploymentUntenantedResponseV1> {
+        const capabilityError = await checkForCapability(this.client, "CreateDeploymentUntenantedCommandV1", "2022.3");
+        if (capabilityError) {
+            this.client.error?.(capabilityError);
+            throw new Error(capabilityError);
+        }
+
         this.client.debug(`Deploying a release...`);
 
         // WARNING: server's API currently expects there to be a SpaceIdOrName value, which was intended to allow use of names/slugs, but doesn't
@@ -81,6 +87,12 @@ export class DeploymentRepository {
     }
 
     async createTenanted(command: CreateDeploymentTenantedCommandV1): Promise<CreateDeploymentTenantedResponseV1> {
+        const capabilityError = await checkForCapability(this.client, "CreateDeploymentTenantedCommandV1", "2022.3");
+        if (capabilityError) {
+            this.client.error?.(capabilityError);
+            throw new Error(capabilityError);
+        }
+
         this.client.debug(`Deploying a tenanted release...`);
 
         // WARNING: server's API currently expects there to be a SpaceIdOrName value, which was intended to allow use of names/slugs, but doesn't
