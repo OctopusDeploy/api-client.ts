@@ -1,4 +1,5 @@
 export * from "./buildInformation";
+export * from "./capabilities";
 export * from "./deploymentEnvironments";
 export * from "./forms";
 export * from "./lifecycles";
