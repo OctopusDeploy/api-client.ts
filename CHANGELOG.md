@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.1](https://github.com/OctopusDeploy/api-client.ts/compare/v3.0.0...v3.0.1) (2023-01-27)
+
+
+### Bug Fixes
+
+* get the execution API based methods to check capabilities and report server version info on error ([#145](https://github.com/OctopusDeploy/api-client.ts/issues/145)) ([d0ce6f6](https://github.com/OctopusDeploy/api-client.ts/commit/d0ce6f6f351a1d4f14859477d5365eceb7615638))
+
 ## [3.0.0](https://github.com/OctopusDeploy/api-client.ts/compare/v2.1.4...v3.0.0) (2023-01-18)
 
 
