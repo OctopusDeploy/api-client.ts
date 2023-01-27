@@ -5,6 +5,7 @@ import { spaceScopedRoutePrefix } from "../../../../spaceScopedRoutePrefix";
 import { ListArgs } from "../../../basicRepository";
 import { ResourceCollection } from "../../../../resourceCollection";
 import { CreateRunbookRunCommandV1, CreateRunbookRunResponseV1 } from "./createRunbookRunCommandV1";
+import { checkForCapability } from "../../../capabilities";
 
 // WARNING: we've had to do this to cover a mistake in Octopus' API. The API has been corrected to return PascalCase, but was returning camelCase
 // for a number of versions, so we'll deserialize both and use whichever actually has a value
@@ -51,6 +52,12 @@ export class RunbookRunRepository {
     }
 
     async create(command: CreateRunbookRunCommandV1): Promise<CreateRunbookRunResponseV1> {
+        const capabilityError = await checkForCapability(this.client, "CreateRunbookRunCommandV1");
+        if (capabilityError) {
+            this.client.error?.(capabilityError);
+            throw new Error(capabilityError);
+        }
+
         this.client.debug(`Running a runbook...`);
 
         // WARNING: server's API currently expects there to be a SpaceIdOrName value, which was intended to allow use of names/slugs, but doesn't

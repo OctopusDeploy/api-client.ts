@@ -1,5 +1,5 @@
 import type { Client } from "../../../client";
-import { spaceScopedRoutePrefix } from "../../..";
+import { checkForCapability, spaceScopedRoutePrefix } from "../../..";
 import { CreateReleaseCommandV1 } from "./createReleaseCommandV1";
 import { CreateReleaseResponseV1 } from "./createReleaseResponseV1";
 
@@ -13,6 +13,12 @@ export class ReleaseRepository {
     }
 
     async create(command: CreateReleaseCommandV1): Promise<CreateReleaseResponseV1> {
+        const capabilityError = await checkForCapability(this.client, "CreateReleaseCommandV1");
+        if (capabilityError) {
+            this.client.error?.(capabilityError);
+            throw new Error(capabilityError);
+        }
+
         this.client.debug(`Creating a release...`);
 
         // WARNING: server's API currently expects there to be a SpaceIdOrName value, which was intended to allow use of names/slugs, but doesn't
