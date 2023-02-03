@@ -16,12 +16,12 @@ export class ReleaseRepository {
     async create(command: CreateReleaseCommandV1): Promise<CreateReleaseResponseV1> {
         const serverInformation = await this.client.getServerInformation();
         const serverVersion = new SemVer(serverInformation.version);
-        if (serverVersion < new SemVer("2022.3.5085")) {
+        if (serverVersion < new SemVer("2022.3.5512")) {
             this.client.error?.(
-                "The Octopus instance doesn't support creating releases using the Executions API, it will need to be upgraded to at least 2022.3.5085 in order to access this API."
+                "The Octopus instance doesn't support creating releases using the Executions API, it will need to be upgraded to at least 2022.3.5512 in order to access this API."
             );
             throw new Error(
-                "The Octopus instance doesn't support creating releases using the Executions API, it will need to be upgraded to at least 2022.3.5085 in order to access this API."
+                "The Octopus instance doesn't support creating releases using the Executions API, it will need to be upgraded to at least 2022.3.5512 in order to access this API."
             );
         }
 
