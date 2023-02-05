@@ -1,7 +1,8 @@
 import type { Client } from "../../../client";
-import { checkForCapability, spaceScopedRoutePrefix } from "../../..";
+import { spaceScopedRoutePrefix } from "../../..";
 import { CreateReleaseCommandV1 } from "./createReleaseCommandV1";
 import { CreateReleaseResponseV1 } from "./createReleaseResponseV1";
+import { SemVer } from "semver";
 
 export class ReleaseRepository {
     private client: Client;
@@ -13,10 +14,15 @@ export class ReleaseRepository {
     }
 
     async create(command: CreateReleaseCommandV1): Promise<CreateReleaseResponseV1> {
-        const capabilityError = await checkForCapability(this.client, "CreateReleaseCommandV1", "2022.3");
-        if (capabilityError) {
-            this.client.error?.(capabilityError);
-            throw new Error(capabilityError);
+        const serverInformation = await this.client.getServerInformation();
+        const serverVersion = new SemVer(serverInformation.version);
+        if (serverVersion < new SemVer("2022.3.5512")) {
+            this.client.error?.(
+                "The Octopus instance doesn't support creating releases using the Executions API, it will need to be upgraded to at least 2022.3.5512 in order to access this API."
+            );
+            throw new Error(
+                "The Octopus instance doesn't support creating releases using the Executions API, it will need to be upgraded to at least 2022.3.5512 in order to access this API."
+            );
         }
 
         this.client.debug(`Creating a release...`);

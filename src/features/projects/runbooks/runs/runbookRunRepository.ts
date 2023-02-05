@@ -5,7 +5,7 @@ import { spaceScopedRoutePrefix } from "../../../../spaceScopedRoutePrefix";
 import { ListArgs } from "../../../basicRepository";
 import { ResourceCollection } from "../../../../resourceCollection";
 import { CreateRunbookRunCommandV1, CreateRunbookRunResponseV1 } from "./createRunbookRunCommandV1";
-import { checkForCapability } from "../../../capabilities";
+import { SemVer } from "semver";
 
 // WARNING: we've had to do this to cover a mistake in Octopus' API. The API has been corrected to return PascalCase, but was returning camelCase
 // for a number of versions, so we'll deserialize both and use whichever actually has a value
@@ -52,10 +52,15 @@ export class RunbookRunRepository {
     }
 
     async create(command: CreateRunbookRunCommandV1): Promise<CreateRunbookRunResponseV1> {
-        const capabilityError = await checkForCapability(this.client, "CreateRunbookRunCommandV1", "2022.3");
-        if (capabilityError) {
-            this.client.error?.(capabilityError);
-            throw new Error(capabilityError);
+        const serverInformation = await this.client.getServerInformation();
+        const serverVersion = new SemVer(serverInformation.version);
+        if (serverVersion < new SemVer("2022.3.5512")) {
+            this.client.error?.(
+                "The Octopus instance doesn't support running runbooks using the Executions API, it will need to be upgraded to at least 2022.3.5512 in order to access this API."
+            );
+            throw new Error(
+                "The Octopus instance doesn't support running runbooks using the Executions API, it will need to be upgraded to at least 2022.3.5512 in order to access this API."
+            );
         }
 
         this.client.debug(`Running a runbook...`);
