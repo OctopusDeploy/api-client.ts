@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.2](https://github.com/OctopusDeploy/api-client.ts/compare/v3.0.1...v3.0.2) (2023-02-05)
+
+
+### Bug Fixes
+
+* Removed Capabilities API from Execution API version check to fix incorrect failure of check  ([#147](https://github.com/OctopusDeploy/api-client.ts/issues/147)) ([f65e599](https://github.com/OctopusDeploy/api-client.ts/commit/f65e599b31ff62adee5483660a7b5e8986f6bc64))
+
 ## [3.0.1](https://github.com/OctopusDeploy/api-client.ts/compare/v3.0.0...v3.0.1) (2023-01-27)
 
 
