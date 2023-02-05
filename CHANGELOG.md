@@ -5,7 +5,7 @@
 
 ### Bug Fixes
 
-* Removed Capabilities API from Execution API version check to fixed  ([#147](https://github.com/OctopusDeploy/api-client.ts/issues/147)) ([f65e599](https://github.com/OctopusDeploy/api-client.ts/commit/f65e599b31ff62adee5483660a7b5e8986f6bc64))
+* Removed Capabilities API from Execution API version check to fix incorrect failure of check  ([#147](https://github.com/OctopusDeploy/api-client.ts/issues/147)) ([f65e599](https://github.com/OctopusDeploy/api-client.ts/commit/f65e599b31ff62adee5483660a7b5e8986f6bc64))
 
 ## [3.0.1](https://github.com/OctopusDeploy/api-client.ts/compare/v3.0.0...v3.0.1) (2023-01-27)
 
