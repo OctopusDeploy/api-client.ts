@@ -1,6 +1,6 @@
 import AdmZip from "adm-zip";
 import fs from "fs";
-import { glob } from "glob";
+import { glob, IOptions } from "glob";
 import path from "path";
 import { promisify } from "util";
 import { Logger } from "../../../logger";
@@ -69,11 +69,12 @@ const setCompressionLevel = (zip: AdmZip, level: number): void => {
 
 async function expandGlobs(filePatterns: string[]): Promise<string[]> {
     const files: string[] = [];
+    const options: IOptions = { dot: true };
 
     for (const filePattern of filePatterns) {
         for (const fileName of filePattern.split(",")) {
             if (glob.hasMagic(fileName)) {
-                const filePaths = await globp(fileName);
+                const filePaths = await globp(fileName, options);
                 for (const filePath of filePaths) {
                     files.push(filePath);
                 }
