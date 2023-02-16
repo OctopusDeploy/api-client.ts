@@ -129,7 +129,7 @@ describe("Can create a Zip packages", () => {
         const zip = new AdmZip(expectedPackageFile);
         let entry = zip.getEntry("ZipPackagingTest.txt");
         expect(entry).not.toBeNull();
-        let entry = zip.getEntry(".dotfile");
+        entry = zip.getEntry(".dotfile");
         expect(entry).not.toBeNull();
     });
 });
