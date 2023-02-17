@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.3](https://github.com/OctopusDeploy/api-client.ts/compare/v3.0.2...v3.0.3) (2023-02-17)
+
+
+### Bug Fixes
+
+* added dot file support for globbing in pack ([1a36127](https://github.com/OctopusDeploy/api-client.ts/commit/1a361279f093180aa6922f905b2b4befb7af1536))
+
 ## [3.0.2](https://github.com/OctopusDeploy/api-client.ts/compare/v3.0.1...v3.0.2) (2023-02-05)
 
 
