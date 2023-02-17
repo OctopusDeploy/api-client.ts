@@ -2,6 +2,7 @@ import type { Client } from "./client";
 import { apiLocation } from "./apiLocation";
 import { Space } from "./features/spaces/space";
 import { ResourceCollection } from "./resourceCollection";
+import { BasicRepository } from "./features";
 
 const knownSpaces: Record<string, string> = {};
 
@@ -12,7 +13,7 @@ export async function resolveSpaceId(client: Client, spaceName: string): Promise
 
     client.debug(`Resolving space from name '${spaceName}'`);
 
-    const spaces = await client.get<ResourceCollection<Space>>(`${apiLocation}/spaces`, { partialName: spaceName });
+    const spaces = await client.get<ResourceCollection<Space>>(`${apiLocation}/spaces?partialName=${spaceName}&skip=0&take=${BasicRepository.TakeAll}`);
     let spaceId = "";
 
     if (spaces.TotalResults === 0) {

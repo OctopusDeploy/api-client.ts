@@ -22,7 +22,7 @@ export class BasicRepository<
     TCreateArgs extends RouteArgs = RouteArgs,
     TModifyArgs extends RouteArgs = RouteArgs
 > {
-    readonly takeAll = 2147483647;
+    static TakeAll = 2147483647;
     readonly takeDefaultPageSize = 30;
     protected client: Client;
     protected readonly baseApiPathTemplate: string;
