@@ -107,4 +107,27 @@ describe("Can create a Zip packages", () => {
         entry = zip.getEntry("src/features/projects/index.ts");
         expect(entry).not.toBeNull();
     });
+
+    test("Can create zip file with dot-files included", async () => {
+        const tmpFolder = os.tmpdir();
+        const zipPackageBuilder = new ZipPackageBuilder();
+        await zipPackageBuilder.pack({
+            packageId: "TestPackage",
+            version: "1.0.1",
+            basePath: ".",
+            inputFilePatterns: ["*"],
+            outputFolder: tmpFolder,
+            overwrite: true,
+            logger,
+        });
+
+        const expectedPackageFile = path.join(tmpFolder, `TestPackage.1.0.1.zip`);
+
+        expect(fs.existsSync(expectedPackageFile)).toBe(true);
+        const zip = new AdmZip(expectedPackageFile);
+        let entry = zip.getEntry(".gitignore");
+        expect(entry).not.toBeNull();
+        entry = zip.getEntry("README.md");
+        expect(entry).not.toBeNull();
+    });
 });
