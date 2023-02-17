@@ -12,7 +12,7 @@ export async function resolveSpaceId(client: Client, spaceName: string): Promise
 
     client.debug(`Resolving space from name '${spaceName}'`);
 
-    const spaces = await client.get<ResourceCollection<Space>>(`${apiLocation}/spaces`, { partialName: spaceName });
+    const spaces = await client.get<ResourceCollection<Space>>(`${apiLocation}/spaces?partialName=${spaceName}&skip=0&take=2147483647`); // 2^31-1 same as Int32.MaxValue
     let spaceId = "";
 
     if (spaces.TotalResults === 0) {
