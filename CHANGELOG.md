@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.4](https://github.com/OctopusDeploy/api-client.ts/compare/v3.0.3...v3.0.4) (2023-02-17)
+
+
+### Bug Fixes
+
+* fix space query to ensure requested space is found ([#152](https://github.com/OctopusDeploy/api-client.ts/issues/152)) ([e432a4c](https://github.com/OctopusDeploy/api-client.ts/commit/e432a4cae60c35db826f09722021414b60de3d34))
+
 ## [3.0.3](https://github.com/OctopusDeploy/api-client.ts/compare/v3.0.2...v3.0.3) (2023-02-17)
 
 
