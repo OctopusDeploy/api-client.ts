@@ -13,7 +13,9 @@ export async function resolveSpaceId(client: Client, spaceName: string): Promise
 
     client.debug(`Resolving space from name '${spaceName}'`);
 
-    const spaces = await client.get<ResourceCollection<Space>>(`${apiLocation}/spaces?partialName=${spaceName}&skip=0&take=${BasicRepository.TakeAll}`);
+    const spaces = await client.get<ResourceCollection<Space>>(
+        `${apiLocation}/spaces?partialName=${encodeURIComponent(spaceName)}&skip=0&take=${BasicRepository.TakeAll}`
+    );
     let spaceId = "";
 
     if (spaces.TotalResults === 0) {
