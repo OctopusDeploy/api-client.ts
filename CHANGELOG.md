@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.5](https://github.com/OctopusDeploy/api-client.ts/compare/v3.0.4...v3.0.5) (2023-02-21)
+
+
+### Bug Fixes
+
+* url encoding on space name resolver ([#154](https://github.com/OctopusDeploy/api-client.ts/issues/154)) ([c60c3a9](https://github.com/OctopusDeploy/api-client.ts/commit/c60c3a9c5ee17f922888cc6183ee69f1bb6e10b9))
+
 ## [3.0.4](https://github.com/OctopusDeploy/api-client.ts/compare/v3.0.3...v3.0.4) (2023-02-17)
 
 
