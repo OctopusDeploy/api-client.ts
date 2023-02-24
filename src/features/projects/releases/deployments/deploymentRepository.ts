@@ -8,7 +8,7 @@ import {
     CreateDeploymentUntenantedCommandV1,
     CreateDeploymentUntenantedResponseV1,
 } from ".";
-import { SemVer } from "semver";
+import { lt } from "semver";
 
 // WARNING: we've had to do this to cover a mistake in Octopus' API. The API has been corrected to return PascalCase, but was returning camelCase
 // for a number of versions, so we'll deserialize both and use whichever actually has a value
@@ -55,8 +55,7 @@ export class DeploymentRepository {
 
     async create(command: CreateDeploymentUntenantedCommandV1): Promise<CreateDeploymentUntenantedResponseV1> {
         const serverInformation = await this.client.getServerInformation();
-        const serverVersion = new SemVer(serverInformation.version);
-        if (serverVersion < new SemVer("2022.3.5512")) {
+        if (lt(serverInformation.version, "2022.3.5512")) {
             this.client.error?.(
                 "The Octopus instance doesn't support deploying releases using the Executions API, it will need to be upgraded to at least 2022.3.5512 in order to access this API."
             );
@@ -94,8 +93,7 @@ export class DeploymentRepository {
 
     async createTenanted(command: CreateDeploymentTenantedCommandV1): Promise<CreateDeploymentTenantedResponseV1> {
         const serverInformation = await this.client.getServerInformation();
-        const serverVersion = new SemVer(serverInformation.version);
-        if (serverVersion < new SemVer("2022.3.5512")) {
+        if (lt(serverInformation.version, "2022.3.5512")) {
             this.client.error?.(
                 "The Octopus instance doesn't support deploying tenanted releases using the Executions API, it will need to be upgraded to at least 2022.3.5512 in order to access this API."
             );
