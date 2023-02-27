@@ -24,7 +24,7 @@ export class TenantRepository extends SpaceScopedBasicRepository<Tenant, NewTena
     }
 
     getVariables(tenant: Tenant): Promise<TenantVariable> {
-        return this.client.request(`${spaceScopedRoutePrefix}/tenants/{id}/variables`);
+        return this.client.request(`${spaceScopedRoutePrefix}/tenants/{id}/variables`, tenant);
     }
 
     setVariables(tenant: Tenant, variables: any): Promise<TenantVariable> {
