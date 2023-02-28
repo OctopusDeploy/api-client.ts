@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.6](https://github.com/OctopusDeploy/api-client.ts/compare/v3.0.5...v3.0.6) (2023-02-28)
+
+
+### Bug Fixes
+
+* tenant get variables ([#159](https://github.com/OctopusDeploy/api-client.ts/issues/159)) ([8f753e9](https://github.com/OctopusDeploy/api-client.ts/commit/8f753e9232f76c9f53462ef9905a707673a3b2ee))
+
 ## [3.0.5](https://github.com/OctopusDeploy/api-client.ts/compare/v3.0.4...v3.0.5) (2023-02-21)
 
 
