@@ -20,19 +20,30 @@ export class TenantRepository extends SpaceScopedBasicRepository<Tenant, NewTena
     }
 
     tagTest(tenantIds: string[], tags: string[]): Promise<TagTestResult> {
-        return this.client.request(`${spaceScopedRoutePrefix}/tenants/tag-test{?tenantIds,tags}`, { tenantIds, tags });
+        return this.client.request(`${spaceScopedRoutePrefix}/tenants/tag-test{?tenantIds,tags}`, {
+            spaceName: this.spaceName,
+            tenantIds,
+            tags,
+        });
     }
 
     getVariables(tenant: Tenant): Promise<TenantVariable> {
-        return this.client.request(`${spaceScopedRoutePrefix}/tenants/{id}/variables`);
+        return this.client.request(`${spaceScopedRoutePrefix}/tenants/{id}/variables`, {
+            spaceName: this.spaceName,
+            id: tenant.Id,
+        });
     }
 
     setVariables(tenant: Tenant, variables: any): Promise<TenantVariable> {
-        return this.client.doUpdate(`${spaceScopedRoutePrefix}/tenants/{id}/variables`, variables);
+        return this.client.doUpdate(`${spaceScopedRoutePrefix}/tenants/{id}/variables`, variables, {
+            spaceName: this.spaceName,
+            id: tenant.Id,
+        });
     }
 
     missingVariables(filterOptions: FilterOptions = {}, includeDetails: boolean = false): Promise<TenantMissingVariable[]> {
         const payload = {
+            spaceName: this.spaceName,
             environmentId: filterOptions.environmentId,
             includeDetails: includeDetails,
             projectId: filterOptions.projectId,
