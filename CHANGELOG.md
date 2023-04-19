@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.7](https://github.com/OctopusDeploy/api-client.ts/compare/v3.0.6...v3.0.7) (2023-04-19)
+
+
+### Bug Fixes
+
+* properly compare versions ([#158](https://github.com/OctopusDeploy/api-client.ts/issues/158)) ([e604b86](https://github.com/OctopusDeploy/api-client.ts/commit/e604b86520a697a1937003159d313ccac7edf493))
+
 ## [3.0.6](https://github.com/OctopusDeploy/api-client.ts/compare/v3.0.5...v3.0.6) (2023-02-28)
 
 
