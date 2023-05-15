@@ -15,22 +15,22 @@ export class SpaceServerTaskRepository {
         this.spaceName = spaceName;
     }
 
-    async getById(serverTaskId: string): Promise<ServerTask> {
+    async getById<TArgument = void>(serverTaskId: string): Promise<ServerTask> {
         if (!serverTaskId) {
             throw new Error("Server Task Id was not provided");
         }
-        const response = await this.client.request<ServerTask>(`${this.baseApiPathTemplate}/${serverTaskId}`, { spaceName: this.spaceName });
+        const response = await this.client.request<ServerTask<TArgument>>(`${this.baseApiPathTemplate}/${serverTaskId}`, { spaceName: this.spaceName });
         return response;
     }
 
-    async getByIds(serverTaskIds: string[]): Promise<ServerTask[]> {
+    async getByIds<TArguments = void>(serverTaskIds: string[]): Promise<ServerTask[]> {
         const batchSize = 300;
         const idArrays = chunk(serverTaskIds, batchSize);
         const promises: Array<Promise<ResourceCollection<ServerTask>>> = [];
 
         for (const [index, ids] of idArrays.entries()) {
             promises.push(
-                this.client.request<ResourceCollection<ServerTask>>(`${this.baseApiPathTemplate}{?skip,take,ids,partialName}`, {
+                this.client.request<ResourceCollection<ServerTask<TArguments>>>(`${this.baseApiPathTemplate}{?skip,take,ids,partialName}`, {
                     spaceName: this.spaceName,
                     ids: ids,
                     skip: index * batchSize,
