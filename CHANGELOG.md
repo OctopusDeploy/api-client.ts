@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.8](https://github.com/OctopusDeploy/api-client.ts/compare/v3.0.7...v3.0.8) (2023-05-17)
+
+
+### Bug Fixes
+
+* add argument type parameter to task ([#164](https://github.com/OctopusDeploy/api-client.ts/issues/164)) ([64606cd](https://github.com/OctopusDeploy/api-client.ts/commit/64606cd58aef7047becfce6db866dcdd2416d16b))
+
 ## [3.0.7](https://github.com/OctopusDeploy/api-client.ts/compare/v3.0.6...v3.0.7) (2023-04-19)
 
 
