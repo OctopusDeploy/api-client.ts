@@ -1,7 +1,7 @@
 import { NamedResource } from "../../namedResource";
 import { TaskState } from "./taskState";
 
-export interface ServerTask extends NamedResource {
+export interface ServerTask<TArguments = any> extends NamedResource {
     Description: string;
     State: TaskState;
     Completed?: string;
@@ -19,4 +19,5 @@ export interface ServerTask extends NamedResource {
     HasPendingInterruptions: boolean;
     CanRerun?: boolean;
     HasWarningsOrErrors: boolean;
+    Arguments: TArguments;
 }
