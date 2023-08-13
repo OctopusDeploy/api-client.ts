@@ -50,7 +50,8 @@ const configuration: ClientConfiguration = {
 Each parameter serve a specific purpose:
 
 * `agent` (optional) defines an HTTP proxy agent that may be defined for debugging purposes (i.e. Fiddler) -- useful for viewing inbound/outbound messages between the API client and the target instance of Octopus Deploy
-* `apiKey` (required) defines the API key to be used to connect to Octopus Deploy (see [How to Create an API Key](https://octopus.com/docs/octopus-rest-api/how-to-create-an-api-key) for more information concerning API keys)
+* `apiKey` (optional) defines the API key to be used to connect to Octopus Deploy (see [How to Create an API Key](https://octopus.com/docs/octopus-rest-api/how-to-create-an-api-key) for more information concerning API keys). One of `apiKey` or `accessToken` is required.
+* `accessToken` (optional) defines the access token to be used to connect to Octopus Deploy. Access tokens can be obtained using OpenID Connect identities. One of `accessToken` or `apiKey` is required.
 * `instanceURL` (required) defines the full URL of target instance of Octopus Deploy (i.e. `'https://demo.octopus.app'`)
 * `autoConnect` (optional) informs the `Client` to automatically attempt to connect to the target instance of Octopus Deploy when `Client.create(configuration)` is invoked
 * `space`: (optional) defines the target space in Octopus Deploy for API operations -- assumes the default space if undefined
