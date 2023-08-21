@@ -3,23 +3,11 @@ import axios from "axios";
 import type { Adapter, AdapterResponse } from "../adapter";
 import { AdapterError } from "../adapter";
 import { ClientOptions } from "../clientOptions";
+import { createRequestHeaders } from "./createRequestHeaders";
 
 export class AxiosAdapter<TResource> implements Adapter<TResource> {
     public async execute(options: ClientOptions): Promise<AdapterResponse<TResource>> {
         try {
-            const headers: RawAxiosRequestHeaders = {
-                "Accept-Encoding": "gzip,deflate,compress", // HACK: required for https://github.com/axios/axios/issues/5346 -- this line can be removed once this bug has been fixed
-            };
-            if (options.configuration.apiKey) {
-                headers["X-Octopus-ApiKey"] = options.configuration.apiKey;
-            }
-            if (options.configuration.accessToken) {
-                headers["Authorization"] = `Bearer ${options.configuration.accessToken}`;
-            }
-            if (!options.configuration.accessToken && !options.configuration.apiKey) {
-                // Backward compatibility: Add the api key header in with a blank value
-                headers["X-Octopus-ApiKey"] = "";
-            }
             const config: AxiosRequestConfig = {
                 httpsAgent: options.configuration.httpsAgent,
                 url: options.url,
@@ -28,7 +16,7 @@ export class AxiosAdapter<TResource> implements Adapter<TResource> {
                 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
                 method: options.method as Method,
                 data: options.requestBody,
-                headers: headers,
+                headers: createRequestHeaders(options.configuration),
                 responseType: "json",
             };
             if (typeof XMLHttpRequest === "undefined") {
