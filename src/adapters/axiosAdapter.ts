@@ -16,6 +16,10 @@ export class AxiosAdapter<TResource> implements Adapter<TResource> {
             if (options.configuration.accessToken) {
                 headers["Authorization"] = `Bearer ${options.configuration.accessToken}`;
             }
+            if (!options.configuration.accessToken && !options.configuration.apiKey) {
+                // Backward compatibility: Add the api key header in with a blank value
+                headers["X-Octopus-ApiKey"] = "";
+            }
             const config: AxiosRequestConfig = {
                 httpsAgent: options.configuration.httpsAgent,
                 url: options.url,
