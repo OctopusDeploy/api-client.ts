@@ -1,8 +1,9 @@
-import type { AxiosRequestConfig, Method } from "axios";
+import type { AxiosRequestConfig, Method, RawAxiosRequestHeaders } from "axios";
 import axios from "axios";
 import type { Adapter, AdapterResponse } from "../adapter";
 import { AdapterError } from "../adapter";
 import { ClientOptions } from "../clientOptions";
+import { createRequestHeaders } from "./createRequestHeaders";
 
 export class AxiosAdapter<TResource> implements Adapter<TResource> {
     public async execute(options: ClientOptions): Promise<AdapterResponse<TResource>> {
@@ -12,12 +13,10 @@ export class AxiosAdapter<TResource> implements Adapter<TResource> {
                 url: options.url,
                 maxContentLength: Infinity,
                 maxBodyLength: Infinity,
+                // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
                 method: options.method as Method,
                 data: options.requestBody,
-                headers: {
-                    "Accept-Encoding": "gzip,deflate,compress", // HACK: required for https://github.com/axios/axios/issues/5346 -- this line can be removed once this bug has been fixed
-                    "X-Octopus-ApiKey": options.configuration.apiKey ?? "",
-                },
+                headers: createRequestHeaders(options.configuration),
                 responseType: "json",
             };
             if (typeof XMLHttpRequest === "undefined") {
@@ -51,6 +50,7 @@ export class AxiosAdapter<TResource> implements Adapter<TResource> {
             let message = response.data.ErrorMessage;
 
             if (response.data.Errors) {
+                // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
                 const errors = response.data.Errors as string[];
 
                 for (let i = 0; i < errors.length; i++) {
