@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.0](https://github.com/OctopusDeploy/api-client.ts/compare/v3.0.8...v3.1.0) (2023-08-22)
+
+
+### Features
+
+* Adds access token authentication to client ([#166](https://github.com/OctopusDeploy/api-client.ts/issues/166)) ([7ba6d05](https://github.com/OctopusDeploy/api-client.ts/commit/7ba6d05c32711fd9a8eeac56f9b10abe864b239a))
+
 ## [3.0.8](https://github.com/OctopusDeploy/api-client.ts/compare/v3.0.7...v3.0.8) (2023-05-17)
 
 
