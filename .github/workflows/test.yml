@@ -1,4 +1,4 @@
-name: 'Run Tests' #temp change to trigger a build
+name: 'Run Tests'
 on:
   push:
   schedule:
