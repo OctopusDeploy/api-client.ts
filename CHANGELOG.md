@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.0](https://github.com/OctopusDeploy/api-client.ts/compare/v3.1.0...v3.2.0) (2023-12-13)
+
+
+### Features
+
+* Update to node 20 ([#168](https://github.com/OctopusDeploy/api-client.ts/issues/168)) ([618afa7](https://github.com/OctopusDeploy/api-client.ts/commit/618afa7fd822c7d62e792fd117ede762d025c646))
+
 ## [3.1.0](https://github.com/OctopusDeploy/api-client.ts/compare/v3.0.8...v3.1.0) (2023-08-22)
 
 
