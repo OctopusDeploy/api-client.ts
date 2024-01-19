@@ -1,5 +1,5 @@
 import { Package } from "./package";
-import { promises as fs } from "fs";
+import { createReadStream } from "fs";
 import path from "path";
 import FormData from "form-data";
 import { OverwriteMode } from "../overwriteMode";
@@ -29,11 +29,10 @@ export class PackageRepository {
         if (!packageId) {
             throw new Error("Package Id was not provided");
         }
-        const response = await this.client.request<Package>(`${spaceScopedRoutePrefix}/packages{/packageId}`, {
+        return await this.client.request<Package>(`${spaceScopedRoutePrefix}/packages{/packageId}`, {
             spaceName: this.spaceName,
             packageId,
         });
-        return response;
     }
 
     async list(args?: PackagesListArgs): Promise<ResourceCollection<Package>> {
@@ -91,8 +90,11 @@ export class PackageRepository {
 
     private async upload(spaceId: string, filePath: string, fileName: string, overwriteMode: OverwriteMode) {
         const fd = new FormData();
-        const data = await fs.readFile(filePath);
-        fd.append("fileToUpload", data, fileName);
-        return this.client.post<Package>(`${spaceScopedRoutePrefix}/packages/raw{?overwriteMode}`, fd, { overwriteMode, spaceId });
+        const dataStream = createReadStream(filePath);
+        fd.append("fileToUpload", dataStream, fileName);
+        return this.client.post<Package>(`${spaceScopedRoutePrefix}/packages/raw{?overwriteMode}`, fd, {
+            overwriteMode,
+            spaceId,
+        });
     }
 }
