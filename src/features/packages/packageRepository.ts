@@ -92,9 +92,14 @@ export class PackageRepository {
         const fd = new FormData();
         const dataStream = createReadStream(filePath);
         fd.append("fileToUpload", dataStream, fileName);
-        return this.client.post<Package>(`${spaceScopedRoutePrefix}/packages/raw{?overwriteMode}`, fd, {
-            overwriteMode,
-            spaceId,
-        });
+        return this.client.post<Package>(
+            `${spaceScopedRoutePrefix}/packages/raw{?overwriteMode}`,
+            fd,
+            {
+                overwriteMode,
+                spaceId,
+            },
+            { ["X-Content-Type"]: "multipart/form-data" }
+        );
     }
 }

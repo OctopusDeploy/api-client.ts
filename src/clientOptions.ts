@@ -16,4 +16,5 @@ export interface ClientOptions {
     onRequestCallback: (details: ClientRequestDetails) => void;
     onResponseCallback: (details: ClientResponseDetails) => void;
     onErrorResponseCallback: (details: ClientErrorResponseDetails) => void;
+    headers?: { [key: string]: string };
 }

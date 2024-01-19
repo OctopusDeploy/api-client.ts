@@ -16,7 +16,7 @@ export class AxiosAdapter<TResource> implements Adapter<TResource> {
                 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
                 method: options.method as Method,
                 data: options.requestBody,
-                headers: createRequestHeaders(options.configuration),
+                headers: createRequestHeaders(options),
                 responseType: "json",
             };
             if (typeof XMLHttpRequest === "undefined") {

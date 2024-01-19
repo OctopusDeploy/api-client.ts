@@ -104,7 +104,7 @@ export class Client {
         return this.dispatchRequest("GET", url) as Promise<TResource>;
     }
 
-    getRaw(path: string, args?: RouteArgs): Promise<string> {
+    getRaw(path: string, args?: RouteArgs, customHeaders?: { [key:string]: string } ): Promise<string> {
         const url = this.resolve(path, args);
 
         return new Promise((resolve, reject) => {
@@ -118,6 +118,7 @@ export class Client {
                 onRequestCallback: (r) => this.onRequest(r),
                 onResponseCallback: (r) => this.onResponse(r),
                 onErrorResponseCallback: (r) => this.onErrorResponse(r),
+                headers: customHeaders,
             }).execute();
         });
     }
@@ -199,7 +200,7 @@ export class Client {
         return this.dispatchRequest("GET", url, null) as Promise<TReturn>;
     }
 
-    post<TReturn>(path: string, resource?: any, args?: RouteArgs): Promise<TReturn> {
+    post<TReturn>(path: string, resource?: any, args?: RouteArgs, customHeaders: { [key: string]: string }): Promise<TReturn> {
         const url = this.resolveUrl(path, args);
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         return this.dispatchRequest("POST", url, resource) as Promise<TReturn>;
@@ -234,7 +235,7 @@ export class Client {
             : null;
     }
 
-    private dispatchRequest(method: any, url: string, requestBody?: any) {
+    private dispatchRequest(method: any, url: string, requestBody?: any, customHeaders?: { [key: string]: string }) {
         return new Promise((resolve, reject) => {
             new ApiClient({
                 configuration: this.configuration,
@@ -246,6 +247,7 @@ export class Client {
                 onRequestCallback: (r) => this.onRequest(r),
                 onResponseCallback: (r) => this.onResponse(r),
                 onErrorResponseCallback: (r) => this.onErrorResponse(r),
+                headers: customHeaders,
             }).execute();
         });
     }
