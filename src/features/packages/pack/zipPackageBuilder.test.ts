@@ -130,4 +130,40 @@ describe("Can create a Zip packages", () => {
         entry = zip.getEntry("README.md");
         expect(entry).not.toBeNull();
     });
+    
+    test("Re-creating a zip with overwrite set to false does not replace the existing archive", async () => {
+        const tmpFolder = os.tmpdir();
+
+        fs.writeFileSync(path.join(tmpFolder, "ZipPackagingTest.txt"), "Some test content to add to the zip archive");
+        const zipPackageBuilder = new ZipPackageBuilder();
+        await zipPackageBuilder.pack({
+            packageId: "TestPackage",
+            version: "1.0.1",
+            basePath: tmpFolder,
+            inputFilePatterns: ["ZipPackagingTest.txt"],
+            outputFolder: tmpFolder,
+            overwrite: true,
+            logger,
+        });
+
+        fs.writeFileSync(path.join(tmpFolder, "ZipPackagingTest.txt"), "Updated Content");
+        const zipPackageBuilderReplace = new ZipPackageBuilder();
+        await zipPackageBuilderReplace.pack({
+            packageId: "TestPackage",
+            version: "1.0.1",
+            basePath: tmpFolder,
+            inputFilePatterns: ["ZipPackagingTest.txt"],
+            outputFolder: tmpFolder,
+            overwrite: false,
+            logger,
+        });
+
+        const expectedPackageFile = path.join(tmpFolder, `TestPackage.1.0.1.zip`);
+
+        expect(fs.existsSync(expectedPackageFile)).toBe(true);
+        const zip = new AdmZip(expectedPackageFile);
+        const entry = zip.getEntry("ZipPackagingTest.txt");
+        expect(entry).not.toBeNull();
+        expect(entry?.getData().toString()).toBe("Some test content to add to the zip archive");
+    });
 });
