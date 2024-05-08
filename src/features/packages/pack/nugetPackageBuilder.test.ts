@@ -107,4 +107,32 @@ describe("Can create a NuGet packages", () => {
         expect(entry).not.toBeNull();
         await fs.rmSync("RelativeFolderTest", { recursive: true, force: true });
     });
+
+    test("Can create with unexpected characters", async () => {
+        const tmpFolder = os.tmpdir();
+
+        fs.writeFileSync(path.join(tmpFolder, "NuGetPackagingTestæøå.txt"), "Some test content to add to the zip archive æøå");
+        const packageBuilder = new NuGetPackageBuilder();
+        await packageBuilder.pack({
+            packageId: "TestNuGetPackageWithOddCharacters",
+            version: "2.0.1",
+            basePath: tmpFolder,
+            inputFilePatterns: ["NuGetPackagingTestæøå.txt"],
+            outputFolder: tmpFolder,
+            overwrite: true,
+            logger,
+            nuspecArgs: {
+                description: "This is a test NuGet Package",
+                authors: ["Test AuthorA", "Test AuthorB"],
+            },
+        });
+
+        const expectedPackageFile = path.join(tmpFolder, `TestNuGetPackageWithOddCharacters.2.0.1.nupkg`);
+
+        expect(fs.existsSync(expectedPackageFile)).toBe(true);
+        const zip = new AdmZip(expectedPackageFile);
+        const entry = zip.getEntry("NuGetPackagingTestæøå.txt");
+        expect(entry).not.toBeNull();
+        expect(entry?.getData().toString()).toBe("Some test content to add to the zip archive æøå");
+    });
 });

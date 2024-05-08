@@ -53,8 +53,13 @@ export async function doZip(
     setCompressionLevel(zip, compressionLevel || 8);
 
     process.chdir(initialWorkingDirectory);
+    if (fs.existsSync(archivePath) && overwrite === false)
+    {
+        logger.info?.(`Found an existing archive at ${archivePath} and overwrite is disabled. The existing archive will not be overwritten.`);
+        return;
+    }
 
-    await zip.writeZipPromise(archivePath, { overwrite: overwrite || true });
+    return zip.writeZip(archivePath, () => {});
 }
 
 const setCompressionLevel = (zip: AdmZip, level: number): void => {
