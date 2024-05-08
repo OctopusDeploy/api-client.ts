@@ -55,7 +55,7 @@ export async function doZip(
     process.chdir(initialWorkingDirectory);
     if (fs.existsSync(archivePath) && overwrite === false)
     {
-        logger.info?.(`Found an existing archive at ${archivePath} and overwrite is disabled. The existing archive will not be over-written.`);
+        logger.info?.(`Found an existing archive at ${archivePath} and overwrite is disabled. The existing archive will not be overwritten.`);
         return;
     }
 
