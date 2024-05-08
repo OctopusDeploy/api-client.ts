@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.3.0](https://github.com/OctopusDeploy/api-client.ts/compare/v3.2.0...v3.3.0) (2024-05-08)
+
+
+### Miscellaneous Chores
+
+* release 3.3.0 ([2694e53](https://github.com/OctopusDeploy/api-client.ts/commit/2694e53042503b348683f4f3a5b2ff27e68aab3e))
+
 ## [3.2.0](https://github.com/OctopusDeploy/api-client.ts/compare/v3.1.0...v3.2.0) (2023-12-13)
 
 
