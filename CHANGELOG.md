@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.3.1](https://github.com/OctopusDeploy/api-client.ts/compare/v3.3.0...v3.3.1) (2024-06-19)
+
+
+### Bug Fixes
+
+* Fix an issue where the timeout passed in is not adhered to when waiting for a task ([68b923d](https://github.com/OctopusDeploy/api-client.ts/commit/68b923df5d273c0ba67f07a292bfcbdf0aa102ac))
+
+
+### Miscellaneous Chores
+
+* 3.3.1 ([9115d1a](https://github.com/OctopusDeploy/api-client.ts/commit/9115d1a9a18532665694a165fda409bac252f5ef))
+
 ## [3.3.0](https://github.com/OctopusDeploy/api-client.ts/compare/v3.2.0...v3.3.0) (2024-05-08)
 
 
