@@ -50,8 +50,8 @@ export class ServerTaskWaiter {
 
         const completedTasks: ServerTask[] = [];
 
-        while (!stop) {
-            try {
+        try {
+            while (!stop) {
                 const tasks = await spaceServerTaskRepository.getByIds(serverTaskIds);
 
                 const unknownTaskIds = serverTaskIds.filter((id) => tasks.filter((t) => t.Id === id).length == 0);
@@ -79,13 +79,15 @@ export class ServerTaskWaiter {
                 // once all tasks have completed we can stop the loop
                 if (serverTaskIds.length === 0 || tasks.length === 0) {
                     stop = true;
+                    clearTimeout(t);
                 }
-            } finally {
-                clearTimeout(t);
-            }
 
-            await sleep(statusCheckSleepCycle);
+                await sleep(statusCheckSleepCycle);
+            }
+        } finally {
+            clearTimeout(t);
         }
+
         return completedTasks;
     }
 }
