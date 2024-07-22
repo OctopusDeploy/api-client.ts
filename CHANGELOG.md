@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.4.0](https://github.com/OctopusDeploy/api-client.ts/compare/v3.3.1...v3.4.0) (2024-07-22)
+
+
+### Features
+
+* Adds AllowIgnoreChannelRules to project ([#185](https://github.com/OctopusDeploy/api-client.ts/issues/185)) ([59a90e5](https://github.com/OctopusDeploy/api-client.ts/commit/59a90e5f150da385d812a5bc5aef3769eda52f73))
+
 ## [3.3.1](https://github.com/OctopusDeploy/api-client.ts/compare/v3.3.0...v3.3.1) (2024-06-19)
 
 
