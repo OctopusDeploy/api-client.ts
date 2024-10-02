@@ -73,6 +73,37 @@ describe("push build information", () => {
         expect(result.PackageVersionBuildInformation?.VcsCommitNumber).toStrictEqual("314cf2c3ee916c92a384c2796a6abe332d678e4f");
     });
 
+    test("to a package failed", async () => {
+        const packageRepository = new PackageRepository(client, space.Name);
+        await packageRepository.push([path.join(tempOutDir, "Hello.1.0.0.zip")]);
+
+        const buildInformation = {
+            spaceName: space.Name,
+            BuildEnvironment: "BitBucket",
+            Branch: "main",
+            BuildNumber: "288",
+            BuildUrl: "https://bitbucket.org/octopussamples/petclinic/addon/pipelines/home#!/results/288",
+            VcsType: "Git",
+            VcsRoot: "http://bitbucket.org/octopussamples/petclinic",
+            VcsCommitNumber: "314cf2c3ee916c92a384c2796a6abe332d678e4f",
+            Packages: [{ Id: "Hello", Version: "1.0.0" }],
+            Commits: [
+                {
+                    Id: "314cf2c3ee916c92a384c2796a6abe332d678e4f",
+                    Comment: "GOD-1 - 'test build info",
+                },
+            ],
+        };
+
+        expect.assertions(1);
+        try {
+            await new BuildInformationRepository(client, space.Name).push(buildInformation);
+            await new BuildInformationRepository(client, space.Name).push(buildInformation);
+        } catch (error) {
+            expect(error).toBeDefined();
+        }
+    });
+
     afterAll(async () => {
         await rm(tempOutDir, { recursive: true });
     });
