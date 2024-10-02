@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.4.1](https://github.com/OctopusDeploy/api-client.ts/compare/v3.4.0...v3.4.1) (2024-10-02)
+
+
+### Bug Fixes
+
+* Add build information push error handling ([#187](https://github.com/OctopusDeploy/api-client.ts/issues/187)) ([f91e29f](https://github.com/OctopusDeploy/api-client.ts/commit/f91e29f437be923fadfd4ee908faeb682f265c0b))
+
 ## [3.4.0](https://github.com/OctopusDeploy/api-client.ts/compare/v3.3.1...v3.4.0) (2024-07-22)
 
 
