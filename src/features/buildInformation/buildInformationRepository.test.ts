@@ -95,12 +95,17 @@ describe("push build information", () => {
             ],
         };
 
-        expect.assertions(1);
+        expect.assertions(2);
         try {
             await new BuildInformationRepository(client, space.Name).push(buildInformation);
             await new BuildInformationRepository(client, space.Name).push(buildInformation);
         } catch (error) {
             expect(error).toBeDefined();
+            if (error instanceof Error) {
+                expect(error.message).toContain(`Metadata for the specified Package ID and version already exists.`);
+            } else {
+                throw error;
+            }
         }
     });
 
