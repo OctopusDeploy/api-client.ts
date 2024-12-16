@@ -1,5 +1,5 @@
 import { GuidedFailureMode, RunbookEnvironmentScope, TenantedDeploymentMode } from "@octopusdeploy/api-client";
-import { ClientConfiguration, RunbookRepository, Unit } from "../../../src/index";
+import { ClientConfiguration, RunbookRepository, RunbookRetentionUnit } from "../../../src/index";
 import { CreateClient, GetProject } from "./utility";
 
 const main = async () => {
@@ -22,7 +22,7 @@ const main = async () => {
         RunRetentionPolicy: {
             QuantityToKeep: 20,
             ShouldKeepForever: false,
-            Unit: Unit.days
+            Unit: RunbookRetentionUnit.Days
         },
         MultiTenancyMode: TenantedDeploymentMode.TenantedOrUntenanted,
         EnvironmentScope: RunbookEnvironmentScope.All,

@@ -1,10 +1,12 @@
+import { RetentionUnit } from "../../..";
+
 export interface RunbookRetentionPeriod {
     QuantityToKeep: number;
     ShouldKeepForever: boolean;
-    Unit: Unit;
+    Unit: RunbookRetentionUnit;
 }
 
-export enum Unit {
-    days = "Days",
-    items = "Items",
+export enum RunbookRetentionUnit {
+    Days = "Days",
+    Items = "Items",
 }
