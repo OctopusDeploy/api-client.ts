@@ -6,6 +6,10 @@ import { ListArgs } from "../../../basicRepository";
 import { ResourceCollection } from "../../../../resourceCollection";
 import { CreateRunbookRunCommandV1, CreateRunbookRunResponseV1 } from "./createRunbookRunCommandV1";
 import { lt } from "semver";
+import { GitRef, Project } from "../../project";
+import { RunbookRepository } from "../runbookRepository";
+import { RunGitRunbookCommand } from "./RunGitRunbookCommand";
+import { RunGitRunbookResponse } from "./RunGitRunbookResponse";
 
 // WARNING: we've had to do this to cover a mistake in Octopus' API. The API has been corrected to return PascalCase, but was returning camelCase
 // for a number of versions, so we'll deserialize both and use whichever actually has a value
@@ -68,6 +72,45 @@ export class RunbookRunRepository {
         // work properly due to limitations in the middleware. For now, we'll just set it to the SpaceId
         const response = await this.client.doCreate<InternalCreateRunbookRunResponseV1>(`${spaceScopedRoutePrefix}/runbook-runs/create/v1`, {
             spaceIdOrName: command.spaceName,
+            ...command,
+        });
+
+        if (response.RunbookRunServerTasks.length == 0) {
+            throw new Error("No server task details returned");
+        }
+
+        const mappedTasks = response.RunbookRunServerTasks.map((x) => {
+            return {
+                RunbookRunId: x.RunbookRunId || x.runbookRunId,
+                ServerTaskId: x.ServerTaskId || x.serverTaskId,
+            };
+        });
+
+        this.client.debug(`Runbook executed successfully. [${mappedTasks.map((t) => t.ServerTaskId).join(", ")}]`);
+
+        return {
+            RunbookRunServerTasks: mappedTasks,
+        };
+    }
+
+    async createGit(command: RunGitRunbookCommand, gitRef: GitRef): Promise<RunGitRunbookResponse> {
+        const serverInformation = await this.client.getServerInformation();
+        if (lt(serverInformation.version, "2022.3.5512")) {
+            this.client.error?.(
+                "The Octopus instance doesn't support running runbooks using the Executions API, it will need to be upgraded to at least 2022.3.5512 in order to access this API."
+            );
+            throw new Error(
+                "The Octopus instance doesn't support running runbooks using the Executions API, it will need to be upgraded to at least 2022.3.5512 in order to access this API."
+            );
+        }
+
+        this.client.debug(`Running a runbook...`);
+
+        // WARNING: server's API currently expects there to be a SpaceIdOrName value, which was intended to allow use of names/slugs, but doesn't
+        // work properly due to limitations in the middleware. For now, we'll just set it to the SpaceId
+        const response = await this.client.doCreate<InternalCreateRunbookRunResponseV1>(`${spaceScopedRoutePrefix}/runbook-runs/git/create/v1`, {
+            spaceIdOrName: command.spaceName,
+            gitRef: gitRef,
             ...command,
         });
 
