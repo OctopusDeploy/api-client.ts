@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.5.0](https://github.com/OctopusDeploy/api-client.ts/compare/v3.4.1...v3.5.0) (2024-12-17)
+
+
+### Features
+
+* Adds Git Runbook support ([f110687](https://github.com/OctopusDeploy/api-client.ts/commit/f110687e9ca8c70d8b92820c310ee1133d52842e))
+
 ## [3.4.1](https://github.com/OctopusDeploy/api-client.ts/compare/v3.4.0...v3.4.1) (2024-10-02)
 
 
