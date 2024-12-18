@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.5.1](https://github.com/OctopusDeploy/api-client.ts/compare/v3.5.0...v3.5.1) (2024-12-18)
+
+
+### Bug Fixes
+
+* Make runbookretention unit optional ([a90cecf](https://github.com/OctopusDeploy/api-client.ts/commit/a90cecfb1ca9961f6dc7be977287d6a7c213ad0d))
+
 ## [3.5.0](https://github.com/OctopusDeploy/api-client.ts/compare/v3.4.1...v3.5.0) (2024-12-17)
 
 
