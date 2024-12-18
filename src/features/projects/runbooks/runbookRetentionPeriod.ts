@@ -3,7 +3,7 @@ import { RetentionUnit } from "../../..";
 export interface RunbookRetentionPeriod {
     QuantityToKeep: number;
     ShouldKeepForever: boolean;
-    Unit: RunbookRetentionUnit;
+    Unit?: RunbookRetentionUnit;
 }
 
 export enum RunbookRetentionUnit {
