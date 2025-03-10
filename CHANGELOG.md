@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.5.2](https://github.com/OctopusDeploy/api-client.ts/compare/v3.5.1...v3.5.2) (2025-03-10)
+
+
+### Bug Fixes
+
+* Update axios to 1.8.2 to fix security vulnerabilities ([d50b526](https://github.com/OctopusDeploy/api-client.ts/commit/d50b52639fd36d3c7eae8e969996468b14e10ca8))
+
 ## [3.5.1](https://github.com/OctopusDeploy/api-client.ts/compare/v3.5.0...v3.5.1) (2024-12-18)
 
 
