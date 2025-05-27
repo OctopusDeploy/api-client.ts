@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.6.0](https://github.com/OctopusDeploy/api-client.ts/compare/v3.5.2...v3.6.0) (2025-05-27)
+
+
+### Features
+
+* Add live status dashboard option to Project ([#204](https://github.com/OctopusDeploy/api-client.ts/issues/204)) ([a8541a0](https://github.com/OctopusDeploy/api-client.ts/commit/a8541a0f071accc77e2ce8c996429ed26991037f))
+
 ## [3.5.2](https://github.com/OctopusDeploy/api-client.ts/compare/v3.5.1...v3.5.2) (2025-03-10)
 
 
