@@ -38,3 +38,27 @@ export interface TenantProjectVariable {
         [environmentId: string]: { [variableId: string]: PropertyValue };
     };
 }
+
+export interface GetCommonVariablesByTenantIdResponse extends SpaceScopedResource {
+    TenantId: string;
+    TenantName: string;
+    LibraryVariables: { [libraryVariableSetId: string]: TenantLibraryVariable };
+}
+
+export interface GetProjectVariablesByTenantIdResponse extends SpaceScopedResource {
+    TenantId: string;
+    TenantName: string;
+    ProjectVariables: { [projectId: string]: TenantProjectVariable };
+}
+
+export interface ModifyCommonVariablesByTenantIdResponse extends SpaceScopedResource {
+    TenantId: string;
+    TenantName: string;
+    LibraryVariables: { [libraryVariableSetId: string]: TenantLibraryVariable };
+}
+
+export interface ModifyProjectVariablesByTenantIdResponse extends SpaceScopedResource {
+    TenantId: string;
+    TenantName: string;
+    ProjectVariables: { [projectId: string]: TenantProjectVariable };
+}
