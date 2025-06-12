@@ -51,6 +51,38 @@ export class TenantRepository extends SpaceScopedBasicRepository<Tenant, NewTena
         };
         return this.client.request(`${spaceScopedRoutePrefix}/tenants/variables-missing{?tenantId,projectId,environmentId,includeDetails}`, payload);
     }
+
+    getCommonVariables(tenant: Tenant, includeMissingVariables: boolean = false): Promise<TenantVariable> {
+        return this.client.request(`${spaceScopedRoutePrefix}/tenants/{id}/commonvariables{?includeMissingVariables}`, {
+            spaceName: this.spaceName,
+            id: tenant.Id,
+            includeMissingVariables,
+        });
+    }
+
+    getCommonVariablesById(tenantId: string, includeMissingVariables: boolean = false): Promise<TenantVariable> {
+        return this.client.request(`${spaceScopedRoutePrefix}/tenants/{id}/commonvariables{?includeMissingVariables}`, {
+            spaceName: this.spaceName,
+            id: tenantId,
+            includeMissingVariables,
+        });
+    }
+
+    getProjectVariables(tenant: Tenant, includeMissingVariables: boolean = false): Promise<TenantVariable> {
+        return this.client.request(`${spaceScopedRoutePrefix}/tenants/{id}/projectvariables{?includeMissingVariables}`, {
+            spaceName: this.spaceName,
+            id: tenant.Id,
+            includeMissingVariables,
+        });
+    }
+
+    getProjectVariablesById(tenantId: string, includeMissingVariables: boolean = false): Promise<TenantVariable> {
+        return this.client.request(`${spaceScopedRoutePrefix}/tenants/{id}/projectvariables{?includeMissingVariables}`, {
+            spaceName: this.spaceName,
+            id: tenantId,
+            includeMissingVariables,
+        });
+    }
 }
 
 type FilterOptions = {
