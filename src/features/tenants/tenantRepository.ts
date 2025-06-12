@@ -83,6 +83,34 @@ export class TenantRepository extends SpaceScopedBasicRepository<Tenant, NewTena
             includeMissingVariables,
         });
     }
+
+    setCommonVariables(tenant: Tenant, variables: TenantVariable): Promise<TenantVariable> {
+        return this.client.doUpdate(`${spaceScopedRoutePrefix}/tenants/{id}/commonvariables`, variables, {
+            spaceName: this.spaceName,
+            id: tenant.Id,
+        });
+    }
+
+    setCommonVariablesById(tenantId: string, variables: TenantVariable): Promise<TenantVariable> {
+        return this.client.doUpdate(`${spaceScopedRoutePrefix}/tenants/{id}/commonvariables`, variables, {
+            spaceName: this.spaceName,
+            id: tenantId,
+        });
+    }
+
+    setProjectVariables(tenant: Tenant, variables: TenantVariable): Promise<TenantVariable> {
+        return this.client.doUpdate(`${spaceScopedRoutePrefix}/tenants/{id}/projectvariables`, variables, {
+            spaceName: this.spaceName,
+            id: tenant.Id,
+        });
+    }
+
+    setProjectVariablesById(tenantId: string, variables: TenantVariable): Promise<TenantVariable> {
+        return this.client.doUpdate(`${spaceScopedRoutePrefix}/tenants/{id}/projectvariables`, variables, {
+            spaceName: this.spaceName,
+            id: tenantId,
+        });
+    }
 }
 
 type FilterOptions = {
