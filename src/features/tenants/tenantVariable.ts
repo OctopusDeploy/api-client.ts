@@ -39,26 +39,90 @@ export interface TenantProjectVariable {
     };
 }
 
-export interface GetCommonVariablesByTenantIdResponse extends SpaceScopedResource {
-    TenantId: string;
-    TenantName: string;
-    LibraryVariables: { [libraryVariableSetId: string]: TenantLibraryVariable };
+export interface TenantVariableTemplateV2 extends NamedResource {
+    Id: string;
+    Label: string;
+    HelpText: string;
+    DefaultValue?: PropertyValue;
+    DisplaySettings: TenantVariableTemplateDisplaySettings;
 }
 
-export interface GetProjectVariablesByTenantIdResponse extends SpaceScopedResource {
-    TenantId: string;
-    TenantName: string;
-    ProjectVariables: { [projectId: string]: TenantProjectVariable };
+export interface TenantVariableScope {
+    EnvironmentIds: string[];
 }
 
-export interface ModifyCommonVariablesByTenantIdResponse extends SpaceScopedResource {
-    TenantId: string;
-    TenantName: string;
-    LibraryVariables: { [libraryVariableSetId: string]: TenantLibraryVariable };
+export interface TenantCommonVariableV2 {
+    Id: string;
+    LibraryVariableSetId: string;
+    LibraryVariableSetName?: string;
+    TemplateId: string;
+    Template?: TenantVariableTemplateV2
+    Value: PropertyValue;
+    Scope: TenantVariableScope;
 }
 
-export interface ModifyProjectVariablesByTenantIdResponse extends SpaceScopedResource {
+export interface MissingTenantCommonVariable {
+    LibraryVariableSetId: string;
+    LibraryVariableSetName?: string;
+    TemplateId: string;
+    Template?: TenantVariableTemplateV2,
+    Value: PropertyValue;
+    Scope: TenantVariableScope;
+    
+}
+
+export interface TenantProjectVariableV2 {
+    Id: string;
+    ProjectId: string;
+    ProjectName: string;
+    TemplateId: string;
+    Template: TenantVariableTemplateV2
+    Value: PropertyValue;
+    Scope: TenantVariableScope;
+}
+
+export interface MissingTenantProjectVariable {
+    ProjectId: string;
+    ProjectName: string;
+    TemplateId: string;
+    Template: TenantVariableTemplateV2
+    Value: PropertyValue;
+    Scope: TenantVariableScope;
+    
+}
+
+export interface GetCommonVariablesByTenantIdResponse {
     TenantId: string;
-    TenantName: string;
-    ProjectVariables: { [projectId: string]: TenantProjectVariable };
+    Variables: TenantCommonVariableV2[];
+    MissingVariables?: MissingTenantCommonVariable[];
+}
+
+export interface GetProjectVariablesByTenantIdResponse {
+    TenantId: string;
+    Variables:  TenantProjectVariableV2[];
+    MissingVariables?: MissingTenantProjectVariable[];
+}
+
+export interface ModifyTenantCommonVariablePayload {
+    Id: string;
+    TemplateId: string;
+    Value: PropertyValue;
+    Scope: TenantVariableScope;
+}
+
+export interface ModifyTenantProjectVariablePayload {
+    Id: string;
+    TemplateId: string;
+    Value: PropertyValue;
+    Scope: TenantVariableScope;
+}
+
+export interface ModifyCommonVariablesByTenantIdResponse {
+    TenantId: string;
+    Variables: TenantCommonVariableV2[];
+}
+
+export interface ModifyProjectVariablesByTenantIdResponse {
+    TenantId: string;
+    Variables: TenantProjectVariableV2[];
 }

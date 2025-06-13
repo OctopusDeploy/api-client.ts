@@ -1,7 +1,7 @@
 import { Client, spaceScopedRoutePrefix } from "../..";
 import { ListArgs } from "..";
 import { NewTenant, Tenant, TagTestResult } from "./tenant";
-import { TenantVariable, GetCommonVariablesByTenantIdResponse, GetProjectVariablesByTenantIdResponse, ModifyCommonVariablesByTenantIdResponse, ModifyProjectVariablesByTenantIdResponse } from "./tenantVariable";
+import { TenantVariable, GetCommonVariablesByTenantIdResponse, GetProjectVariablesByTenantIdResponse, ModifyTenantCommonVariablePayload, ModifyTenantProjectVariablePayload, ModifyCommonVariablesByTenantIdResponse, ModifyProjectVariablesByTenantIdResponse } from "./tenantVariable";
 import { TenantMissingVariable } from "./tenantMissingVariables";
 import { SpaceScopedBasicRepository } from "../spaceScopedBasicRepository";
 
@@ -84,28 +84,28 @@ export class TenantRepository extends SpaceScopedBasicRepository<Tenant, NewTena
         });
     }
 
-    setCommonVariables(tenant: Tenant, variables: GetCommonVariablesByTenantIdResponse): Promise<ModifyCommonVariablesByTenantIdResponse> {
+    modifyCommonVariables(tenant: Tenant, variables: ModifyTenantCommonVariablePayload[]): Promise<ModifyCommonVariablesByTenantIdResponse> {
         return this.client.doUpdate(`${spaceScopedRoutePrefix}/tenants/{id}/commonvariables`, variables, {
             spaceName: this.spaceName,
             id: tenant.Id,
         });
     }
 
-    setCommonVariablesById(tenantId: string, variables: GetCommonVariablesByTenantIdResponse): Promise<ModifyCommonVariablesByTenantIdResponse> {
+    modifyCommonVariablesById(tenantId: string, variables: ModifyTenantCommonVariablePayload[]): Promise<ModifyCommonVariablesByTenantIdResponse> {
         return this.client.doUpdate(`${spaceScopedRoutePrefix}/tenants/{id}/commonvariables`, variables, {
             spaceName: this.spaceName,
             id: tenantId,
         });
     }
 
-    setProjectVariables(tenant: Tenant, variables: GetProjectVariablesByTenantIdResponse): Promise<ModifyProjectVariablesByTenantIdResponse> {
+    modifyProjectVariables(tenant: Tenant, variables: ModifyTenantProjectVariablePayload[]): Promise<ModifyProjectVariablesByTenantIdResponse> {
         return this.client.doUpdate(`${spaceScopedRoutePrefix}/tenants/{id}/projectvariables`, variables, {
             spaceName: this.spaceName,
             id: tenant.Id,
         });
     }
 
-    setProjectVariablesById(tenantId: string, variables: GetProjectVariablesByTenantIdResponse): Promise<ModifyProjectVariablesByTenantIdResponse> {
+    modifyProjectVariablesById(tenantId: string, variables: ModifyTenantProjectVariablePayload[]): Promise<ModifyProjectVariablesByTenantIdResponse> {
         return this.client.doUpdate(`${spaceScopedRoutePrefix}/tenants/{id}/projectvariables`, variables, {
             spaceName: this.spaceName,
             id: tenantId,
