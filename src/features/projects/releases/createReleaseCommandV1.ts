@@ -12,4 +12,5 @@ export interface CreateReleaseCommandV1 extends SpaceScopedOperation {
     IgnoreIfAlreadyExists?: boolean;
     IgnoreChannelRules?: boolean;
     PackagePrerelease?: string;
+    CustomFields?: Record<string, string>;
 }
