@@ -1,6 +1,7 @@
 import { Client } from "../..";
 import { ServerTask } from "../../features/serverTasks";
 import { SpaceServerTaskRepository } from "../serverTasks";
+import { ServerTaskRepository } from "../serverTasks";
 
 export class ServerTaskWaiter {
     constructor(private readonly client: Client, private readonly spaceName: string) {}
@@ -9,29 +10,35 @@ export class ServerTaskWaiter {
         serverTaskIds: string[],
         statusCheckSleepCycle: number,
         timeout: number,
-        pollingCallback?: (serverTask: ServerTask) => void
+        pollingCallback?: (serverTask: ServerTask) => void,
+        cancelOnTimeout: boolean = false,
     ): Promise<ServerTask[]> {
         const spaceServerTaskRepository = new SpaceServerTaskRepository(this.client, this.spaceName);
+        const serverTaskRepository = new ServerTaskRepository(this.client)
 
-        return this.waitForTasks(spaceServerTaskRepository, serverTaskIds, statusCheckSleepCycle, timeout, pollingCallback);
+        return this.waitForTasks(spaceServerTaskRepository, serverTaskRepository, serverTaskIds, statusCheckSleepCycle, timeout, cancelOnTimeout, pollingCallback);
     }
 
     async waitForServerTaskToComplete(
         serverTaskId: string,
         statusCheckSleepCycle: number,
         timeout: number,
-        pollingCallback?: (serverTask: ServerTask) => void
+        pollingCallback?: (serverTask: ServerTask) => void,
+        cancelOnTimeout: boolean = false,
     ): Promise<ServerTask> {
         const spaceServerTaskRepository = new SpaceServerTaskRepository(this.client, this.spaceName);
-        const tasks = await this.waitForTasks(spaceServerTaskRepository, [serverTaskId], statusCheckSleepCycle, timeout, pollingCallback);
+        const serverTaskRepository = new ServerTaskRepository(this.client)
+        const tasks = await this.waitForTasks(spaceServerTaskRepository, serverTaskRepository, [serverTaskId], statusCheckSleepCycle, timeout, cancelOnTimeout, pollingCallback);
         return tasks[0];
     }
 
     private async waitForTasks(
         spaceServerTaskRepository: SpaceServerTaskRepository,
+        serverTaskRepository: ServerTaskRepository,
         serverTaskIds: string[],
         statusCheckSleepCycle: number,
         timeout: number,
+        cancelOnTimeout: boolean,
         pollingCallback?: (serverTask: ServerTask) => void
     ): Promise<ServerTask[]> {
         // short circuit if no ids are passed. Sending an empty array to server here
@@ -44,8 +51,10 @@ export class ServerTaskWaiter {
         const sleep = async (ms: number) => new Promise((r) => setTimeout(r, ms));
 
         let stop = false;
+        let timedOut = false;
         const t = setTimeout(() => {
             stop = true;
+            timedOut = true;
         }, timeout);
 
         const completedTasks: ServerTask[] = [];
@@ -84,10 +93,26 @@ export class ServerTaskWaiter {
 
                 await sleep(statusCheckSleepCycle);
             }
+            if (timedOut && cancelOnTimeout && serverTaskIds.length > 0) {
+                await this.cancelTasks(serverTaskRepository, serverTaskIds);
+            }
+            if (timedOut && cancelOnTimeout) {
+                throw new Error(`Timeout reached after ${timeout / 1000} seconds. Tasks were cancelled.`);
+            }
         } finally {
             clearTimeout(t);
         }
 
         return completedTasks;
+    }
+
+    private async cancelTasks(serverTaskRepository: ServerTaskRepository, taskIds: string[]): Promise<void> {
+        for (const taskId of taskIds) {
+            try {
+                await serverTaskRepository.cancel(taskId);
+            } catch (error) {
+                console.warn(`Failed to cancel task ${taskId}:`, error);
+            }
+        }
     }
 }
