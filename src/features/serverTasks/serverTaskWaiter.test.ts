@@ -190,6 +190,43 @@ describe("wait for server task", () => {
             });
         });
 
+
+        test("deploy with cancel on timeout works correctly", async () => {
+            const releaseCommand: CreateReleaseCommandV1 = {
+                spaceName: space.Name,
+                ProjectName: project.Name,
+            };
+            const releaseRepository = new ReleaseRepository(client, space.Name);
+            const releaseResponse = await releaseRepository.create(releaseCommand);
+        
+            const deployCommand: CreateDeploymentUntenantedCommandV1 = {
+                spaceName: space.Name,
+                ProjectName: project.Name,
+                ReleaseVersion: releaseResponse.ReleaseVersion,
+                EnvironmentNames: [environment.Name],
+            };
+            const deploymentRepository = new DeploymentRepository(client, space.Name);
+            const response = await deploymentRepository.create(deployCommand);
+            const deployments = await deploymentRepository.list({ ids: response.DeploymentServerTasks.map((t) => t.DeploymentId) });
+            expect(deployments.Items.length).toBe(1);
+        
+            const taskIds = response.DeploymentServerTasks.map((x) => x.ServerTaskId);
+            const e = new ServerTaskWaiter(client, space.Name);
+        
+            await expect(
+                e.waitForServerTasksToComplete(taskIds, 1000, 5000, (serverTask: ServerTask): void => {
+                    console.log(`Waiting for task ${serverTask.Id}. Current status: ${serverTask.State}`);
+                }, true)
+            ).rejects.toThrow("Timeout reached after 5 seconds. Tasks were cancelled.");
+        
+            const completedTasks = await e.waitForServerTasksToComplete(taskIds, 1000, 10000, (serverTask: ServerTask): void => {
+                console.log(`Waiting for task ${serverTask.Id}. Current status: ${serverTask.State}`);
+            });
+            
+            expect(completedTasks.length).toBe(1);
+            expect(completedTasks[0].State).toBe("Canceled");
+        });
+
         afterEach(async () => {
             if (space === undefined || space === null) return;
 
