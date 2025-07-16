@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.7.0](https://github.com/OctopusDeploy/api-client.ts/compare/v3.6.0...v3.7.0) (2025-07-16)
+
+
+### Features
+
+* Add ability to cancel tasks on timeout in server task waiter ([#208](https://github.com/OctopusDeploy/api-client.ts/issues/208)) ([21cc388](https://github.com/OctopusDeploy/api-client.ts/commit/21cc3882d407cdcd2fd5868d772241c4a9660e4b))
+
 ## [3.6.0](https://github.com/OctopusDeploy/api-client.ts/compare/v3.5.2...v3.6.0) (2025-06-26)
 
 
