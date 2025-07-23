@@ -1,5 +1,67 @@
 # Changelog
 
+## [3.7.0](https://github.com/OctopusDeploy/api-client.ts/compare/v3.6.0...v3.7.0) (2025-07-16)
+
+
+### Features
+
+* Add ability to cancel tasks on timeout in server task waiter ([#208](https://github.com/OctopusDeploy/api-client.ts/issues/208)) ([21cc388](https://github.com/OctopusDeploy/api-client.ts/commit/21cc3882d407cdcd2fd5868d772241c4a9660e4b))
+
+## [3.6.0](https://github.com/OctopusDeploy/api-client.ts/compare/v3.5.2...v3.6.0) (2025-06-26)
+
+
+### Features
+
+* Add Custom Fields to Create Release Command ([#207](https://github.com/OctopusDeploy/api-client.ts/issues/207)) ([53963c0](https://github.com/OctopusDeploy/api-client.ts/commit/53963c0349b7b57de6d5652da195c07c1e4649de))
+* Add live status dashboard option to Project ([#204](https://github.com/OctopusDeploy/api-client.ts/issues/204)) ([a8541a0](https://github.com/OctopusDeploy/api-client.ts/commit/a8541a0f071accc77e2ce8c996429ed26991037f))
+
+## [3.5.2](https://github.com/OctopusDeploy/api-client.ts/compare/v3.5.1...v3.5.2) (2025-03-10)
+
+
+### Bug Fixes
+
+* Update axios to 1.8.2 to fix security vulnerabilities ([d50b526](https://github.com/OctopusDeploy/api-client.ts/commit/d50b52639fd36d3c7eae8e969996468b14e10ca8))
+
+## [3.5.1](https://github.com/OctopusDeploy/api-client.ts/compare/v3.5.0...v3.5.1) (2024-12-18)
+
+
+### Bug Fixes
+
+* Make runbookretention unit optional ([a90cecf](https://github.com/OctopusDeploy/api-client.ts/commit/a90cecfb1ca9961f6dc7be977287d6a7c213ad0d))
+
+## [3.5.0](https://github.com/OctopusDeploy/api-client.ts/compare/v3.4.1...v3.5.0) (2024-12-17)
+
+
+### Features
+
+* Adds Git Runbook support ([f110687](https://github.com/OctopusDeploy/api-client.ts/commit/f110687e9ca8c70d8b92820c310ee1133d52842e))
+
+## [3.4.1](https://github.com/OctopusDeploy/api-client.ts/compare/v3.4.0...v3.4.1) (2024-10-02)
+
+
+### Bug Fixes
+
+* Add build information push error handling ([#187](https://github.com/OctopusDeploy/api-client.ts/issues/187)) ([f91e29f](https://github.com/OctopusDeploy/api-client.ts/commit/f91e29f437be923fadfd4ee908faeb682f265c0b))
+
+## [3.4.0](https://github.com/OctopusDeploy/api-client.ts/compare/v3.3.1...v3.4.0) (2024-07-22)
+
+
+### Features
+
+* Adds AllowIgnoreChannelRules to project ([#185](https://github.com/OctopusDeploy/api-client.ts/issues/185)) ([59a90e5](https://github.com/OctopusDeploy/api-client.ts/commit/59a90e5f150da385d812a5bc5aef3769eda52f73))
+
+## [3.3.1](https://github.com/OctopusDeploy/api-client.ts/compare/v3.3.0...v3.3.1) (2024-06-19)
+
+
+### Bug Fixes
+
+* Fix an issue where the timeout passed in is not adhered to when waiting for a task ([68b923d](https://github.com/OctopusDeploy/api-client.ts/commit/68b923df5d273c0ba67f07a292bfcbdf0aa102ac))
+
+
+### Miscellaneous Chores
+
+* 3.3.1 ([9115d1a](https://github.com/OctopusDeploy/api-client.ts/commit/9115d1a9a18532665694a165fda409bac252f5ef))
+
 ## [3.3.0](https://github.com/OctopusDeploy/api-client.ts/compare/v3.2.0...v3.3.0) (2024-05-08)
 
 

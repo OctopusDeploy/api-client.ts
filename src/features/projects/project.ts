@@ -74,6 +74,8 @@ export interface Project extends SpaceScopedResource, NamedResource {
     ProjectGroupId: string;
     Description: string;
     IsDisabled: boolean;
+    AllowIgnoreChannelRules?: boolean;
+    CombineHealthAndSyncStatusInDashboardLiveStatus?: boolean;
 }
 
 export type ProjectOrSummary = Project | ProjectSummary;

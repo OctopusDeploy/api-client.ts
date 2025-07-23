@@ -82,7 +82,7 @@ describe("push package", () => {
         } catch (error) {
             expect(error).toBeDefined();
             if (error instanceof Error) {
-                expect(error.message).toContain(`A package with the same ID and version already exists`);
+                expect(error.message).toContain(`A package with the same name and version already exists`);
             } else {
                 throw error;
             }

@@ -10,6 +10,8 @@ export interface CreateExecutionBaseV1 extends SpaceScopedOperation {
     RunAt?: Date | undefined;
     NoRunAfter?: Date | undefined;
     Variables?: PromptedVariableValues;
+    DeploymentFreezeOverrideReason?: string;
+    DeploymentFreezeNames?: string[];
 }
 
 export interface PromptedVariableValues {
