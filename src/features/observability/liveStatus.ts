@@ -17,7 +17,7 @@ export interface KubernetesMachineLiveStatusResource {
 }
 
 export interface LiveStatusSummaryResource {
-    Status: string ;
+    Status: string;
     LastUpdated: Date;
 }
 
