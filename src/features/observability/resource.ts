@@ -8,7 +8,7 @@ export interface GetResourceRequest {
 
 export interface GetResourceResponse {
     Resource: KubernetesLiveStatusDetailedResource;
-} 
+}
 
 export interface GetResourceManifestRequest {
     ProjectId: string;
@@ -19,10 +19,10 @@ export interface GetResourceManifestRequest {
 }
 
 export interface GetResourceManifestResponse {
-   LiveManifest: string;
-   DesiredManifest?: string;
-   Diff?: LiveResourceDiff;
-} 
+    LiveManifest: string;
+    DesiredManifest?: string;
+    Diff?: LiveResourceDiff;
+}
 
 export interface LiveResourceDiff {
     Left: string;
@@ -45,11 +45,11 @@ export interface KubernetesLiveStatusDetailedResource {
 }
 
 export interface ManifestSummaryResource {
-  Labels: [string, string][];
-  Annotations: [string, string][];
-  CreationTimestamp: Date;
+    Labels: { [key: string]: string };
+    Annotations: { [key: string]: string };
+    CreationTimestamp: Date;
 }
 
-export interface PodManifestSummaryResource extends ManifestSummaryResource  {
-  Containers: string[]
+export interface PodManifestSummaryResource extends ManifestSummaryResource {
+    Containers: string[];
 }
