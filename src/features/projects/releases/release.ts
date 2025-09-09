@@ -1,4 +1,5 @@
 import type { NewSpaceScopedResource, SpaceScopedResource } from "../../../spaceScopedResource";
+import type { ReleasePackageVersionBuildInformation } from "./releaseChanges";
 
 export interface Release extends SpaceScopedResource {
     ChannelId: string;
@@ -43,22 +44,6 @@ export interface SelectedGitResource {
 export interface GitReference {
     GitRef?: string;
     GitCommit?: string;
-}
-
-export interface ReleasePackageVersionBuildInformation {
-    PackageId: string;
-    Version: string;
-    BuildEnvironment: string;
-    BuildNumber: string;
-    BuildUrl: string;
-    Branch: string;
-    VcsType: string;
-    VcsRoot: string;
-    VcsCommitId: string;
-    VcsCommitUrl: string;
-    IssueTrackerName: string;
-    WorkItems: WorkItem[];
-    Commits: Commit[];
 }
 
 export interface WorkItem {
