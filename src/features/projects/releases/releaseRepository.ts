@@ -2,7 +2,18 @@ import type { Client } from "../../../client";
 import { spaceScopedRoutePrefix } from "../../..";
 import { CreateReleaseCommandV1 } from "./createReleaseCommandV1";
 import { CreateReleaseResponseV1 } from "./createReleaseResponseV1";
+import { Release } from "./release";
+import { ResourceCollection } from "../../../resourceCollection";
 import { lt } from "semver";
+
+type ReleaseListArgs = {
+    skip?: number;
+    take?: number;
+};
+
+type ReleasePerProjectListArgs = ReleaseListArgs & {
+    searchByVersion?: string;
+}
 
 export class ReleaseRepository {
     private client: Client;
@@ -36,5 +47,23 @@ export class ReleaseRepository {
         this.client.debug(`Release created successfully.`);
 
         return response;
+    }
+
+    async get(id: string): Promise<Release> {
+        return this.client.request(`${spaceScopedRoutePrefix}/releases/${id}`, { spaceName: this.spaceName });
+    }
+
+    async list(args?: ReleaseListArgs): Promise<ResourceCollection<Release>> {
+        return this.client.request(`${spaceScopedRoutePrefix}/releases{?skip,take}`, { 
+            spaceName: this.spaceName, 
+            ...args 
+        });
+    }
+
+    async listForProject(projectId: string, args?: ReleasePerProjectListArgs): Promise<ResourceCollection<Release>> {
+        return this.client.request(`${spaceScopedRoutePrefix}/projects/${projectId}/releases{?skip,take,searchByVersion}`, { 
+            spaceName: this.spaceName, 
+            ...args 
+        });
     }
 }
