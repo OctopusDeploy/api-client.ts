@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.8.0](https://github.com/OctopusDeploy/api-client.ts/compare/v3.7.0...v3.8.0) (2025-09-11)
+
+
+### Features
+
+* Add get / list Releases endpoints ([#228](https://github.com/OctopusDeploy/api-client.ts/issues/228)) ([a64c98c](https://github.com/OctopusDeploy/api-client.ts/commit/a64c98cbd224114d80508fd9b2d2a0557abbfed5))
+
 ## [3.7.0](https://github.com/OctopusDeploy/api-client.ts/compare/v3.6.0...v3.7.0) (2025-07-16)
 
 
