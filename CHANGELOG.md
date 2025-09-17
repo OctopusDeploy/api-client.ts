@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.8.1](https://github.com/OctopusDeploy/api-client.ts/compare/v3.8.0...v3.8.1) (2025-09-17)
+
+
+### Bug Fixes
+
+* Update axios to 1.12.2 ([#230](https://github.com/OctopusDeploy/api-client.ts/issues/230)) ([c8bb065](https://github.com/OctopusDeploy/api-client.ts/commit/c8bb0655a18e3b0620e826e36e560d4ba3661c39))
+
 ## [3.8.0](https://github.com/OctopusDeploy/api-client.ts/compare/v3.7.0...v3.8.0) (2025-09-11)
 
 
