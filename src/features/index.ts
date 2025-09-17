@@ -19,3 +19,4 @@ export * from "./extensionSettingsValues";
 export * from "./overwriteMode";
 export * from "./permission";
 export * from "./spaceScopedBasicRepository";
+export * from "./observability";
