@@ -1,6 +1,6 @@
-import { GuidedFailureMode, RunbookEnvironmentScope, TenantedDeploymentMode } from "@octopusdeploy/api-client";
+import { GuidedFailureMode, RunbookEnvironmentScope, TenantedDeploymentMode } from "../../../";
 import { ClientConfiguration, RunbookRepository, RunbookRetentionUnit } from "../../../src/index";
-import { CreateClient, GetProject } from "./utility";
+import { CreateClient, GetProject } from "../utility";
 
 const main = async () => {
     const projectNameOrId: string = "project-name-or-ID";
