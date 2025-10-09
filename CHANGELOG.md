@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.9.0](https://github.com/OctopusDeploy/api-client.ts/compare/v3.8.0...v3.9.0) (2025-10-09)
+
+
+### Features
+
+* Add Ephemeral Environment methods to environment repository ([#233](https://github.com/OctopusDeploy/api-client.ts/issues/233)) ([4465f36](https://github.com/OctopusDeploy/api-client.ts/commit/4465f360555eb8e78b3fe58de1f347650e9a1b8d))
+
+
+### Bug Fixes
+
+* Update axios to 1.12.2 ([#230](https://github.com/OctopusDeploy/api-client.ts/issues/230)) ([c8bb065](https://github.com/OctopusDeploy/api-client.ts/commit/c8bb0655a18e3b0620e826e36e560d4ba3661c39))
+
 ## [3.8.0](https://github.com/OctopusDeploy/api-client.ts/compare/v3.7.0...v3.8.0) (2025-09-11)
 
 
