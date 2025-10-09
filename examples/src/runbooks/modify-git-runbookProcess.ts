@@ -1,5 +1,5 @@
 import { ClientConfiguration, RunbookRepository, RunbookProcessRepository } from "../../../src/index";
-import { CreateClient, GetProject } from "./utility";
+import { CreateClient, GetProject } from "../utility";
 
 const main = async () => {
     const projectNameOrId: string = "project-name-or-ID";

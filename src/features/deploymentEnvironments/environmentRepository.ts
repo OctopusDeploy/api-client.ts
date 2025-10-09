@@ -1,8 +1,9 @@
-import { Client, spaceScopedRoutePrefix } from "../..";
+import { Client, DeploymentEnvironmentV2, spaceScopedRoutePrefix } from "../..";
 import { ListArgs } from "../basicRepository";
 import { ResourceCollection } from "../../resourceCollection";
 import { SpaceScopedBasicRepository } from "../spaceScopedBasicRepository";
 import { DeploymentEnvironment, NewDeploymentEnvironment } from "./deploymentEnvironment";
+import { error } from "console";
 
 type EnvironmentRepositoryListArgs = {
     ids?: string[];
@@ -42,6 +43,63 @@ export class EnvironmentRepository extends SpaceScopedBasicRepository<Deployment
             id: environment.Id,
         });
     }
+
+    async createEphemeralEnvironment(environmentName: string, projectId: string): Promise<CreateEphemeralEnvironmentResponse> {
+        const response = await this.client.doCreate<CreateEphemeralEnvironmentResponse>(
+            `${spaceScopedRoutePrefix}/projects/{projectId}/environments/ephemeral`,
+            { EnvironmentName: environmentName },
+            {
+                spaceName: this.spaceName,
+                projectId: projectId,
+            }
+        );
+        return response;
+    }
+
+    async deprovisionEphemeralEnvironmentForProject(environmentId: string, projectId: string): Promise<DeprovisionEphemeralEnvironmentProjectResponse> {
+        const response = await this.client.doCreate<DeprovisionEphemeralEnvironmentProjectResponse>(
+            `${spaceScopedRoutePrefix}/projects/{projectId}/environments/ephemeral/{environmentId}/deprovision`,
+            {},
+            {
+                spaceName: this.spaceName,
+                environmentId: environmentId,
+                projectId: projectId,
+            }
+        );
+        return response;
+    }
+
+    async deprovisionEphemeralEnvironment(environmentId: string): Promise<DeprovisionEphemeralEnvironmentProjectResponse> {
+        const response = await this.client.doCreate<DeprovisionEphemeralEnvironmentProjectResponse>(
+            `${spaceScopedRoutePrefix}/environments/ephemeral/{environmentId}/deprovision`,
+            {},
+            {
+                spaceName: this.spaceName,
+                environmentId: environmentId,
+            }
+        );
+        return response;
+    }
+
+    async getEnvironmentByName(environmentName: string): Promise<DeploymentEnvironmentV2 | null> {
+        const listResponse = await this.client.request<ResourceCollection<DeploymentEnvironmentV2>>(
+            `${spaceScopedRoutePrefix}/environments/v2{?partialName,take,skip}`,
+            {
+                spaceName: this.spaceName,
+                partialName: environmentName,
+                skip: 0,
+                take: 100,
+            }
+        );
+
+        const matchingEnvironments = listResponse.Items.filter((env) => env.Name === environmentName);
+
+        if (matchingEnvironments.length > 1) {
+            throw error(`Multiple environments found with the name '${environmentName}`);
+        }
+
+        return matchingEnvironments.length == 1 ? matchingEnvironments[0] : null;
+    }
 }
 
 export type EnvironmentMachinesArgs = {
@@ -75,4 +133,12 @@ export interface VariablesScopedToEnvironmentResponse {
     HasUnauthorizedProjectVariables: boolean;
     HasUnauthorizedLibraryVariableSetVariables: boolean;
     VariableMap: Record<string, unknown>;
+}
+
+export interface CreateEphemeralEnvironmentResponse {
+    Id: string;
+}
+
+export interface DeprovisionEphemeralEnvironmentProjectResponse {
+    RunbookRunId?: string;
 }

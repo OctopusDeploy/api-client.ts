@@ -1,11 +1,11 @@
 import { ClientConfiguration, RunbookRepository, RunbookRunRepository } from "../../../src/index";
-import { CreateClient, GetProject } from "./utility";
+import { CreateClient, GetProject } from "../utility";
 
 const main = async () => {
     const projectNameOrId: string = "project-name-or-ID";
     const runbookId: string = "runbook-ID";
 
-    const configuration: ClientConfiguration = {
+const configuration: ClientConfiguration = {
         userAgentApp: "examples",
         instanceURL: "instance-url", // required
         apiKey: "api-key", // required

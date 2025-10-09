@@ -1,4 +1,4 @@
-import { Client, ClientConfiguration, Project, ProjectRepository } from "../../../src/index";
+import { Client, ClientConfiguration, Project, ProjectRepository } from "../../src/index";
 
 export async function CreateClient(configuration: ClientConfiguration) : Promise<Client> {
     let client: Client | undefined;
