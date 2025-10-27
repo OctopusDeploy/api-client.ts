@@ -160,7 +160,7 @@ export class ServerTaskWaiter {
                 (error as any).status;
 
             const isRetryable = this.isRetryableError(error, statusCode);
-            const shouldRetry = isRetryable && attempt + 1 < this.maxRetries;
+            const shouldRetry = isRetryable && attempt + 1 <= this.maxRetries;
 
             if (shouldRetry) {
                 const backoffDelay = this.retryBackoffMs * Math.pow(2, attempt);
@@ -174,7 +174,7 @@ export class ServerTaskWaiter {
             }
 
             if (isRetryable) {
-                throw new Error(`Failed to connect to Octopus server after ${attempt + 1} attempts. ` + `Last error: ${errorMessage}`);
+                throw new Error(`Failed to connect to Octopus server after ${this.maxRetries} attempts. ` + `Last error: ${errorMessage}`);
             }
             throw error;
         }
