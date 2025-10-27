@@ -69,8 +69,8 @@ export class EnvironmentRepository extends SpaceScopedBasicRepository<Deployment
         return response;
     }
 
-    async deprovisionEphemeralEnvironment(environmentId: string): Promise<DeprovisionEphemeralEnvironmentProjectResponse> {
-        const response = await this.client.doCreate<DeprovisionEphemeralEnvironmentProjectResponse>(
+    async deprovisionEphemeralEnvironment(environmentId: string): Promise<DeprovisionEphemeralEnvironmentResponse> {
+        const response = await this.client.doCreate<DeprovisionEphemeralEnvironmentResponse>(
             `${spaceScopedRoutePrefix}/environments/ephemeral/{environmentId}/deprovision`,
             {},
             {
@@ -139,6 +139,15 @@ export interface CreateEphemeralEnvironmentResponse {
     Id: string;
 }
 
+export type DeprovisioningRunbookRun = {
+    RunbookRunId: string;
+    TaskId: string;
+};
+
 export interface DeprovisionEphemeralEnvironmentProjectResponse {
-    RunbookRunId?: string;
+    DeprovisioningRun?: DeprovisioningRunbookRun;
+}
+
+export interface DeprovisionEphemeralEnvironmentResponse {
+    DeprovisioningRuns?: DeprovisioningRunbookRun[];
 }
