@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.9.1](https://github.com/OctopusDeploy/api-client.ts/compare/v3.9.0...v3.9.1) (2025-10-29)
+
+
+### Bug Fixes
+
+* Add TaskIds to ephemeral env deprovisioning response types ([#236](https://github.com/OctopusDeploy/api-client.ts/issues/236)) ([c9b3c7d](https://github.com/OctopusDeploy/api-client.ts/commit/c9b3c7d9982d212e4f99c009d04ae17be85eb9a8))
+
 ## [3.9.0](https://github.com/OctopusDeploy/api-client.ts/compare/v3.8.0...v3.9.0) (2025-10-09)
 
 
