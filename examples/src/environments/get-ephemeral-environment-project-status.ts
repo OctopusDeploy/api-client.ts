@@ -20,7 +20,6 @@ const main = async () => {
 
     console.log(`Creating ephemeral environment: ${environmentName}`);
     const environment = await environmentsRepo.createEphemeralEnvironment(environmentName, project.Id);
-    
     console.log(`Getting ephemeral environment status: ${environment.Id}`);
     const response = await environmentsRepo.getEphemeralEnvironmentProjectStatus(environment.Id, project.Id);
 
