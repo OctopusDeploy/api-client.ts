@@ -14,7 +14,7 @@ const main = async () => {
     const client = await CreateClient(configuration);
 
     console.log(`Getting project: ${projectNameOrId}`);
-    const project = await GetProject(client, projectNameOrId);  
+    const project = await GetProject(client, projectNameOrId);
 
     const environmentsRepo = new EnvironmentRepository(client, "Default");
 
