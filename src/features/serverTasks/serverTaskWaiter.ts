@@ -147,22 +147,30 @@ export class ServerTaskWaiter {
         }
     }
 
-    private async getTasksWithRetry(repository: SpaceServerTaskRepository, taskIds: string[], attempt: number = 0): Promise<ServerTask[]> {
-        try {
-            return await repository.getByIds(taskIds);
-        } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : String(error);
+    private async getTasksWithRetry(repository: SpaceServerTaskRepository, taskIds: string[]): Promise<ServerTask[]> {
+        // eslint-disable-next-line @typescript-eslint/init-declarations
+        let lastError: any;
 
-            const statusCode =
-                (error as any).StatusCode ||
-                (typeof (error as any).code === "number" ? (error as any).code : null) ||
-                (error as any).response?.status ||
-                (error as any).status;
+        for (let attempt = 0; attempt <= this.maxRetries; attempt++) {
+            try {
+                return await repository.getByIds(taskIds);
+            } catch (error) {
+                lastError = error;
+                const errorMessage = error instanceof Error ? error.message : String(error);
 
-            const isRetryable = this.isRetryableError(error, statusCode);
-            const shouldRetry = isRetryable && attempt + 1 <= this.maxRetries;
+                const statusCode =
+                    (error as any).StatusCode ||
+                    (typeof (error as any).code === "number" ? (error as any).code : null) ||
+                    (error as any).response?.status ||
+                    (error as any).status;
 
-            if (shouldRetry) {
+                const isRetryable = this.isRetryableError(error, statusCode);
+
+                if (!isRetryable) throw error;
+
+                if (attempt === this.maxRetries)
+                    throw new Error(`Failed to connect to Octopus server after ${attempt + 1} attempts. ` + `Last error: ${errorMessage}`);
+
                 const backoffDelay = this.retryBackoffMs * Math.pow(2, attempt);
                 this.client.warn(
                     `HTTP request failed (attempt ${attempt + 1}/${this.maxRetries}): ${errorMessage}${
@@ -170,14 +178,11 @@ export class ServerTaskWaiter {
                     }. Retrying in ${backoffDelay}ms...`
                 );
                 await new Promise((resolve) => setTimeout(resolve, backoffDelay));
-                return this.getTasksWithRetry(repository, taskIds, attempt + 1);
             }
-
-            if (isRetryable) {
-                throw new Error(`Failed to connect to Octopus server after ${this.maxRetries} attempts. ` + `Last error: ${errorMessage}`);
-            }
-            throw error;
         }
+
+        // This should never be reached due to throws above, but TypeScript needs it
+        throw lastError;
     }
 
     private isRetryableError(error: any, statusCode: number | null): boolean {
@@ -189,6 +194,7 @@ export class ServerTaskWaiter {
 
         try {
             const errorStr = String(error.message || error).toLowerCase();
+            const errorCode = error.code ? String(error.code).toLowerCase() : "";
             const keywords = [
                 "timeout",
                 "etimedout",
@@ -203,7 +209,7 @@ export class ServerTaskWaiter {
                 "socket",
                 "network",
             ];
-            return keywords.some((k) => errorStr.includes(k));
+            return keywords.some((k) => errorStr.includes(k) || errorCode.includes(k));
         } catch {
             return false;
         }
