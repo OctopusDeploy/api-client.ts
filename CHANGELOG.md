@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.10.1](https://github.com/OctopusDeploy/api-client.ts/compare/v3.10.0...v3.10.1) (2025-10-31)
+
+
+### Bug Fixes
+
+* get environment by name so it is case insensitive ([#242](https://github.com/OctopusDeploy/api-client.ts/issues/242)) ([b9d1086](https://github.com/OctopusDeploy/api-client.ts/commit/b9d10866d95c95ac0439f5fd3d52535210da4f05))
+
 ## [3.10.0](https://github.com/OctopusDeploy/api-client.ts/compare/v3.9.1...v3.10.0) (2025-10-31)
 
 
