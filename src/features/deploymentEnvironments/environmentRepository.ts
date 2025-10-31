@@ -104,7 +104,7 @@ export class EnvironmentRepository extends SpaceScopedBasicRepository<Deployment
             }
         );
 
-        const matchingEnvironments = listResponse.Items.filter((env) => env.Name === environmentName);
+        const matchingEnvironments = listResponse.Items.filter((env) => env.Name.toLowerCase() === environmentName.toLowerCase());
 
         if (matchingEnvironments.length > 1) {
             throw error(`Multiple environments found with the name '${environmentName}`);
