@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.10.0](https://github.com/OctopusDeploy/api-client.ts/compare/v3.9.1...v3.10.0) (2025-10-31)
+
+
+### Features
+
+* Add ability to get ephemeral environment project status ([#240](https://github.com/OctopusDeploy/api-client.ts/issues/240)) ([ae239e7](https://github.com/OctopusDeploy/api-client.ts/commit/ae239e74b85df585371fc686a322389e3e86e57f))
+
 ## [3.9.1](https://github.com/OctopusDeploy/api-client.ts/compare/v3.9.0...v3.9.1) (2025-10-29)
 
 
