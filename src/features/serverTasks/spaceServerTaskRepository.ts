@@ -38,7 +38,10 @@ export class SpaceServerTaskRepository {
                 })
             );
         }
-        return Promise.allSettled(promises).then((result) => flatMap(result, (c) => (c.status == "fulfilled" ? c.value.Items : [])));
+        // Changed from Promise.allSettled to Promise.all
+        // Errors will now propagate instead of being swallowed, allowing retry logic at higher levels
+        const results = await Promise.all(promises);
+        return flatMap(results, (c) => c.Items);
     }
 
     async getDetails(serverTaskId: string): Promise<ServerTaskDetails> {
