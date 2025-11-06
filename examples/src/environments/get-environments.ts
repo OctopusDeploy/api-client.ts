@@ -13,7 +13,7 @@ const main = async () => {
 
     const environmentsRepo = new EnvironmentV2Repository(client, "Default");
 
-    const environments = await environmentsRepo.list({skip: 0, take: 1000});
+    const environments = await environmentsRepo.list({ skip: 0, take: 1000 });
 
     if (environments.Items.length === 0) {
         console.log("No environments found.");
