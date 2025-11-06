@@ -10,7 +10,7 @@ type EnvironmentRepositoryListArgs = {
     partialName?: string;
 } & ListArgs;
 
-export class EnvironmentRepository extends SpaceScopedBasicRepository<DeploymentEnvironment, NewDeploymentEnvironment, EnvironmentRepositoryListArgs> {
+export class EnvironmentRepository extends SpaceScopedBasicRepository<DeploymentEnvironmentV2, NewDeploymentEnvironment, EnvironmentRepositoryListArgs> {
     constructor(client: Client, spaceName: string) {
         super(client, spaceName, `${spaceScopedRoutePrefix}/environments`, "skip,take,ids,partialName");
     }
