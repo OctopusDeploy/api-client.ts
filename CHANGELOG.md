@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.10.2](https://github.com/OctopusDeploy/api-client.ts/compare/v3.10.1...v3.10.2) (2025-11-06)
+
+
+### Bug Fixes
+
+* Add environmentV2 repository to list new environment types ([#244](https://github.com/OctopusDeploy/api-client.ts/issues/244)) ([55f76ba](https://github.com/OctopusDeploy/api-client.ts/commit/55f76ba9fc2a5a9333f68d246afbe81ba7c783ff))
+
 ## [3.10.1](https://github.com/OctopusDeploy/api-client.ts/compare/v3.10.0...v3.10.1) (2025-10-31)
 
 
