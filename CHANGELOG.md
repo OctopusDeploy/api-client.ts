@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.11.0](https://github.com/OctopusDeploy/api-client.ts/compare/v3.10.2...v3.11.0) (2025-12-02)
+
+
+### Features
+
+* Add getTasksWithRetry with retry logic for transient network errors ([664759c](https://github.com/OctopusDeploy/api-client.ts/commit/664759c93f075fd68c4b7917d620645fa68fb77f))
+
 ## [3.10.2](https://github.com/OctopusDeploy/api-client.ts/compare/v3.10.1...v3.10.2) (2025-11-06)
 
 
