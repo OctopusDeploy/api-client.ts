@@ -5,6 +5,7 @@ export enum FeedType {
     GitHub = "GitHub",
     Helm = "Helm",
     Maven = "Maven",
+    Npm = "Npm",
     Nuget = "NuGet",
     OctopusProject = "OctopusProject",
 }

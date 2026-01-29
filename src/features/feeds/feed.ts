@@ -7,11 +7,12 @@ import { FeedType } from "./feedType";
 import type { GitHubFeed } from "./gitHubFeed";
 import type { HelmFeed } from "./helmFeed";
 import type { MavenFeed } from "./mavenFeed";
+import type { NpmFeed } from "./npmFeed";
 import type { NugetFeed } from "./nugetFeed";
 import type { OctopusProjectFeed } from "./octopusProjectFeed";
 import { every } from "lodash";
 
-export type ExternalFeed = NugetFeed | DockerFeed | MavenFeed | GitHubFeed | HelmFeed | AwsElasticContainerRegistryFeed;
+export type ExternalFeed = NugetFeed | DockerFeed | MavenFeed | GitHubFeed | HelmFeed | AwsElasticContainerRegistryFeed | NpmFeed;
 
 export type Feed = ExternalFeed | BuiltInFeed | OctopusProjectFeed;
 
