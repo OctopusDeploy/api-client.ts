@@ -4,6 +4,7 @@ export * from "./dockerFeed";
 export * from "./feed";
 export * from "./feedRepository";
 export * from "./feedType";
+export * from "./gcsStorageFeed";
 export * from "./gitHubFeed";
 export * from "./helmFeed";
 export * from "./mavenFeed";
