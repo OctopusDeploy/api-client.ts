@@ -4,6 +4,7 @@ import type { AwsElasticContainerRegistryFeed } from "./awsElasticContainerRegis
 import type { BuiltInFeed } from "./builtInFeed";
 import type { DockerFeed } from "./dockerFeed";
 import { FeedType } from "./feedType";
+import type { GcsStorageFeed } from "./gcsStorageFeed";
 import type { GitHubFeed } from "./gitHubFeed";
 import type { HelmFeed } from "./helmFeed";
 import type { MavenFeed } from "./mavenFeed";
@@ -12,7 +13,7 @@ import type { NugetFeed } from "./nugetFeed";
 import type { OctopusProjectFeed } from "./octopusProjectFeed";
 import { every } from "lodash";
 
-export type ExternalFeed = NugetFeed | DockerFeed | MavenFeed | GitHubFeed | HelmFeed | AwsElasticContainerRegistryFeed | NpmFeed;
+export type ExternalFeed = NugetFeed | DockerFeed | MavenFeed | GitHubFeed | HelmFeed | AwsElasticContainerRegistryFeed | GcsStorageFeed | NpmFeed;
 
 export type Feed = ExternalFeed | BuiltInFeed | OctopusProjectFeed;
 
