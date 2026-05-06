@@ -26,3 +26,4 @@ export * from "./spaceScopedResource";
 export * from "./spaceScopedRoutePrefix";
 export * from "./subscriptionRecord";
 export * from "./utils";
+export * from "./versionCheck";
