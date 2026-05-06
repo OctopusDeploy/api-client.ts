@@ -4,7 +4,7 @@ import { CreateReleaseCommandV1 } from "./createReleaseCommandV1";
 import { CreateReleaseResponseV1 } from "./createReleaseResponseV1";
 import { Release } from "./release";
 import { ResourceCollection } from "../../../resourceCollection";
-import { lt } from "semver";
+import { ensureServerVersionAtLeast } from "../../../versionCheck";
 
 type ReleaseListArgs = {
     skip?: number;
@@ -25,15 +25,7 @@ export class ReleaseRepository {
     }
 
     async create(command: CreateReleaseCommandV1): Promise<CreateReleaseResponseV1> {
-        const serverInformation = await this.client.getServerInformation();
-        if (lt(serverInformation.version, "2022.3.5512")) {
-            this.client.error?.(
-                "The Octopus instance doesn't support creating releases using the Executions API, it will need to be upgraded to at least 2022.3.5512 in order to access this API."
-            );
-            throw new Error(
-                "The Octopus instance doesn't support creating releases using the Executions API, it will need to be upgraded to at least 2022.3.5512 in order to access this API."
-            );
-        }
+        await ensureServerVersionAtLeast(this.client, "2022.3.5512", "creating releases using the Executions API");
 
         this.client.debug(`Creating a release...`);
 

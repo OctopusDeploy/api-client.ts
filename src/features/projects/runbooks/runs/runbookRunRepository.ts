@@ -5,7 +5,7 @@ import { spaceScopedRoutePrefix } from "../../../../spaceScopedRoutePrefix";
 import { ListArgs } from "../../../basicRepository";
 import { ResourceCollection } from "../../../../resourceCollection";
 import { CreateRunbookRunCommandV1, CreateRunbookRunResponseV1 } from "./createRunbookRunCommandV1";
-import { lt } from "semver";
+import { ensureServerVersionAtLeast } from "../../../../versionCheck";
 import { GitRef, Project } from "../../project";
 import { RunbookRepository } from "../runbookRepository";
 import { RunGitRunbookCommand } from "./RunGitRunbookCommand";
@@ -56,15 +56,7 @@ export class RunbookRunRepository {
     }
 
     async create(command: CreateRunbookRunCommandV1): Promise<CreateRunbookRunResponseV1> {
-        const serverInformation = await this.client.getServerInformation();
-        if (lt(serverInformation.version, "2022.3.5512")) {
-            this.client.error?.(
-                "The Octopus instance doesn't support running runbooks using the Executions API, it will need to be upgraded to at least 2022.3.5512 in order to access this API."
-            );
-            throw new Error(
-                "The Octopus instance doesn't support running runbooks using the Executions API, it will need to be upgraded to at least 2022.3.5512 in order to access this API."
-            );
-        }
+        await ensureServerVersionAtLeast(this.client, "2022.3.5512", "running runbooks using the Executions API");
 
         this.client.debug(`Running a runbook...`);
 
@@ -94,15 +86,7 @@ export class RunbookRunRepository {
     }
 
     async createGit(command: RunGitRunbookCommand, gitRef: GitRef): Promise<RunGitRunbookResponse> {
-        const serverInformation = await this.client.getServerInformation();
-        if (lt(serverInformation.version, "2022.3.5512")) {
-            this.client.error?.(
-                "The Octopus instance doesn't support running runbooks using the Executions API, it will need to be upgraded to at least 2022.3.5512 in order to access this API."
-            );
-            throw new Error(
-                "The Octopus instance doesn't support running runbooks using the Executions API, it will need to be upgraded to at least 2022.3.5512 in order to access this API."
-            );
-        }
+        await ensureServerVersionAtLeast(this.client, "2022.3.5512", "running runbooks using the Executions API");
 
         this.client.debug(`Running a runbook...`);
 
