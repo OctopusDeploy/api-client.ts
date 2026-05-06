@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.11.1](https://github.com/OctopusDeploy/api-client.ts/compare/v3.11.0...v3.11.1) (2026-05-06)
+
+
+### Bug Fixes
+
+* support locally-built Octopus servers in version checks ([#250](https://github.com/OctopusDeploy/api-client.ts/issues/250)) ([f348e44](https://github.com/OctopusDeploy/api-client.ts/commit/f348e4455c926bf75ab6881417ee2824b405cc73))
+
 ## [3.11.0](https://github.com/OctopusDeploy/api-client.ts/compare/v3.10.2...v3.11.0) (2025-12-02)
 
 
