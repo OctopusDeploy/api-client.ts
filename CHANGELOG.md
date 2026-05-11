@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.11.2](https://github.com/OctopusDeploy/api-client.ts/compare/v3.11.1...v3.11.2) (2026-05-11)
+
+
+### Bug Fixes
+
+* Update axios to 1.15.2 ([#254](https://github.com/OctopusDeploy/api-client.ts/issues/254)) ([6b4e509](https://github.com/OctopusDeploy/api-client.ts/commit/6b4e50919f17858b5da024e0bbc23cb7441258d3))
+
 ## [3.11.1](https://github.com/OctopusDeploy/api-client.ts/compare/v3.11.0...v3.11.1) (2026-05-06)
 
 
