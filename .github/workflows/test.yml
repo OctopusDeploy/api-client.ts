@@ -39,14 +39,14 @@ jobs:
       statuses: write
       checks: write
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v6
       with:
         fetch-depth: 0
 
-    - uses: actions/setup-node@v3
+    - uses: actions/setup-node@v6
       with:
         cache: 'npm'
-        node-version: 20
+        node-version: 24
         registry-url: 'https://registry.npmjs.org'
         scope: '@octopusdeploy'
     - run: npm install
@@ -60,7 +60,7 @@ jobs:
         OCTOPUS_TEST_URL: ${{ env.SERVER_URL }}
         OCTOPUS_TEST_API_KEY: ${{ env.ADMIN_API_KEY }}
 
-    - uses: dorny/test-reporter@v1
+    - uses: dorny/test-reporter@v3
       if: success() || failure()
       name: Tests report
       with:
