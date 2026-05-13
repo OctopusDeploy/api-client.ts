@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.11.3](https://github.com/OctopusDeploy/api-client.ts/compare/v3.11.2...v3.11.3) (2026-05-13)
+
+
+### Bug Fixes
+
+* Bump lodash ([#257](https://github.com/OctopusDeploy/api-client.ts/issues/257)) ([c1577cc](https://github.com/OctopusDeploy/api-client.ts/commit/c1577cc0148f0c8e7e75cfedbac0c96ad9d3555c))
+
 ## [3.11.2](https://github.com/OctopusDeploy/api-client.ts/compare/v3.11.1...v3.11.2) (2026-05-11)
 
 
