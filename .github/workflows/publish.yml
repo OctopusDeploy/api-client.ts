@@ -31,5 +31,8 @@ jobs:
         if: ${{ steps.release.outputs.release_created }}        
       - run: npm ci
         if: ${{ steps.release.outputs.release_created }}
-      - run: npm publish --access=public
+      # --provenance signs a statement linking the tarball to this workflow
+      # run via Sigstore + the OIDC token above, so consumers can verify it
+      # was built from this repo/commit rather than a leaked npm token.
+      - run: npm publish --access=public --provenance
         if: ${{ steps.release.outputs.release_created }}
