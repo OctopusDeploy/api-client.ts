@@ -8,6 +8,7 @@ export interface CreateReleaseCommandV1 extends SpaceScopedOperation {
     ReleaseVersion?: string;
     ChannelName?: string;
     Packages?: string[];
+    GitResources?: string[];
     ReleaseNotes?: string;
     IgnoreIfAlreadyExists?: boolean;
     IgnoreChannelRules?: boolean;
