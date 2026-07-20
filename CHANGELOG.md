@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.11.4](https://github.com/OctopusDeploy/api-client.ts/compare/v3.11.3...v3.11.4) (2026-07-20)
+
+
+### Bug Fixes
+
+* Patch CVEs and add supply-chain defences ([#260](https://github.com/OctopusDeploy/api-client.ts/issues/260)) ([f42d768](https://github.com/OctopusDeploy/api-client.ts/commit/f42d768a3788a4c8c0432ce6b8ca70ec2ccc87cd))
+
 ## [3.11.3](https://github.com/OctopusDeploy/api-client.ts/compare/v3.11.2...v3.11.3) (2026-05-13)
 
 
