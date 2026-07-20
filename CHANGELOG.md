@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.11.5](https://github.com/OctopusDeploy/api-client.ts/compare/v3.11.4...v3.11.5) (2026-07-20)
+
+
+### Bug Fixes
+
+* Upgrade adm-zip to 0.6.0 ([#281](https://github.com/OctopusDeploy/api-client.ts/issues/281)) ([8fb6b45](https://github.com/OctopusDeploy/api-client.ts/commit/8fb6b45ea9ee47fb5eeec85154455aba0da5e292))
+
 ## [3.11.4](https://github.com/OctopusDeploy/api-client.ts/compare/v3.11.3...v3.11.4) (2026-07-20)
 
 
