@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.11.6](https://github.com/OctopusDeploy/api-client.ts/compare/v3.11.5...v3.11.6) (2026-07-22)
+
+
+### Bug Fixes
+
+* **deps:** bump axios to 1.18.1 ([#286](https://github.com/OctopusDeploy/api-client.ts/issues/286)) ([2602337](https://github.com/OctopusDeploy/api-client.ts/commit/2602337f76d629cb352a09579c05762fae4b6861))
+* **deps:** bump brace-expansion to 1.1.16 to resolve security alert ([#284](https://github.com/OctopusDeploy/api-client.ts/issues/284)) ([9eee95a](https://github.com/OctopusDeploy/api-client.ts/commit/9eee95a89c16450d37a87387a44815f666354a5b))
+
 ## [3.11.5](https://github.com/OctopusDeploy/api-client.ts/compare/v3.11.4...v3.11.5) (2026-07-20)
 
 
