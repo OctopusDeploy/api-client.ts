@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.11.7](https://github.com/OctopusDeploy/api-client.ts/compare/v3.11.6...v3.11.7) (2026-07-23)
+
+
+### Bug Fixes
+
+* **deps:** resolve security advisories in examples dependencies ([#289](https://github.com/OctopusDeploy/api-client.ts/issues/289)) ([f0635e0](https://github.com/OctopusDeploy/api-client.ts/commit/f0635e0e8be3353f0ed12474fc1e9e142c76ef55))
+
 ## [3.11.6](https://github.com/OctopusDeploy/api-client.ts/compare/v3.11.5...v3.11.6) (2026-07-22)
 
 
