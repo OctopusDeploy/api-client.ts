@@ -2,7 +2,7 @@ import { WorkItemLink, CommitDetail } from "../../buildInformation";
 
 export interface ReleaseChanges {
     Version: string;
-    ReleaseNotes: string;
+    ReleaseNotes?: string;
     WorkItems: WorkItemLink[];
     Commits: CommitDetail[];
     BuildInformation: ReleasePackageVersionBuildInformation[];
