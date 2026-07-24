@@ -1,5 +1,8 @@
 name: 'Run Tests'
 on:
+  pull_request:
+    paths:
+      - '**.ts'
   push:
   schedule:
     # Daily 5am australian/brisbane time (7pm UTC)
