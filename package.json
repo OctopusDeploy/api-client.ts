@@ -7,7 +7,7 @@
     "adm-zip": "^0.6.0",
     "axios": "^1.18.1",
     "form-data": "^4.0.4",
-    "glob": "^8.0.3",
+    "glob": "^11.1.0",
     "lodash": "^4.18.1",
     "semver": "^7.7.2",
     "urijs": "^1.19.11"
@@ -17,7 +17,6 @@
     "@faker-js/faker": "^7.6.0",
     "@tsconfig/node20": "^20.1.2",
     "@types/adm-zip": "^0.5.8",
-    "@types/glob": "^8.0.0",
     "@types/jest": "^29.2.4",
     "@types/json-patch": "^0.0.30",
     "@types/lodash": "^4.14.191",
@@ -38,7 +37,7 @@
     "jest-environment-jsdom": "^29.3.1",
     "jest-expect-message": "^1.1.3",
     "jest-extended": "^3.2.0",
-    "jest-junit": "^15.0.0",
+    "jest-junit": "^17.0.0",
     "jest-runner-eslint": "^1.1.0",
     "prettier": "^2.8.1",
     "process": "^0.11.10",
@@ -51,6 +50,9 @@
   "files": [
     "dist/**/*"
   ],
+  "overrides": {
+    "brace-expansion": "^5.0.8"
+  },
   "homepage": "https://github.com/OctopusDeploy/api-client.ts#readme",
   "keywords": [
     "api",
