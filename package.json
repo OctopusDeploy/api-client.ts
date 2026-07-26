@@ -52,7 +52,8 @@
   ],
   "overrides": {
     "brace-expansion": "^5.0.8",
-    "baseline-browser-mapping": "2.11.1"
+    "baseline-browser-mapping": "2.11.1",
+    "electron-to-chromium": "1.5.395"
   },
   "homepage": "https://github.com/OctopusDeploy/api-client.ts#readme",
   "keywords": [
