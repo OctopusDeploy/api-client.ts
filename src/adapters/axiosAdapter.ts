@@ -4,6 +4,7 @@ import type { Adapter, AdapterResponse } from "../adapter";
 import { AdapterError } from "../adapter";
 import { ClientOptions } from "../clientOptions";
 import { createRequestHeaders } from "./createRequestHeaders";
+import { createUserAgent } from "./createUserAgent";
 
 export class AxiosAdapter<TResource> implements Adapter<TResource> {
     public async execute(options: ClientOptions): Promise<AdapterResponse<TResource>> {
@@ -21,11 +22,7 @@ export class AxiosAdapter<TResource> implements Adapter<TResource> {
             };
             if (typeof XMLHttpRequest === "undefined") {
                 if (config.headers) {
-                    let userAgent = "ts-octopusdeploy";
-                    if (options.configuration.userAgentApp) {
-                        userAgent = `${userAgent} ${options.configuration.userAgentApp}`;
-                    }
-                    config.headers["User-Agent"] = userAgent;
+                    config.headers["User-Agent"] = createUserAgent(options.configuration);
                 }
             }
             const response = await axios.request<TResource>(config);
