@@ -79,7 +79,8 @@ const knownAgents: ReadonlyArray<KnownAgent> = [
  * for matching and never included in the output.
  */
 export function getAiAgentUserAgentToken(callerSuppliedAgent?: string, env: EnvironmentVariables = readProcessEnvironment()): string | undefined {
-    const selfReported = [callerSuppliedAgent, env[aiAgentVariable]].map((value) => value?.trim()).filter((value): value is string => !!value);
+    const aiAgentNameFromEnvVar = env[aiAgentVariable];
+    const selfReported = [callerSuppliedAgent, aiAgentNameFromEnvVar].map((value) => value?.trim()).filter((value): value is string => !!value);
 
     // Vendor variables also cover an agent that self-reports in a format that isn't recognised.
     const agent = selfReported.map(findAgentByPrefix).find((a): a is KnownAgent => a !== undefined) ?? findAgentByVariables(env);
