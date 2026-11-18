@@ -54,6 +54,7 @@ describe("getAiAgentUserAgentToken", () => {
         ["claude-code_2-1-322_agent", "AIAgent/ClaudeCode"],
         ["claude-code", "AIAgent/ClaudeCode"],
         ["Claude-Code", "AIAgent/ClaudeCode"],
+        ["Claude Code", "AIAgent/ClaudeCode"],
         ["cursor-cli", "AIAgent/Cursor"],
         ["github_copilot_vscode_agent", "AIAgent/GitHubCopilot"],
         ["github-copilot-cli", "AIAgent/GitHubCopilot"],
