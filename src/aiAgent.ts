@@ -18,51 +18,54 @@ const aiAgentVariable = "AI_AGENT";
 
 const otherAgentName = "Other";
 
-// Ordered: the first agent with a matching rule wins, so the result is deterministic when several agents'
-// variables are present (e.g. one agent running another).
+interface KnownAgent {
+    name: string;
+    // When set, matches the start of a normalised self-reported identifier. Vendors don't agree on a format
+    // (e.g. "claude-code_2-1-322_agent", "github_copilot_vscode_agent", "devin@1"), so identifiers are lowercased
+    // and runs of underscores and whitespace replaced with a single hyphen before matching.
+    aiAgentPrefix?: string;
+    // Vendor-specific environment variables that identify the agent.
+    variables?: AgentRule[];
+}
+
+// Each agent is listed once, and can be recognised from a self-reported identifier (by prefix), from its vendor
+// variables, or both. Self-reported identifiers are checked against the whole list before any vendor variables, so a
+// self-reported identity wins (e.g. Claude Code running inside Cursor). Within each lookup the first match wins, so
+// the result is deterministic when several agents' variables are present.
 //
 // Variables that are commonly present without an agent driving the process are deliberately excluded:
 // CURSOR_TRACE_ID (any Cursor terminal), COPILOT_GITHUB_TOKEN and GOOSE_PROVIDER (user configuration),
 // REPL_ID (any Replit workspace) and ZED_TERM (any Zed terminal).
-const knownAgents: ReadonlyArray<{ name: string; rules: AgentRule[] }> = [
-    { name: "ClaudeCode", rules: [{ variable: "CLAUDECODE" }, { variable: "CLAUDE_CODE_ENTRYPOINT" }] },
-    { name: "Cursor", rules: [{ variable: "CURSOR_AGENT" }, { variable: "CURSOR_EXTENSION_HOST_ROLE", value: "agent-exec" }] },
-    { name: "Codex", rules: [{ variable: "CODEX_SANDBOX" }, { variable: "CODEX_THREAD_ID" }, { variable: "CODEX_CI" }] },
-    { name: "GeminiCLI", rules: [{ variable: "GEMINI_CLI" }] },
-    { name: "GitHubCopilot", rules: [{ variable: "COPILOT_CLI" }, { variable: "COPILOT_AGENT" }, { variable: "GITHUB_COPILOT_CLI_MODE" }] },
-    { name: "OpenCode", rules: [{ variable: "OPENCODE", value: "1" }, { variable: "OPENCODE_CLIENT" }, { variable: "OPENCODE_AI" }] },
-    { name: "Antigravity", rules: [{ variable: "ANTIGRAVITY_AGENT" }] },
-    { name: "Goose", rules: [{ variable: "GOOSE_TERMINAL" }, { variable: "AGENT", value: "goose" }] },
-    { name: "Amp", rules: [{ variable: "AGENT", value: "amp" }] },
-    { name: "Cline", rules: [{ variable: "CLINE_ACTIVE" }, { variable: "CLINE_TASK_ID" }] },
-    { name: "RooCode", rules: [{ variable: "ROO_CODE_TASK_ID" }] },
-    { name: "Augment", rules: [{ variable: "AUGMENT_AGENT" }] },
-    { name: "QwenCode", rules: [{ variable: "QWEN_CODE" }] },
-    { name: "FactoryDroid", rules: [{ variable: "DROID_CLI" }] },
-    { name: "KimiCLI", rules: [{ variable: "KIMI_CLI" }] },
-    { name: "Trae", rules: [{ variable: "TRAE_AI_SHELL_ID" }] },
-    { name: "Aider", rules: [{ variable: "OR_APP_NAME", value: "Aider" }] },
-    { name: "OpenHands", rules: [{ variable: "OR_APP_NAME", value: "OpenHands" }] },
-];
-
-// Maps the start of a normalised self-reported agent identifier to a known agent name. Vendors don't agree on a
-// format (e.g. "claude-code_2-1-322_agent", "github_copilot_vscode_agent", "devin@1"), so values are lowercased
-// and underscores and spaces replaced with hyphens before matching.
-const agentNamePrefixes: ReadonlyArray<{ prefix: string; name: string }> = [
-    { prefix: "claude-code", name: "ClaudeCode" },
-    { prefix: "cursor", name: "Cursor" },
-    { prefix: "codex", name: "Codex" },
-    { prefix: "gemini", name: "GeminiCLI" },
-    { prefix: "github-copilot", name: "GitHubCopilot" },
-    { prefix: "opencode", name: "OpenCode" },
-    { prefix: "antigravity", name: "Antigravity" },
-    { prefix: "goose", name: "Goose" },
-    { prefix: "amp", name: "Amp" },
-    { prefix: "cline", name: "Cline" },
-    { prefix: "augment", name: "Augment" },
-    { prefix: "devin", name: "Devin" },
-    { prefix: "replit", name: "Replit" },
-    { prefix: "v0", name: "V0" },
+const knownAgents: ReadonlyArray<KnownAgent> = [
+    { name: "ClaudeCode", aiAgentPrefix: "claude-code", variables: [{ variable: "CLAUDECODE" }, { variable: "CLAUDE_CODE_ENTRYPOINT" }] },
+    { name: "Cursor", aiAgentPrefix: "cursor", variables: [{ variable: "CURSOR_AGENT" }, { variable: "CURSOR_EXTENSION_HOST_ROLE", value: "agent-exec" }] },
+    { name: "Codex", aiAgentPrefix: "codex", variables: [{ variable: "CODEX_SANDBOX" }, { variable: "CODEX_THREAD_ID" }, { variable: "CODEX_CI" }] },
+    { name: "GeminiCLI", aiAgentPrefix: "gemini", variables: [{ variable: "GEMINI_CLI" }] },
+    {
+        name: "GitHubCopilot",
+        aiAgentPrefix: "github-copilot",
+        variables: [{ variable: "COPILOT_CLI" }, { variable: "COPILOT_AGENT" }, { variable: "GITHUB_COPILOT_CLI_MODE" }],
+    },
+    {
+        name: "OpenCode",
+        aiAgentPrefix: "opencode",
+        variables: [{ variable: "OPENCODE", value: "1" }, { variable: "OPENCODE_CLIENT" }, { variable: "OPENCODE_AI" }],
+    },
+    { name: "Antigravity", aiAgentPrefix: "antigravity", variables: [{ variable: "ANTIGRAVITY_AGENT" }] },
+    { name: "Goose", aiAgentPrefix: "goose", variables: [{ variable: "GOOSE_TERMINAL" }, { variable: "AGENT", value: "goose" }] },
+    { name: "Amp", aiAgentPrefix: "amp", variables: [{ variable: "AGENT", value: "amp" }] },
+    { name: "Cline", aiAgentPrefix: "cline", variables: [{ variable: "CLINE_ACTIVE" }, { variable: "CLINE_TASK_ID" }] },
+    { name: "RooCode", variables: [{ variable: "ROO_CODE_TASK_ID" }] },
+    { name: "Augment", aiAgentPrefix: "augment", variables: [{ variable: "AUGMENT_AGENT" }] },
+    { name: "QwenCode", variables: [{ variable: "QWEN_CODE" }] },
+    { name: "FactoryDroid", variables: [{ variable: "DROID_CLI" }] },
+    { name: "KimiCLI", variables: [{ variable: "KIMI_CLI" }] },
+    { name: "Trae", variables: [{ variable: "TRAE_AI_SHELL_ID" }] },
+    { name: "Aider", variables: [{ variable: "OR_APP_NAME", value: "Aider" }] },
+    { name: "OpenHands", variables: [{ variable: "OR_APP_NAME", value: "OpenHands" }] },
+    { name: "Devin", aiAgentPrefix: "devin" },
+    { name: "Replit", aiAgentPrefix: "replit" },
+    { name: "V0", aiAgentPrefix: "v0" },
 ];
 
 /**
@@ -78,29 +81,30 @@ const agentNamePrefixes: ReadonlyArray<{ prefix: string; name: string }> = [
 export function getAiAgentUserAgentToken(callerSuppliedAgent?: string, env: EnvironmentVariables = readProcessEnvironment()): string | undefined {
     const selfReported = [callerSuppliedAgent, env[aiAgentVariable]].map((value) => value?.trim()).filter((value): value is string => !!value);
 
-    const name =
-        selfReported.map(nameFromIdentifier).find((n): n is string => n !== undefined) ??
-        nameFromVendorVariables(env) ??
-        (selfReported.length > 0 ? otherAgentName : undefined);
+    // Vendor variables also cover an agent that self-reports in a format that isn't recognised.
+    const agent = selfReported.map(findAgentByPrefix).find((a): a is KnownAgent => a !== undefined) ?? findAgentByVariables(env);
+    if (agent) {
+        return `AIAgent/${agent.name}`;
+    }
 
-    return name ? `AIAgent/${name}` : undefined;
+    return selfReported.length > 0 ? `AIAgent/${otherAgentName}` : undefined;
 }
 
-function nameFromIdentifier(identifier: string): string | undefined {
+function findAgentByPrefix(identifier: string): KnownAgent | undefined {
     const normalised = identifier.toLowerCase().replace(/[_\s]+/g, "-");
-    return agentNamePrefixes.find((p) => normalised.startsWith(p.prefix))?.name;
+    return knownAgents.find((agent) => agent.aiAgentPrefix !== undefined && normalised.startsWith(agent.aiAgentPrefix));
 }
 
-function nameFromVendorVariables(env: EnvironmentVariables): string | undefined {
+function findAgentByVariables(env: EnvironmentVariables): KnownAgent | undefined {
     return knownAgents.find((agent) =>
-        agent.rules.some((rule) => {
+        (agent.variables ?? []).some((rule) => {
             const value = env[rule.variable];
             if (!value) {
                 return false;
             }
             return rule.value === undefined || value.toLowerCase() === rule.value.toLowerCase();
         })
-    )?.name;
+    );
 }
 
 function readProcessEnvironment(): EnvironmentVariables {
