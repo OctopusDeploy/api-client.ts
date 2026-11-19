@@ -69,26 +69,40 @@ const knownAgents: ReadonlyArray<KnownAgent> = [
 ];
 
 /**
- * Returns a User-Agent token naming the AI agent driving this client (e.g. "AIAgent/ClaudeCode"), or undefined
+ * Returns a User-Agent comment naming the AI agent driving this client (e.g. "(ai-agent=ClaudeCode)"), or undefined
  * when none is detected.
  *
  * Self-reported identifiers are checked first, in order: an identifier supplied by the caller (for example an MCP
  * server passing the connected client's `clientInfo.name`), then the `AI_AGENT` environment variable. If neither is
  * recognised, vendor-specific environment variables are checked. An identifier that is present but not recognised
- * reports as "AIAgent/Other". Only the normalised name is reported: raw identifiers are free-form, so they are used
+ * reports as "(ai-agent=Other)". Only the normalised name is reported: raw identifiers are free-form, so they are used
  * for matching and never included in the output.
  */
-export function getAiAgentUserAgentToken(callerSuppliedAgent?: string, env: EnvironmentVariables = readProcessEnvironment()): string | undefined {
-    const aiAgentNameFromEnvVar = env[aiAgentVariable];
-    const selfReported = [callerSuppliedAgent, aiAgentNameFromEnvVar].map((value) => value?.trim()).filter((value): value is string => !!value);
+export function getAiAgentUserAgentToken(callerSuppliedAgent?: string, env?: EnvironmentVariables): string | undefined {
+    try {
+        const variables = env ?? readProcessEnvironment();
+        const aiAgentNameFromEnvVar = variables[aiAgentVariable];
+        const selfReported = [callerSuppliedAgent, aiAgentNameFromEnvVar]
+            .map((value) => (typeof value === "string" ? value.trim() : undefined))
+            .filter((value): value is string => !!value);
 
-    // Vendor variables also cover an agent that self-reports in a format that isn't recognised.
-    const agent = selfReported.map(findAgentByPrefix).find((a): a is KnownAgent => a !== undefined) ?? findAgentByVariables(env);
-    if (agent) {
-        return `AIAgent/${agent.name}`;
+        // Vendor variables also cover an agent that self-reports in a format that isn't recognised.
+        const agent = selfReported.map(findAgentByPrefix).find((a): a is KnownAgent => a !== undefined) ?? findAgentByVariables(variables);
+        if (agent) {
+            return aiAgentComment(agent.name);
+        }
+
+        return selfReported.length > 0 ? aiAgentComment(otherAgentName) : undefined;
+    } catch {
+        // Detection is best-effort and must never fail a request, e.g. where reading the environment isn't permitted.
+        return undefined;
     }
+}
 
-    return selfReported.length > 0 ? `AIAgent/${otherAgentName}` : undefined;
+// Formats the agent as an RFC 9110 comment, so it describes the request rather than claiming to be a product in the
+// User-Agent.
+function aiAgentComment(name: string): string {
+    return `(ai-agent=${name})`;
 }
 
 function findAgentByPrefix(identifier: string): KnownAgent | undefined {
