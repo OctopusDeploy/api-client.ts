@@ -32,6 +32,7 @@ describe("getAiAgentUserAgentToken", () => {
         ["github_copilot_vscode_agent", "AIAgent/GitHubCopilot"],
         ["devin@1", "AIAgent/Devin"],
         ["custom-agent@2.0", "AIAgent/Other"],
+        ["amplitude-mcp", "AIAgent/Other"],
     ])("maps AI_AGENT=%s to %s", (value, expected) => {
         expect(getAiAgentUserAgentToken(undefined, { AI_AGENT: value })).toBe(expected);
     });

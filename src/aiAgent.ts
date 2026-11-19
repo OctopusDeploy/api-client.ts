@@ -93,7 +93,17 @@ export function getAiAgentUserAgentToken(callerSuppliedAgent?: string, env: Envi
 
 function findAgentByPrefix(identifier: string): KnownAgent | undefined {
     const normalised = identifier.toLowerCase().replace(/[_\s]+/g, "-");
-    return knownAgents.find((agent) => agent.aiAgentPrefix !== undefined && normalised.startsWith(agent.aiAgentPrefix));
+    return knownAgents.find((agent) => agent.aiAgentPrefix !== undefined && matchesPrefix(normalised, agent.aiAgentPrefix));
+}
+
+// Whether the identifier starts with the prefix followed by the end of the identifier, or by a separator ("-", "@", ".")
+// or digit, so a short prefix such as "amp" doesn't match an unrelated identifier such as "amplitude-mcp".
+function matchesPrefix(identifier: string, prefix: string): boolean {
+    if (!identifier.startsWith(prefix)) {
+        return false;
+    }
+    const next = identifier.charAt(prefix.length);
+    return next === "" || /^[-@.0-9]$/.test(next);
 }
 
 function findAgentByVariables(env: EnvironmentVariables): KnownAgent | undefined {
