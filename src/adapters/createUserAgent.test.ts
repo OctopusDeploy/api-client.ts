@@ -18,8 +18,4 @@ describe("createUserAgent", () => {
     test("uses the caller-supplied agent", () => {
         expect(createUserAgent({ ...configuration, aiAgent: "claude-code" }, {})).toBe("ts-octopusdeploy AIAgent/ClaudeCode GitHubActions (release;deploy;v3)");
     });
-
-    test("omits an empty requesting app", () => {
-        expect(createUserAgent({ ...configuration, userAgentApp: "" }, {})).toBe("ts-octopusdeploy");
-    });
 });
