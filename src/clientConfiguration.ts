@@ -3,6 +3,7 @@ import { Logger } from "./logger";
 
 export interface ClientConfiguration {
     userAgentApp: string;
+    aiAgent?: string;
     httpsAgent?: Agent;
     apiKey?: string;
     accessToken?: string;
