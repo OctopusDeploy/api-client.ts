@@ -1,11 +1,9 @@
 import AdmZip from "adm-zip";
 import fs from "fs";
-import { glob, IOptions } from "glob";
+import { glob, hasMagic } from "glob";
+import type { GlobOptionsWithFileTypesUnset } from "glob";
 import path from "path";
-import { promisify } from "util";
 import { Logger } from "../../../logger";
-
-const globp = promisify(glob);
 
 /**
  * Creates a Zip file with a given filename from the inputFilePatterns.
@@ -74,12 +72,12 @@ const setCompressionLevel = (zip: AdmZip, level: number): void => {
 
 async function expandGlobs(filePatterns: string[]): Promise<string[]> {
     const files: string[] = [];
-    const options: IOptions = { dot: true };
+    const options: GlobOptionsWithFileTypesUnset = { dot: true };
 
     for (const filePattern of filePatterns) {
         for (const fileName of filePattern.split(",")) {
-            if (glob.hasMagic(fileName)) {
-                const filePaths = await globp(fileName, options);
+            if (hasMagic(fileName)) {
+                const filePaths = await glob(fileName, options);
                 for (const filePath of filePaths) {
                     files.push(filePath);
                 }
